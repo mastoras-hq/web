@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — Mástoras Advisory</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #F4F7FA;
+      color: #1F2937;
+      line-height: 1.7;
+    }
+
+    header {
+      background: #1A2B4A;
+      padding: 1.5rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    header .logo {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    header .logo span { color: #00A99D; }
+    header .tagline {
+      margin-left: auto;
+      font-size: 0.8rem;
+      color: #94A3B8;
+    }
+
+    main {
+      max-width: 860px;
+      margin: 2.5rem auto;
+      padding: 0 1.5rem 4rem;
+    }
+
+    .hero {
+      background: #1A2B4A;
+      color: #ffffff;
+      border-radius: 8px;
+      padding: 2.5rem;
+      margin-bottom: 2.5rem;
+    }
+    .hero h1 { font-size: 1.75rem; margin-bottom: 0.5rem; }
+    .hero .meta { color: #94A3B8; font-size: 0.875rem; }
+    .hero .meta strong { color: #00A99D; }
+
+    .toc {
+      background: #ffffff;
+      border-left: 4px solid #00A99D;
+      border-radius: 0 8px 8px 0;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+    .toc h2 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; color: #6B7280; margin-bottom: 0.75rem; }
+    .toc ol { padding-left: 1.25rem; }
+    .toc li { margin-bottom: 0.3rem; }
+    .toc a { color: #1A2B4A; text-decoration: none; font-size: 0.9rem; }
+    .toc a:hover { color: #00A99D; text-decoration: underline; }
+
+    section {
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      border-top: 3px solid #00A99D;
+    }
+    section h2 {
+      font-size: 1.15rem;
+      color: #1A2B4A;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #E5E7EB;
+    }
+    section h3 {
+      font-size: 1rem;
+      color: #1F2937;
+      margin: 1.25rem 0 0.5rem;
+    }
+    section p { margin-bottom: 0.75rem; color: #374151; }
+    section p:last-child { margin-bottom: 0; }
+    section ul, section ol {
+      padding-left: 1.5rem;
+      margin-bottom: 0.75rem;
+      color: #374151;
+    }
+    section li { margin-bottom: 0.35rem; }
+
+    .highlight {
+      background: #ECFDF5;
+      border: 1px solid #6EE7B7;
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      margin: 1rem 0;
+      font-size: 0.9rem;
+      color: #065F46;
+    }
+    .warning {
+      background: #FFFBEB;
+      border: 1px solid #FCD34D;
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      margin: 1rem 0;
+      font-size: 0.9rem;
+      color: #92400E;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: 0.875rem;
+    }
+    th {
+      background: #1A2B4A;
+      color: #ffffff;
+      text-align: left;
+      padding: 0.75rem 1rem;
+    }
+    td {
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid #E5E7EB;
+      vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:nth-child(even) td { background: #F9FAFB; }
+
+    .contact-card {
+      background: #1A2B4A;
+      color: #ffffff;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-top: 1rem;
+    }
+    .contact-card p { color: #CBD5E1; margin-bottom: 0.4rem; }
+    .contact-card strong { color: #00A99D; }
+
+    footer {
+      text-align: center;
+      color: #9CA3AF;
+      font-size: 0.8rem;
+      padding: 2rem;
+    }
+    footer a { color: #00A99D; text-decoration: none; }
+
+    @media (max-width: 600px) {
+      .hero { padding: 1.5rem; }
+      section { padding: 1.25rem; }
+      table { font-size: 0.8rem; }
+      th, td { padding: 0.5rem 0.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Mástoras<span> Advisor</span></div>
+  <span class="tagline">mastoras.uk</span>
+</header>
+
+<main>
+
+  <div class="hero">
+    <h1>Privacy Policy</h1>
+    <p class="meta">
+      Last updated: <strong>May 2026</strong> &nbsp;|&nbsp;
+      Applies to: mastoras.uk and api.mastoras.uk
+    </p>
+  </div>
+
+  <nav class="toc" aria-label="Table of contents">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#controller">1. Who we are / Data Controller</a></li>
+      <li><a href="#data-collected">2. What personal data we collect</a></li>
+      <li><a href="#how-we-use">3. How and why we use your data</a></li>
+      <li><a href="#lawful-basis">4. Lawful basis for processing</a></li>
+      <li><a href="#sharing">5. Who we share your data with</a></li>
+      <li><a href="#retention">6. How long we keep your data</a></li>
+      <li><a href="#transfers">7. International data transfers</a></li>
+      <li><a href="#rights">8. Your rights under UK GDPR</a></li>
+      <li><a href="#security">9. How we protect your data</a></li>
+      <li><a href="#cookies">10. Cookies</a></li>
+      <li><a href="#changes">11. Changes to this policy</a></li>
+      <li><a href="#contact">12. Contact us / Complaints</a></li>
+    </ol>
+  </nav>
+
+  <!-- 1 -->
+  <section id="controller">
+    <h2>1. Who We Are / Data Controller</h2>
+    <p>
+      This Privacy Policy applies to <strong>Mástoras Advisory</strong>
+      ("Mástoras", "we", "us", "our"), a business advisory consultancy based
+      in Northern Ireland, United Kingdom.
+    </p>
+    <p>
+      Mástoras Advisory is the <strong>data controller</strong> in respect of
+      any personal information you provide to us or that we collect in the
+      course of providing our advisory services. This means we are responsible
+      for deciding how and why your personal data is processed, and we are
+      accountable to you under the UK General Data Protection Regulation
+      (UK GDPR) and the Data Protection Act 2018.
+    </p>
+    <p>
+      Our website is <strong>mastoras.uk</strong> and our Funding Intelligence
+      API operates at <strong>api.mastoras.uk</strong>.
+    </p>
+    <div class="highlight">
+      We are committed to handling your personal data with care, transparency
+      and respect. We will never sell your data or use it for purposes other
+      than those described in this policy.
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section id="data-collected">
+    <h2>2. What Personal Data We Collect</h2>
+
+    <h3>2.1 Contact and Enquiry Information</h3>
+    <p>When you contact us or complete an enquiry or assessment form on our website, we may collect:</p>
+    <ul>
+      <li>Your name</li>
+      <li>Email address</li>
+      <li>Details about your business or project idea</li>
+      <li>Your responses to any diagnostic or assessment questions</li>
+    </ul>
+
+    <h3>2.2 Business Profile Information (Advisory Service)</h3>
+    <p>When we provide funding advisory services to you or your organisation, we may collect and process:</p>
+    <ul>
+      <li>Organisation name and type</li>
+      <li>Business sector and stage of development</li>
+      <li>Location (council area, region)</li>
+      <li>Years trading, VAT registration status</li>
+      <li>Previous grants received</li>
+      <li>Project descriptions, funding requirements, and budget information</li>
+    </ul>
+
+    <h3>2.3 Funding Match Reports</h3>
+    <p>
+      When we generate a Funding Match Report for you, the business profile
+      information above is used to produce the report. A copy of the report
+      and the input data is retained in our secure database for the purpose
+      of audit trail, service improvement, and future reference.
+    </p>
+
+    <h3>2.4 Technical Data</h3>
+    <p>When you visit our website, we may automatically collect:</p>
+    <ul>
+      <li>IP address and approximate geographic location</li>
+      <li>Browser type and version</li>
+      <li>Pages visited and time spent on each page</li>
+      <li>Referring website or link</li>
+    </ul>
+    <p>This data is collected in aggregate and is not used to identify you individually.</p>
+
+    <h3>2.5 Data We Do Not Collect</h3>
+    <p>We do not collect or process:</p>
+    <ul>
+      <li>Payment card or banking information</li>
+      <li>Government-issued identification numbers (e.g. NI number, passport)</li>
+      <li>Special category data (health, ethnicity, religion, etc.) unless you specifically provide it in a project description and consent to its use</li>
+    </ul>
+  </section>
+
+  <!-- 3 -->
+  <section id="how-we-use">
+    <h2>3. How and Why We Use Your Data</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Purpose</th>
+          <th>Data used</th>
+          <th>Lawful basis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Respond to your enquiry or initial assessment</td>
+          <td>Name, email, business idea, assessment answers</td>
+          <td>Legitimate interests</td>
+        </tr>
+        <tr>
+          <td>Deliver funding advisory services</td>
+          <td>Business profile, project details</td>
+          <td>Contract performance</td>
+        </tr>
+        <tr>
+          <td>Generate and store Funding Match Reports</td>
+          <td>Business profile, project details, report output</td>
+          <td>Contract performance</td>
+        </tr>
+        <tr>
+          <td>Maintain an audit trail of advice given</td>
+          <td>Reports, timestamps, client reference</td>
+          <td>Legitimate interests</td>
+        </tr>
+        <tr>
+          <td>Improve and train our matching engine</td>
+          <td>Anonymised / aggregated report data</td>
+          <td>Legitimate interests</td>
+        </tr>
+        <tr>
+          <td>Communicate service updates or relevant funding news</td>
+          <td>Email address</td>
+          <td>Consent (you may opt out at any time)</td>
+        </tr>
+        <tr>
+          <td>Comply with legal or regulatory obligations</td>
+          <td>Any data as required by law</td>
+          <td>Legal obligation</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>We will never use your data for automated decision-making that produces legal or similarly significant effects without human review.</p>
+  </section>
+
+  <!-- 4 -->
+  <section id="lawful-basis">
+    <h2>4. Lawful Basis for Processing</h2>
+    <p>Under UK GDPR, we rely on the following lawful bases:</p>
+    <ul>
+      <li>
+        <strong>Contract performance (Article 6(1)(b)):</strong> Where processing
+        is necessary to deliver the advisory service you have requested.
+      </li>
+      <li>
+        <strong>Legitimate interests (Article 6(1)(f)):</strong> Where we have a
+        genuine business reason to process data that does not override your
+        rights — for example, maintaining service records, responding to
+        enquiries, and improving our funding engine. We have assessed these
+        interests and concluded they are proportionate.
+      </li>
+      <li>
+        <strong>Legal obligation (Article 6(1)(c)):</strong> Where we are required
+        to process data to comply with UK law.
+      </li>
+      <li>
+        <strong>Consent (Article 6(1)(a)):</strong> For any optional communications
+        such as funding newsletters or marketing updates. You may withdraw
+        consent at any time by emailing us at the address in Section 12.
+      </li>
+    </ul>
+  </section>
+
+  <!-- 5 -->
+  <section id="sharing">
+    <h2>5. Who We Share Your Data With</h2>
+
+    <p>
+      We do not sell, rent, or trade your personal data with third parties.
+      We share data only in the following limited circumstances:
+    </p>
+
+    <h3>5.1 Technology Sub-processors</h3>
+    <p>
+      To operate our service, we use the following third-party platforms which
+      may process your data on our behalf as <strong>data processors</strong>.
+      Each is bound by a data processing agreement:
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Processor</th>
+          <th>Purpose</th>
+          <th>Location</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Supabase Inc.</strong></td>
+          <td>Secure cloud database storage of reports, fund data and enquiry submissions</td>
+          <td>EU (eu-west-2, Ireland)</td>
+        </tr>
+        <tr>
+          <td><strong>Railway Corp.</strong></td>
+          <td>Hosting the Mástoras Advisor API</td>
+          <td>USA (see Section 7)</td>
+        </tr>
+        <tr>
+          <td><strong>Cloudflare Inc.</strong></td>
+          <td>DNS, DDoS protection and security for mastoras.uk</td>
+          <td>USA / global CDN (see Section 7)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>5.2 Legal Disclosure</h3>
+    <p>
+      We may disclose your data if required to do so by law, court order,
+      or where we believe disclosure is necessary to protect our rights,
+      your safety or the safety of others, or to investigate fraud.
+    </p>
+
+    <h3>5.3 Business Transfer</h3>
+    <p>
+      If Mástoras Advisory is acquired or merges with another organisation,
+      your data may be transferred as part of that transaction. We will
+      notify you before your data is transferred and becomes subject to a
+      different privacy policy.
+    </p>
+  </section>
+
+  <!-- 6 -->
+  <section id="retention">
+    <h2>6. How Long We Keep Your Data</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Data type</th>
+          <th>Retention period</th>
+          <th>Reason</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Enquiry and assessment submissions</td>
+          <td>2 years from date of submission</td>
+          <td>Follow-up and service records</td>
+        </tr>
+        <tr>
+          <td>Funding Match Reports (client reports)</td>
+          <td>5 years from date of generation</td>
+          <td>Advisory audit trail and professional standards</td>
+        </tr>
+        <tr>
+          <td>Business profile data (used in reports)</td>
+          <td>Retained with the associated report</td>
+          <td>Report integrity</td>
+        </tr>
+        <tr>
+          <td>Email marketing consent</td>
+          <td>Until you withdraw consent</td>
+          <td>Consent-based — you control this</td>
+        </tr>
+        <tr>
+          <td>Technical / server logs</td>
+          <td>90 days</td>
+          <td>Security and incident investigation</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      When data reaches the end of its retention period, it is securely
+      deleted or irreversibly anonymised.
+    </p>
+  </section>
+
+  <!-- 7 -->
+  <section id="transfers">
+    <h2>7. International Data Transfers</h2>
+    <p>
+      Our primary database (Supabase) is hosted in the <strong>EU (Ireland)</strong>,
+      keeping the majority of your data within the UK/EU adequacy framework.
+    </p>
+    <p>
+      Our API server (Railway) is hosted in the <strong>United States</strong>.
+      Data passes through Railway's servers when API requests are processed.
+      Railway is Privacy Shield successor-certified and operates under Standard
+      Contractual Clauses (SCCs) for UK-US data transfers, providing an
+      appropriate level of protection under UK GDPR Article 46.
+    </p>
+    <p>
+      Cloudflare processes DNS and network traffic globally. Cloudflare is
+      certified under the UK Extension to the EU–US Data Privacy Framework
+      and operates SCCs for UK data transfers.
+    </p>
+    <div class="warning">
+      If you have concerns about international transfers of your specific
+      personal data, please contact us using the details in Section 12 and
+      we will discuss the options available to you.
+    </div>
+  </section>
+
+  <!-- 8 -->
+  <section id="rights">
+    <h2>8. Your Rights Under UK GDPR</h2>
+    <p>
+      You have the following rights in relation to your personal data.
+      To exercise any of these rights, please contact us at the address
+      in Section 12. We will respond within <strong>one month</strong> of
+      receiving your request.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Right</th>
+          <th>What it means</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Right of access</strong></td>
+          <td>You can ask for a copy of all personal data we hold about you (a Subject Access Request).</td>
+        </tr>
+        <tr>
+          <td><strong>Right to rectification</strong></td>
+          <td>You can ask us to correct inaccurate or incomplete personal data.</td>
+        </tr>
+        <tr>
+          <td><strong>Right to erasure</strong></td>
+          <td>You can ask us to delete your personal data where there is no compelling reason to continue processing it.</td>
+        </tr>
+        <tr>
+          <td><strong>Right to restrict processing</strong></td>
+          <td>You can ask us to pause processing of your data in certain circumstances.</td>
+        </tr>
+        <tr>
+          <td><strong>Right to data portability</strong></td>
+          <td>Where processing is based on consent or contract, you can request your data in a machine-readable format.</td>
+        </tr>
+        <tr>
+          <td><strong>Right to object</strong></td>
+          <td>You can object to processing based on legitimate interests or for direct marketing. We will stop unless we have compelling legitimate grounds.</td>
+        </tr>
+        <tr>
+          <td><strong>Rights re: automated decisions</strong></td>
+          <td>You have the right not to be subject to solely automated decisions that significantly affect you.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      There is no charge for exercising your rights. If a request is
+      unfounded or excessive, we may charge a reasonable fee or decline
+      the request, but will explain our reasoning.
+    </p>
+  </section>
+
+  <!-- 9 -->
+  <section id="security">
+    <h2>9. How We Protect Your Data</h2>
+    <p>We take security seriously and have implemented appropriate technical and organisational measures, including:</p>
+    <ul>
+      <li><strong>Encrypted data in transit:</strong> All connections to mastoras.uk and api.mastoras.uk are TLS-encrypted (HTTPS).</li>
+      <li><strong>Encrypted data at rest:</strong> Our Supabase database applies encryption at rest.</li>
+      <li><strong>API authentication:</strong> Our Funding Intelligence API requires a secure API key for all data-bearing requests. The public health-check endpoint returns no personal data.</li>
+      <li><strong>Row-Level Security:</strong> Our database uses Supabase Row-Level Security (RLS) policies to restrict data access at the database layer.</li>
+      <li><strong>Access controls:</strong> Access to personal data is limited to Mástoras staff with a legitimate need.</li>
+      <li><strong>No plaintext passwords:</strong> We do not store passwords in our systems.</li>
+    </ul>
+    <p>
+      Despite these measures, no internet-based service is completely
+      immune to security breaches. In the unlikely event of a data breach
+      that poses a risk to your rights and freedoms, we will notify the
+      ICO within 72 hours and inform affected individuals without undue delay.
+    </p>
+  </section>
+
+  <!-- 10 -->
+  <section id="cookies">
+    <h2>10. Cookies</h2>
+    <p>
+      Our website may use cookies — small text files stored in your browser
+      — to improve your experience. We use the following types:
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Cookie type</th>
+          <th>Purpose</th>
+          <th>Consent required?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Strictly necessary</strong></td>
+          <td>Essential for the website to function (e.g. session security)</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td><strong>Analytics</strong></td>
+          <td>Understand how visitors use the site (e.g. Cloudflare Web Analytics — privacy-preserving, no cross-site tracking)</td>
+          <td>No (privacy-preserving, no personal data)</td>
+        </tr>
+        <tr>
+          <td><strong>Marketing / third-party</strong></td>
+          <td>We do not currently use marketing or retargeting cookies</td>
+          <td>N/A</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      You can control or delete cookies through your browser settings.
+      This may affect some website functionality.
+    </p>
+  </section>
+
+  <!-- 11 -->
+  <section id="changes">
+    <h2>11. Changes to This Policy</h2>
+    <p>
+      We may update this Privacy Policy from time to time to reflect changes
+      in our services, technology, legal requirements, or best practice.
+      When we make material changes, we will update the "Last updated" date
+      at the top of this page.
+    </p>
+    <p>
+      We encourage you to review this policy periodically. Continued use of
+      our services after any changes constitutes your acceptance of the
+      revised policy.
+    </p>
+  </section>
+
+  <!-- 12 -->
+  <section id="contact">
+    <h2>12. Contact Us / Complaints</h2>
+    <p>
+      If you have any questions about this Privacy Policy, wish to exercise
+      your data rights, or have a concern about how we have handled your
+      personal data, please contact us:
+    </p>
+
+    <div class="contact-card">
+      <p><strong>Mástoras Advisory</strong></p>
+      <p>Northern Ireland, United Kingdom</p>
+      <p>Email: <strong>hello@mastoras.uk</strong></p>
+      <p>Website: <strong>mastoras.uk</strong></p>
+    </div>
+
+    <p style="margin-top: 1.25rem;">
+      We take all complaints seriously and will respond within 30 days.
+    </p>
+
+    <h3>Right to Complain to the ICO</h3>
+    <p>
+      If you are unhappy with how we have handled your personal data, you
+      have the right to lodge a complaint with the
+      <strong>Information Commissioner's Office (ICO)</strong>, the UK's
+      independent data protection authority:
+    </p>
+    <ul>
+      <li>Website: <a href="https://ico.org.uk" target="_blank" rel="noopener">ico.org.uk</a></li>
+      <li>Helpline: 0303 123 1113</li>
+      <li>ICO, Wycliffe House, Water Lane, Wilmslow, Cheshire SK9 5AF</li>
+    </ul>
+    <p>
+      We would, however, appreciate the opportunity to address any concern
+      directly before you approach the ICO.
+    </p>
+  </section>
+
+</main>
+
+<footer>
+  <p>&copy; 2026 Mástoras Advisory &nbsp;|&nbsp; Northern Ireland &nbsp;|&nbsp;
+    <a href="https://mastoras.uk">mastoras.uk</a>
+  </p>
+  <p style="margin-top:0.5rem;">
+    This policy is governed by UK GDPR and the Data Protection Act 2018.
+  </p>
+</footer>
+
+</body>
+</html>
