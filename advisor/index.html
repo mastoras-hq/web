@@ -310,12 +310,19 @@
       border-left: 3px solid var(--brass); padding: 10px 14px;
       background: rgba(176,141,87,0.06); margin-bottom: 10px; border-radius: 0 4px 4px 0;
     }
+    .intel-block {
+      border-left: 3px solid var(--slate); padding: 10px 14px;
+      background: rgba(46,52,64,0.04); margin-bottom: 10px; border-radius: 0 4px 4px 0;
+    }
     .block-label {
       font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
       text-transform: uppercase; margin-bottom: 6px;
     }
-    .why-block .block-label  { color: var(--teal); }
-    .risk-block .block-label { color: var(--brass); }
+    .why-block .block-label   { color: var(--teal); }
+    .risk-block .block-label  { color: var(--brass); }
+    .intel-block .block-label { color: var(--slate); }
+    .intel-block .block-list li { margin-bottom: 8px; }
+    .intel-block .block-list li strong { color: var(--slate); }
     .block-list { margin: 0; padding-left: 16px; font-size: 13.5px; color: var(--graphite); }
     .block-list li { margin-bottom: 4px; }
     .fund-link { font-size: 13px; color: var(--teal); text-decoration: none; font-weight: 500; }
@@ -874,6 +881,29 @@
           '</ul></div>';
       }
 
+      var intelHtml = '';
+      if (m.application_intelligence) {
+        var intel = m.application_intelligence;
+        var intelLabels = {
+          application_requirements: 'Requirements',
+          evaluation_criteria: 'Evaluation criteria',
+          application_tips: 'Tips for a strong application',
+          common_pitfalls: 'Common pitfalls',
+          typical_timeline: 'Typical timeline'
+        };
+        var intelItems = [];
+        Object.keys(intelLabels).forEach(function (key) {
+          var val = intel[key];
+          if (val && val.indexOf('Not specified') === -1) {
+            intelItems.push('<li><strong>' + intelLabels[key] + ':</strong> ' + escHtml(val) + '</li>');
+          }
+        });
+        if (intelItems.length) {
+          intelHtml = '<div class="intel-block"><p class="block-label">Application Intelligence</p><ul class="block-list">' +
+            intelItems.join('') + '</ul></div>';
+        }
+      }
+
       var fundLink = m.source_url ? '<a href="' + escHtml(m.source_url) + '" target="_blank" rel="noopener" class="fund-link">View fund →</a>' : '';
 
       html += '<div class="match-card">' +
@@ -887,7 +917,7 @@
           (m.grant_size ? '<span class="badge badge-neutral">' + escHtml(m.grant_size) + '</span>' : '') +
           (m.effort_level ? '<span class="badge badge-neutral">Effort: ' + escHtml(m.effort_level) + '</span>' : '') +
         '</div>' +
-        whyHtml + riskHtml + fundLink +
+        whyHtml + riskHtml + intelHtml + fundLink +
         '</div>';
     });
 
