@@ -681,7 +681,8 @@
   var state = {
     apiKey: localStorage.getItem('mastoras_api_key') || '',
     lastPayload: null,
-    lastReportId: null
+    lastReportId: null,
+    fundNotes: {}
   };
 
   var API = 'https://api.mastoras.uk';
@@ -805,8 +806,9 @@
     btn.disabled = true;
     document.getElementById('submit-error').style.display = 'none';
 
+    state.fundNotes = {};
     var panel = document.getElementById('results-panel');
-    panel.innerHTML = '<div class="match-loading">Matching against 141 funding schemes…</div>';
+    panel.innerHTML = '<div class="match-loading">Matching against funding schemes…</div>';
     document.getElementById('pdf-btn').style.display = 'none';
     document.getElementById('results-heading').innerHTML = '';
 
@@ -918,10 +920,19 @@
           (m.effort_level ? '<span class="badge badge-neutral">Effort: ' + escHtml(m.effort_level) + '</span>' : '') +
         '</div>' +
         whyHtml + riskHtml + intelHtml + fundLink +
+        '<div class="consultant-note-wrap">' +
+          '<p class="form-section-title" style="margin:12px 0 6px">Consultant\'s View <span style="font-weight:400;color:#bbb;text-transform:none;letter-spacing:0">(optional — appears in PDF)</span></p>' +
+          '<textarea class="form-textarea consultant-note-input" rows="3" placeholder="Add your professional view on this fund for the client…" data-fund-id="' + escHtml(m.fund_id) + '" onchange="saveNote(this)">' + escHtml(state.fundNotes[m.fund_id] || '') + '</textarea>' +
+        '</div>' +
         '</div>';
     });
 
     panel.innerHTML = html;
+  }
+
+  function saveNote(el) {
+    var fundId = el.getAttribute('data-fund-id');
+    state.fundNotes[fundId] = el.value;
   }
 
   /* ── PDF DOWNLOAD ── */
@@ -931,10 +942,11 @@
     btn.textContent = 'Preparing PDF…';
     btn.disabled = true;
 
+    var pdfPayload = Object.assign({}, state.lastPayload, { fund_notes: state.fundNotes });
     fetch(API + '/report/pdf', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-API-Key': state.apiKey },
-      body: JSON.stringify(state.lastPayload)
+      body: JSON.stringify(pdfPayload)
     })
     .then(function (res) {
       if (!res.ok) throw new Error('PDF error ' + res.status);
