@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Check Your Funding Profile — Mástoras</title>
+  <meta name="description" content="Find out how many Northern Ireland funding schemes match your organisation in 30 seconds. Free instant check by Mástoras.">
+  <meta property="og:title" content="Check Your Funding Profile — Mástoras">
+  <meta property="og:description" content="Find out how many NI funding schemes match your profile — free instant check.">
+  <meta property="og:url" content="https://mastoras.uk/funding-check/">
+
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --slate:    #2E3440;
+      --linen:    #F4F1EC;
+      --brass:    #B08D57;
+      --teal:     #0F595E;
+      --graphite: #222222;
+      --white:    #ffffff;
+      --rule:     #e2e8f0;
+      --red:      #c0392b;
+    }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      line-height: 1.65;
+      color: var(--graphite);
+      background: var(--linen);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+    h1,h2,h3 { font-family: 'Merriweather', Georgia, serif; color: var(--slate); line-height: 1.3; }
+    a { color: var(--teal); }
+    .wrap { max-width: 1060px; margin: 0 auto; padding: 0 32px; }
+
+    /* ── HEADER ── */
+    header { background: var(--white); border-bottom: 1px solid var(--rule); position: sticky; top: 0; z-index: 200; }
+    .header-inner { display: flex; justify-content: space-between; align-items: center; height: 72px; }
+    .wordmark { text-decoration: none; display: flex; align-items: center; }
+    .wordmark img { height: 52px; width: auto; }
+    .nav-links { display: flex; align-items: center; gap: 28px; }
+    .nav-links a { color: var(--graphite); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.15s; }
+    .nav-links a:hover { color: var(--teal); }
+    .nav-cta { background: var(--teal); color: #fff !important; padding: 9px 20px; font-size: 13px; font-weight: 600; text-decoration: none; border-radius: 5px; }
+    .nav-cta:hover { background: #0c4c50 !important; }
+
+    /* ── HERO ── */
+    .page-hero { background: var(--slate); color: var(--white); padding: 64px 0 56px; text-align: center; }
+    .hero-eyebrow {
+      display: inline-block; font-size: 11px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--brass); margin-bottom: 20px;
+      background: rgba(176,141,87,0.15); padding: 4px 12px; border-radius: 3px;
+    }
+    .page-hero h1 { font-size: clamp(1.6rem,4vw,2.4rem); color: var(--white); margin-bottom: 14px; }
+    .page-hero p { color: rgba(255,255,255,0.6); font-size: 16px; max-width: 520px; margin: 0 auto; }
+
+    /* ── FORM SECTION ── */
+    .form-section { padding: 56px 0 64px; }
+    .form-card {
+      background: var(--white); border: 1px solid var(--rule);
+      border-radius: 8px; padding: 40px;
+      max-width: 620px; margin: 0 auto;
+    }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .form-group { margin-bottom: 0; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-group label {
+      display: block; font-size: 13px; font-weight: 600;
+      color: var(--slate); margin-bottom: 6px;
+    }
+    .form-select, .form-input {
+      width: 100%; padding: 11px 14px;
+      border: 1px solid #ddd; border-radius: 4px;
+      font-family: 'DM Sans', sans-serif; font-size: 15px;
+      color: var(--graphite); background: var(--white);
+      transition: border-color 0.15s;
+    }
+    .form-select:focus, .form-input:focus {
+      outline: none; border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(15,89,94,0.1);
+    }
+    .form-select.error, .form-input.error { border-color: var(--red); }
+    .btn-submit {
+      width: 100%; padding: 16px; background: var(--teal); color: var(--white);
+      border: none; border-radius: 5px; cursor: pointer;
+      font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 600;
+      transition: background 0.15s; margin-top: 24px;
+    }
+    .btn-submit:hover:not(:disabled) { background: #0c4c50; }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+    .form-note { font-size: 13px; color: #aaa; text-align: center; margin-top: 12px; }
+    .error-msg { font-size: 13px; color: var(--red); margin-top: 8px; display: none; }
+
+    /* ── RESULT ── */
+    .result-section {
+      display: none; padding: 56px 0 64px;
+      border-top: 1px solid var(--rule);
+    }
+    .result-card {
+      background: var(--white); border: 1px solid var(--rule);
+      border-radius: 8px; padding: 40px;
+      max-width: 620px; margin: 0 auto;
+      text-align: center;
+    }
+    .result-number {
+      font-family: 'Merriweather', serif;
+      font-size: 5rem; font-weight: 700;
+      color: var(--teal); line-height: 1;
+      margin-bottom: 8px;
+    }
+    .result-label { font-size: 16px; color: #888; margin-bottom: 28px; }
+    .top-funds-list {
+      background: var(--linen); border-radius: 6px;
+      padding: 20px 24px; margin-bottom: 28px; text-align: left;
+    }
+    .top-funds-list p {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--brass); margin-bottom: 12px;
+    }
+    .top-funds-list ol { margin: 0 0 0 18px; padding: 0; }
+    .top-funds-list li { font-size: 15px; color: var(--slate); margin-bottom: 6px; font-weight: 500; }
+    .result-message { font-size: 15px; color: #666; margin-bottom: 28px; line-height: 1.7; }
+    .btn-cta {
+      display: inline-block; background: var(--brass); color: var(--white);
+      padding: 16px 36px; border-radius: 5px; text-decoration: none;
+      font-weight: 600; font-size: 16px; transition: background 0.15s;
+    }
+    .btn-cta:hover { background: #9a7a48; }
+    .btn-retry {
+      display: block; margin-top: 16px;
+      font-size: 14px; color: #aaa; cursor: pointer;
+      background: none; border: none; font-family: inherit;
+    }
+    .btn-retry:hover { color: var(--teal); }
+
+    /* ── TRUST STRIP ── */
+    .trust-strip { padding: 40px 0; background: var(--white); border-top: 1px solid var(--rule); }
+    .trust-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 620px; margin: 0 auto; text-align: center; }
+    .trust-item .num { font-family: 'Merriweather', serif; font-size: 1.8rem; font-weight: 700; color: var(--brass); }
+    .trust-item .lbl { font-size: 13px; color: #888; margin-top: 4px; }
+
+    /* ── FOOTER ── */
+    footer { background: var(--white); border-top: 1px solid var(--rule); padding: 36px 0; }
+    .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+    .footer-left { font-size: 14px; color: #888; line-height: 1.9; }
+    .footer-left a { color: #888; text-decoration: underline; text-underline-offset: 2px; }
+    .footer-tagline { font-family: 'Merriweather', serif; font-style: italic; font-size: 14px; color: #ccc; }
+
+    @media (max-width: 640px) {
+      .wrap { padding: 0 20px; }
+      .form-card, .result-card { padding: 24px 20px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .trust-grid { grid-template-columns: 1fr; gap: 16px; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="wrap">
+    <div class="header-inner">
+      <a href="https://mastoras.uk" class="wordmark">
+        <img src="../mastoras-logo.png" alt="Mástoras" height="52">
+      </a>
+      <nav class="nav-links">
+        <a href="https://mastoras.uk/#services">Services</a>
+        <a href="https://mastoras.uk/#about">About</a>
+        <a href="/blog">Blog</a>
+        <a href="/funding-digest/">Funding Digest</a>
+        <a href="https://calendly.com/garynicholl1515/20min" target="_blank" rel="noopener" class="nav-cta">Book a Call</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<!-- ── HERO ── -->
+<div class="page-hero">
+  <div class="wrap">
+    <span class="hero-eyebrow">Free Instant Check</span>
+    <h1>How many funding schemes match your profile?</h1>
+    <p>Answer four quick questions and find out — no sign-up, no commitment.</p>
+  </div>
+</div>
+
+<!-- ── FORM ── -->
+<section class="form-section" id="form-section">
+  <div class="wrap">
+    <div class="form-card">
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label for="org_type">Organisation type <span style="color:var(--red)">*</span></label>
+          <select id="org_type" class="form-select">
+            <option value="">Select type…</option>
+            <option value="SME">SME</option>
+            <option value="Sole Trader">Sole Trader</option>
+            <option value="Limited Company">Limited Company</option>
+            <option value="Social Enterprise">Social Enterprise</option>
+            <option value="Community Interest Company (CIC)">CIC / Community Interest Company</option>
+            <option value="Registered Charity">Registered Charity</option>
+            <option value="Community Group">Community Group</option>
+            <option value="Voluntary Organisation">Voluntary Organisation</option>
+            <option value="Educational Institution">Educational Institution</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="sector">Primary sector <span style="color:var(--red)">*</span></label>
+          <select id="sector" class="form-select">
+            <option value="">Select sector…</option>
+            <option value="Agriculture / Agri-Food">Agriculture / Agri-Food</option>
+            <option value="Creative Industries / Arts / Culture">Arts, Culture & Creative</option>
+            <option value="Community">Community & Voluntary</option>
+            <option value="Digital & Technology">Digital & Technology</option>
+            <option value="Education & Training">Education & Training</option>
+            <option value="Energy & Environment">Energy & Environment</option>
+            <option value="Engineering & Manufacturing">Engineering & Manufacturing</option>
+            <option value="Food & Drink">Food & Drink</option>
+            <option value="Health & Social Care">Health & Social Care</option>
+            <option value="Hospitality & Tourism">Hospitality & Tourism</option>
+            <option value="Professional Services">Professional Services</option>
+            <option value="Science & Research">Science & Research</option>
+            <option value="Social Enterprise / Third Sector">Social Enterprise</option>
+            <option value="Sport & Recreation">Sport & Recreation</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="council_area">Council area <span style="color:var(--red)">*</span></label>
+          <select id="council_area" class="form-select">
+            <option value="">Select council…</option>
+            <option>Antrim and Newtownabbey</option>
+            <option>Ards and North Down</option>
+            <option>Armagh City, Banbridge and Craigavon</option>
+            <option>Belfast City</option>
+            <option>Causeway Coast and Glens</option>
+            <option>Derry City and Strabane</option>
+            <option>Fermanagh and Omagh</option>
+            <option>Lisburn and Castlereagh</option>
+            <option>Mid and East Antrim</option>
+            <option>Mid Ulster</option>
+            <option>Newry, Mourne and Down</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="funding_ask">Funding ask (£) <span style="color:var(--red)">*</span></label>
+          <input type="number" id="funding_ask" class="form-input" min="500" step="500" placeholder="e.g. 15000">
+        </div>
+
+      </div>
+
+      <div class="error-msg" id="error-msg">Please complete all four fields before checking.</div>
+      <button type="button" class="btn-submit" id="submit-btn" onclick="runCheck()">Check my funding →</button>
+      <p class="form-note">Powered by the Mástoras Funding Intelligence Engine — matching against 160+ NI funding schemes.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── RESULT ── -->
+<section class="result-section" id="result-section">
+  <div class="wrap">
+    <div class="result-card">
+      <div class="result-number" id="result-number">—</div>
+      <p class="result-label" id="result-label">potential funding matches</p>
+      <div class="top-funds-list" id="top-funds-list" style="display:none">
+        <p>Top matches include</p>
+        <ol id="top-funds-ol"></ol>
+      </div>
+      <p class="result-message" id="result-message"></p>
+      <a href="https://calendly.com/garynicholl1515/20min" target="_blank" rel="noopener" class="btn-cta">
+        Get your full report — book a free call →
+      </a>
+      <p style="font-size:13px;color:#aaa;margin-top:16px;">
+        The full Mástoras Funding Match Report includes scores, application intelligence,
+        and a consultant's view for every matched scheme.
+      </p>
+      <button type="button" class="btn-retry" onclick="resetForm()">← Check a different profile</button>
+    </div>
+  </div>
+</section>
+
+<!-- ── TRUST STRIP ── */-->
+<section class="trust-strip">
+  <div class="wrap">
+    <div class="trust-grid">
+      <div class="trust-item">
+        <div class="num">160+</div>
+        <div class="lbl">NI funding schemes tracked</div>
+      </div>
+      <div class="trust-item">
+        <div class="num">26</div>
+        <div class="lbl">All-island cross-border funds</div>
+      </div>
+      <div class="trust-item">
+        <div class="num">Weekly</div>
+        <div class="lbl">Database updated</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="wrap">
+    <div class="footer-inner">
+      <div class="footer-left">
+        Garry Nicholl · Mástoras — Clarity &amp; Story Consultancy<br>
+        <a href="mailto:hello@mastoras.uk">hello@mastoras.uk</a> · Causeway Coast and Glens, Northern Ireland<br>
+        <a href="/privacy-policy.html">Privacy Policy</a>
+      </div>
+      <p class="footer-tagline">Structure → Story → Soul</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  var API = 'https://api.mastoras.uk';
+
+  function escHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function runCheck() {
+    var orgType    = document.getElementById('org_type').value;
+    var sector     = document.getElementById('sector').value;
+    var council    = document.getElementById('council_area').value;
+    var fundingAsk = parseFloat(document.getElementById('funding_ask').value);
+
+    var errMsg = document.getElementById('error-msg');
+    var allFilled = orgType && sector && council && fundingAsk > 0;
+
+    if (!allFilled) {
+      errMsg.style.display = 'block';
+      ['org_type','sector','council_area','funding_ask'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (!el.value || (id === 'funding_ask' && parseFloat(el.value) <= 0)) {
+          el.classList.add('error');
+        } else {
+          el.classList.remove('error');
+        }
+      });
+      return;
+    }
+
+    errMsg.style.display = 'none';
+
+    var btn = document.getElementById('submit-btn');
+    btn.textContent = 'Checking…';
+    btn.disabled = true;
+
+    var payload = {
+      org_profile: {
+        org_type: orgType,
+        sector: sector,
+        council_area: council,
+      },
+      project_profile: {
+        funding_ask: fundingAsk,
+      },
+    };
+
+    fetch(API + '/taster', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+    .then(function(res) { return res.ok ? res.json() : Promise.reject(res.status); })
+    .then(function(data) {
+      showResult(data);
+    })
+    .catch(function(err) {
+      btn.textContent = 'Check my funding →';
+      btn.disabled = false;
+      errMsg.textContent = 'Something went wrong — please try again.';
+      errMsg.style.display = 'block';
+    });
+  }
+
+  function showResult(data) {
+    var count = data.match_count || 0;
+    var topFunds = data.top_funds || [];
+
+    document.getElementById('result-number').textContent = count;
+    document.getElementById('result-label').textContent =
+      'potential funding scheme' + (count !== 1 ? 's' : '') + ' matched your profile';
+
+    if (topFunds.length > 0) {
+      var ol = document.getElementById('top-funds-ol');
+      ol.innerHTML = topFunds.map(function(f) {
+        return '<li>' + escHtml(f) + '</li>';
+      }).join('');
+      document.getElementById('top-funds-list').style.display = 'block';
+    }
+
+    var msg = count > 0
+      ? 'Your profile matched ' + count + ' funding scheme' + (count !== 1 ? 's' : '') + ' in the Mástoras database. ' +
+        'A full report gives you scores, application intelligence, and a consultant\'s view for every match — ' +
+        'so you know exactly which to prioritise and how to apply.'
+      : 'No exact matches found for this profile — but this can often be resolved by refining the organisation type or sector. ' +
+        'Book a call and we\'ll look at it together.';
+
+    document.getElementById('result-message').textContent = msg;
+
+    document.getElementById('form-section').style.display = 'none';
+    document.getElementById('result-section').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function resetForm() {
+    document.getElementById('form-section').style.display = 'block';
+    document.getElementById('result-section').style.display = 'none';
+    document.getElementById('submit-btn').textContent = 'Check my funding →';
+    document.getElementById('submit-btn').disabled = false;
+    document.getElementById('top-funds-list').style.display = 'none';
+    document.getElementById('error-msg').style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Allow Enter key to submit
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') runCheck();
+  });
+</script>
+
+</body>
+</html>
