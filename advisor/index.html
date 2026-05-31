@@ -855,7 +855,7 @@
     document.getElementById('pdf-btn').style.display = matches.length > 0 ? 'block' : 'none';
 
     heading.innerHTML = '<h2 style="font-family:\'Merriweather\',serif;font-size:1.1rem;color:var(--slate)">Found ' + matches.length + ' matching scheme' + (matches.length !== 1 ? 's' : '') + '</h2>' +
-      '<p style="font-size:12px;color:#aaa;margin-top:2px">' + new Date().toLocaleTimeString('en-GB') + (report.applicant_summary && report.applicant_summary.organisation ? ' · ' + report.applicant_summary.organisation : '') + '</p>';
+      '<p style="font-size:12px;color:#aaa;margin-top:2px">' + new Date().toLocaleTimeString('en-GB') + (report.applicant_summary && report.applicant_summary.organisation ? ' · ' + escHtml(report.applicant_summary.organisation) : '') + '</p>';
 
     if (matches.length === 0) {
       panel.innerHTML = '<div style="background:var(--linen);padding:28px 24px;border-radius:4px;text-align:center"><p style="color:#888">No matching schemes found for this profile.</p><p style="color:#aaa;font-size:13px;margin-top:8px">Try adjusting the sector, stage, or funding ask amount.</p></div>';
