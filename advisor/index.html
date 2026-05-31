@@ -351,13 +351,86 @@
     }
     .reports-table tr:last-child td { border-bottom: none; }
     .reports-table tr:nth-child(even) td { background: var(--linen); }
-    .btn-view {
+    .btn-track {
       background: none; border: 1px solid var(--rule);
       padding: 4px 12px; border-radius: 4px; cursor: pointer;
       font-size: 13px; color: var(--teal); font-family: 'DM Sans', sans-serif;
       transition: all 0.15s;
     }
-    .btn-view:hover { border-color: var(--teal); background: rgba(15,89,94,0.05); }
+    .btn-track:hover { border-color: var(--teal); background: rgba(15,89,94,0.05); }
+    .btn-track.open  { background: var(--teal); color: white; border-color: var(--teal); }
+
+    /* ── CRM STATS ── */
+    .crm-stats {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1px; background: var(--rule);
+      border: 1px solid var(--rule); border-radius: 6px;
+      overflow: hidden; margin-bottom: 20px;
+    }
+    .crm-stat { background: var(--white); padding: 16px 20px; text-align: center; }
+    .crm-stat-num {
+      font-family: 'Merriweather', serif; font-size: 1.6rem; font-weight: 700;
+      color: var(--brass); display: block; line-height: 1;
+    }
+    .crm-stat-label {
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.08em; color: #aaa; margin-top: 5px; display: block;
+    }
+
+    /* ── CRM DETAIL ROW ── */
+    .report-detail-row td { padding: 0 !important; background: var(--linen) !important; }
+    .report-detail-wrap { padding: 20px 16px 24px; display: none; border-bottom: 2px solid var(--teal); }
+    .report-detail-wrap.open { display: block; }
+    .crm-label {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--brass);
+      margin-bottom: 8px; display: block;
+    }
+    .crm-notes-area {
+      width: 100%; padding: 10px 12px;
+      border: 1px solid #ddd; border-radius: 4px;
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      color: var(--graphite); resize: vertical; min-height: 70px;
+      transition: border-color 0.15s;
+    }
+    .crm-notes-area:focus { outline: none; border-color: var(--teal); }
+    .crm-save-indicator { font-size: 12px; color: #aaa; margin-top: 4px; min-height: 16px; }
+    .crm-track-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 13px; margin-top: 6px;
+    }
+    .crm-track-table th {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: #aaa;
+      padding: 4px 8px 8px; text-align: left; border-bottom: 1px solid var(--rule);
+    }
+    .crm-track-table td { padding: 8px; border-bottom: 1px solid var(--rule); vertical-align: middle; }
+    .crm-track-table tr:last-child td { border-bottom: none; }
+    .crm-fund-name { color: var(--slate); font-weight: 500; max-width: 260px; }
+    .crm-applied-check { accent-color: var(--teal); width: 15px; height: 15px; cursor: pointer; }
+    .crm-outcome-select {
+      padding: 5px 8px; border: 1px solid #ddd; border-radius: 4px;
+      font-family: 'DM Sans', sans-serif; font-size: 13px;
+      color: var(--graphite); background: var(--white); cursor: pointer;
+    }
+    .crm-outcome-select:disabled { opacity: 0.35; background: #f5f5f5; cursor: default; }
+    .crm-amount-input {
+      width: 90px; padding: 5px 8px; border: 1px solid #ddd; border-radius: 4px;
+      font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--graphite);
+    }
+    .crm-amount-input:disabled { opacity: 0.35; background: #f5f5f5; }
+    .crm-json-link {
+      font-size: 12px; color: #bbb; cursor: pointer;
+      background: none; border: none; font-family: 'DM Sans', sans-serif;
+      padding: 0; text-decoration: underline; text-underline-offset: 2px;
+      margin-top: 18px; display: inline-block;
+    }
+    .crm-json-link:hover { color: var(--teal); }
+
+    @media (max-width: 640px) {
+      .crm-stats { grid-template-columns: repeat(2, 1fr); }
+      .crm-track-table .crm-amount-input { width: 70px; }
+    }
 
     /* ── FOOTER ── */
     footer {
@@ -643,7 +716,27 @@
 <section class="reports-section" id="previous-reports">
   <div class="wrap">
     <h2>Previous Reports</h2>
-    <p class="sub">Last 10 reports generated — click View to inspect the full JSON.</p>
+    <p class="sub">Track which funds clients applied to and record outcomes over time.</p>
+
+    <div class="crm-stats">
+      <div class="crm-stat">
+        <span class="crm-stat-num" id="stat-reports">0</span>
+        <span class="crm-stat-label">Reports</span>
+      </div>
+      <div class="crm-stat">
+        <span class="crm-stat-num" id="stat-applied">0</span>
+        <span class="crm-stat-label">Applied</span>
+      </div>
+      <div class="crm-stat">
+        <span class="crm-stat-num" id="stat-approved">0</span>
+        <span class="crm-stat-label">Approved</span>
+      </div>
+      <div class="crm-stat">
+        <span class="crm-stat-num" id="stat-value">£0</span>
+        <span class="crm-stat-label">Value awarded</span>
+      </div>
+    </div>
+
     <div class="reports-table-wrap">
       <table class="reports-table">
         <thead>
@@ -972,43 +1065,244 @@
     });
   }
 
-  /* ── PREVIOUS REPORTS ── */
+  /* ── PREVIOUS REPORTS (CRM) ── */
+  var _detailCache = {};
+  var _notesTimers = {};
+  var _amountTimers = {};
+
   function loadPreviousReports() {
     if (!state.apiKey) return;
-    fetch(API + '/reports?limit=10', {
-      headers: { 'X-API-Key': state.apiKey }
-    })
-    .then(function (res) { return res.ok ? res.json() : []; })
-    .then(function (reports) { renderReportsTable(reports); })
-    .catch(function () {});
+    fetch(API + '/reports?limit=20', { headers: { 'X-API-Key': state.apiKey } })
+    .then(function(res) { return res.ok ? res.json() : []; })
+    .then(function(reports) { renderReportsTable(reports); })
+    .catch(function() {});
+  }
+
+  function calcStats(reports) {
+    var applied = 0, approved = 0, value = 0;
+    reports.forEach(function(r) {
+      var t = r.application_tracking || {};
+      Object.keys(t).forEach(function(k) {
+        if (t[k].applied) {
+          applied++;
+          if (t[k].outcome === 'approved') {
+            approved++;
+            value += parseFloat(t[k].award_amount) || 0;
+          }
+        }
+      });
+    });
+    return { applied: applied, approved: approved, value: value };
   }
 
   function renderReportsTable(reports) {
     var section = document.getElementById('previous-reports');
     if (!reports || reports.length === 0) { section.style.display = 'none'; return; }
     section.style.display = 'block';
+
+    var stats = calcStats(reports);
+    document.getElementById('stat-reports').textContent  = reports.length;
+    document.getElementById('stat-applied').textContent  = stats.applied;
+    document.getElementById('stat-approved').textContent = stats.approved;
+    document.getElementById('stat-value').textContent    = stats.value > 0 ? '\xA3' + stats.value.toLocaleString('en-GB') : '\xA3' + '0';
+
     var tbody = document.getElementById('reports-tbody');
-    tbody.innerHTML = reports.map(function (r) {
-      var date = r.created_at ? new Date(r.created_at).toLocaleDateString('en-GB') : '—';
-      return '<tr>' +
-        '<td>' + date + '</td>' +
-        '<td>' + escHtml(r.client_ref || '—') + '</td>' +
-        '<td>' + escHtml(r.client_name || '—') + '</td>' +
-        '<td>' + escHtml(r.top_fund || '—') + '</td>' +
-        '<td style="text-align:center">' + (r.total_matches || 0) + '</td>' +
-        '<td><button type="button" class="btn-view" onclick="viewReport(\'' + r.id + '\')">View</button></td>' +
+    tbody.innerHTML = reports.map(function(r) {
+      var date     = r.created_at ? new Date(r.created_at).toLocaleDateString('en-GB') : '—';
+      var tracking = r.application_tracking || {};
+      var nApplied = Object.keys(tracking).filter(function(k) { return tracking[k].applied; }).length;
+      var badge    = nApplied > 0
+        ? ' <span style="font-size:11px;color:var(--teal);font-weight:600">' + nApplied + ' tracked</span>'
+        : '';
+      var rid = escHtml(r.id);
+      return '<tr class="report-summary-row" style="cursor:pointer" onclick="toggleDetail(\'' + rid + '\')">' +
+          '<td>' + date + '</td>' +
+          '<td>' + escHtml(r.client_ref  || '—') + '</td>' +
+          '<td>' + escHtml(r.client_name || '—') + '</td>' +
+          '<td>' + escHtml(r.top_fund    || '—') + badge + '</td>' +
+          '<td style="text-align:center">' + (r.total_matches || 0) + '</td>' +
+          '<td><button type="button" class="btn-track" id="track-btn-' + rid + '" ' +
+              'onclick="event.stopPropagation();toggleDetail(\'' + rid + '\')">Track ▾</button></td>' +
+        '</tr>' +
+        '<tr class="report-detail-row" id="detail-row-' + rid + '">' +
+          '<td colspan="6">' +
+            '<div class="report-detail-wrap" id="detail-' + rid + '">' +
+              '<div id="detail-content-' + rid + '"><p style="color:#aaa;font-size:13px;padding:4px 0">Loading…</p></div>' +
+            '</div>' +
+          '</td>' +
         '</tr>';
     }).join('');
   }
 
-  function viewReport(id) {
-    fetch(API + '/reports/' + id, { headers: { 'X-API-Key': state.apiKey } })
-    .then(function (res) { return res.ok ? res.json() : null; })
-    .then(function (data) { if (data) showReportModal(data); })
-    .catch(function () {});
+  function toggleDetail(id) {
+    var wrap = document.getElementById('detail-' + id);
+    var btn  = document.getElementById('track-btn-' + id);
+    if (!wrap) return;
+    var isOpen = wrap.classList.contains('open');
+    if (isOpen) {
+      wrap.classList.remove('open');
+      if (btn) { btn.classList.remove('open'); btn.textContent = 'Track ▾'; }
+    } else {
+      wrap.classList.add('open');
+      if (btn) { btn.classList.add('open'); btn.textContent = 'Close ✕'; }
+      if (!_detailCache[id]) loadDetail(id);
+    }
   }
 
-  function showReportModal(data) {
+  function loadDetail(id) {
+    fetch(API + '/reports/' + id, { headers: { 'X-API-Key': state.apiKey } })
+    .then(function(res) { return res.ok ? res.json() : null; })
+    .then(function(data) {
+      if (!data) return;
+      _detailCache[id] = data;
+      renderDetail(id, data);
+    })
+    .catch(function() {
+      var el = document.getElementById('detail-content-' + id);
+      if (el) el.innerHTML = '<p style="color:var(--red);font-size:13px">Failed to load report.</p>';
+    });
+  }
+
+  function renderDetail(id, data) {
+    var el = document.getElementById('detail-content-' + id);
+    if (!el) return;
+    var notes    = data.client_notes || '';
+    var tracking = data.application_tracking || {};
+    var matches  = (data.report && data.report.matches) ? data.report.matches : [];
+
+    var html = '<span class="crm-label">Client Notes</span>' +
+      '<textarea class="crm-notes-area" id="notes-' + id + '" ' +
+        'onblur="saveNotes(\'' + id + '\')" oninput="scheduleNotesSave(\'' + id + '\')" ' +
+        'placeholder="Notes about this client, their project, or the application process…">' +
+        escHtml(notes) +
+      '</textarea>' +
+      '<div class="crm-save-indicator" id="notes-ind-' + id + '"></div>';
+
+    if (matches.length > 0) {
+      html += '<span class="crm-label" style="margin-top:20px;display:block">Application Tracking</span>' +
+        '<table class="crm-track-table"><thead><tr>' +
+          '<th>Fund</th><th style="text-align:center">Applied?</th><th>Outcome</th><th>Award (\xA3)</th>' +
+        '</tr></thead><tbody>';
+
+      matches.forEach(function(m) {
+        var t       = tracking[m.fund_id] || {};
+        var applied = t.applied  ? true  : false;
+        var outcome = t.outcome  || '';
+        var amount  = t.award_amount != null ? t.award_amount : '';
+        var fid     = escHtml(m.fund_id);
+
+        html += '<tr>' +
+          '<td class="crm-fund-name">' + escHtml(m.fund_name) + '</td>' +
+          '<td style="text-align:center">' +
+            '<input type="checkbox" class="crm-applied-check"' + (applied ? ' checked' : '') +
+            ' onchange="setApplied(\'' + id + '\',\'' + fid + '\',this.checked)">' +
+          '</td>' +
+          '<td><select class="crm-outcome-select"' + (applied ? '' : ' disabled') +
+            ' onchange="setOutcome(\'' + id + '\',\'' + fid + '\',this.value)">' +
+            '<option value=""'          + (!outcome                  ? ' selected' : '') + '>—</option>' +
+            '<option value="pending"'   + (outcome === 'pending'     ? ' selected' : '') + '>Pending</option>' +
+            '<option value="approved"'  + (outcome === 'approved'    ? ' selected' : '') + '>Approved</option>' +
+            '<option value="declined"'  + (outcome === 'declined'    ? ' selected' : '') + '>Declined</option>' +
+            '<option value="withdrawn"' + (outcome === 'withdrawn'   ? ' selected' : '') + '>Withdrawn</option>' +
+          '</select></td>' +
+          '<td><input type="number" class="crm-amount-input" min="0" ' +
+            (applied && outcome === 'approved' ? '' : 'disabled ') +
+            'value="' + escHtml(String(amount)) + '" ' +
+            'oninput="scheduleAmountSave(\'' + id + '\',\'' + fid + '\',this.value)"></td>' +
+        '</tr>';
+      });
+      html += '</tbody></table>';
+    }
+
+    html += '<button type="button" class="crm-json-link" onclick="showRawJson(\'' + id + '\')">View full report JSON →</button>';
+    el.innerHTML = html;
+  }
+
+  function scheduleNotesSave(id) {
+    clearTimeout(_notesTimers[id]);
+    var ind = document.getElementById('notes-ind-' + id);
+    if (ind) ind.textContent = '';
+    _notesTimers[id] = setTimeout(function() { saveNotes(id); }, 1500);
+  }
+
+  function saveNotes(id) {
+    clearTimeout(_notesTimers[id]);
+    var el  = document.getElementById('notes-' + id);
+    var ind = document.getElementById('notes-ind-' + id);
+    if (!el) return;
+    if (ind) ind.textContent = 'Saving…';
+    patchReport(id, { client_notes: el.value }, function(ok) {
+      if (ind) ind.textContent = ok ? 'Saved ✓' : 'Save failed';
+      if (ok && _detailCache[id]) _detailCache[id].client_notes = el.value;
+    });
+  }
+
+  function scheduleAmountSave(rid, fid, val) {
+    var key = rid + '_' + fid;
+    clearTimeout(_amountTimers[key]);
+    _amountTimers[key] = setTimeout(function() { setAmount(rid, fid, val); }, 1000);
+  }
+
+  function setApplied(rid, fid, applied) {
+    var cache = _detailCache[rid];
+    if (!cache) return;
+    var tracking = JSON.parse(JSON.stringify(cache.application_tracking || {}));
+    if (!tracking[fid]) tracking[fid] = {};
+    tracking[fid].applied = applied;
+    if (!applied) { delete tracking[fid].outcome; delete tracking[fid].award_amount; }
+    patchReport(rid, { application_tracking: tracking }, function(ok) {
+      if (ok) { cache.application_tracking = tracking; renderDetail(rid, cache); refreshStats(); }
+    });
+  }
+
+  function setOutcome(rid, fid, outcome) {
+    var cache = _detailCache[rid];
+    if (!cache) return;
+    var tracking = JSON.parse(JSON.stringify(cache.application_tracking || {}));
+    if (!tracking[fid]) tracking[fid] = {};
+    tracking[fid].outcome = outcome;
+    if (outcome !== 'approved') delete tracking[fid].award_amount;
+    patchReport(rid, { application_tracking: tracking }, function(ok) {
+      if (ok) { cache.application_tracking = tracking; renderDetail(rid, cache); refreshStats(); }
+    });
+  }
+
+  function setAmount(rid, fid, val) {
+    var cache = _detailCache[rid];
+    if (!cache) return;
+    var tracking = JSON.parse(JSON.stringify(cache.application_tracking || {}));
+    if (!tracking[fid]) tracking[fid] = {};
+    tracking[fid].award_amount = parseFloat(val) || 0;
+    patchReport(rid, { application_tracking: tracking }, function(ok) {
+      if (ok) { cache.application_tracking = tracking; refreshStats(); }
+    });
+  }
+
+  function patchReport(id, data, callback) {
+    fetch(API + '/reports/' + id, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'X-API-Key': state.apiKey },
+      body: JSON.stringify(data)
+    })
+    .then(function(res) { if (callback) callback(res.ok); })
+    .catch(function()   { if (callback) callback(false); });
+  }
+
+  function refreshStats() {
+    fetch(API + '/reports?limit=20', { headers: { 'X-API-Key': state.apiKey } })
+    .then(function(res) { return res.ok ? res.json() : []; })
+    .then(function(reports) {
+      var stats = calcStats(reports);
+      document.getElementById('stat-applied').textContent  = stats.applied;
+      document.getElementById('stat-approved').textContent = stats.approved;
+      document.getElementById('stat-value').textContent    = stats.value > 0 ? '\xA3' + stats.value.toLocaleString('en-GB') : '\xA3' + '0';
+    })
+    .catch(function() {});
+  }
+
+  function showRawJson(id) {
+    var data = _detailCache[id];
+    if (!data) return;
     document.getElementById('report-modal-content').textContent = JSON.stringify(data.report || data, null, 2);
     document.getElementById('report-modal').style.display = 'flex';
   }
