@@ -529,6 +529,96 @@
       margin-top: 18px;
     }
 
+    /* ── FI 2-COLUMN LAYOUT ── */
+    .fi-grid {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 80px;
+      align-items: center;
+    }
+    .fi-grid .fi-stats { max-width: none; }
+
+    /* ── FI PREVIEW CARD ── */
+    .fi-preview {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 24px 26px;
+    }
+    .fi-preview-header {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: rgba(255,255,255,0.28);
+      margin-bottom: 14px; padding-bottom: 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .fi-preview-live {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 9px; letter-spacing: 0.1em; color: rgba(255,255,255,0.25);
+    }
+    .fi-preview-live::before {
+      content: ''; width: 5px; height: 5px; border-radius: 50%;
+      background: #4caf50; display: block;
+    }
+    .fi-preview-tags {
+      display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 16px;
+    }
+    .fi-preview-tag {
+      font-size: 11px; padding: 4px 9px;
+      background: rgba(255,255,255,0.07); border-radius: 3px;
+      color: rgba(255,255,255,0.5);
+    }
+    .fi-preview-result {
+      background: rgba(176,141,87,0.1);
+      border: 1px solid rgba(176,141,87,0.2);
+      border-radius: 6px; padding: 18px 16px;
+      text-align: center; margin-bottom: 16px;
+    }
+    .fi-preview-big {
+      font-family: 'Merriweather', serif;
+      font-size: 2.8rem; font-weight: 700;
+      color: var(--brass); line-height: 1;
+      display: block; margin-bottom: 5px;
+    }
+    .fi-preview-big-label {
+      font-size: 11px; color: rgba(255,255,255,0.38);
+      text-transform: uppercase; letter-spacing: 0.09em;
+    }
+    .fi-preview-section-label {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: rgba(255,255,255,0.22); margin-bottom: 8px;
+    }
+    .fi-preview-fund {
+      display: flex; align-items: center; gap: 9px;
+      padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 12.5px; color: rgba(255,255,255,0.62); line-height: 1.35;
+    }
+    .fi-preview-fund:last-child { border-bottom: none; padding-bottom: 0; }
+    .fi-preview-fund-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--brass); flex-shrink: 0;
+    }
+
+    /* ── HERO BRICK PATH ── */
+    .hero-brick-path {
+      display: flex; align-items: center; gap: 12px;
+      margin-top: 28px; padding-top: 22px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      flex-wrap: wrap;
+    }
+    .hero-brick-path span {
+      font-size: 13px; color: rgba(255,255,255,0.38);
+    }
+    .hero-brick-path a {
+      font-size: 13px; font-weight: 600;
+      color: rgba(255,255,255,0.82);
+      text-decoration: underline; text-underline-offset: 3px;
+      text-decoration-color: rgba(255,255,255,0.22);
+    }
+    .hero-brick-path a:hover { color: #fff; text-decoration-color: rgba(255,255,255,0.55); }
+
     /* ── SECONDARY SERVICES TOGGLE ── */
     .svc-secondary-toggle {
       background: none;
@@ -811,6 +901,11 @@
       .footer-inner { flex-direction: column; text-align: center; }
     }
 
+    @media (max-width: 900px) {
+      .fi-grid { grid-template-columns: 1fr; gap: 0; }
+      .fi-right { display: none; }
+    }
+
     @media (max-width: 480px) {
       .wrap { padding: 0 20px; }
       section { padding: 72px 0; }
@@ -861,7 +956,10 @@
       <a href="#services" class="btn-text-light">See what I do</a>
     </div>
     <p class="hero-note">No pitch. No obligation. Just figuring out if I can help.</p>
-    <p class="hero-note" style="margin-top:10px;">Got a new idea or expansion decision? <a href="/readiness-check" style="color:rgba(255,255,255,0.55);text-decoration:underline;text-underline-offset:3px;">Try the free BRICK — Business Readiness and Idea Clarity Kit →</a></p>
+    <div class="hero-brick-path">
+      <span>Not ready to book yet?</span>
+      <a href="/readiness-check">Try the free BRICK — assess your idea before we talk &rarr;</a>
+    </div>
   </div>
 </section>
 
@@ -918,28 +1016,63 @@
 <!-- ── FUNDING INTELLIGENCE ── -->
 <section id="funding-intelligence">
   <div class="wrap">
-    <span class="fi-eyebrow">NI Funding Intelligence</span>
-    <h2 class="fi-heading">The NI funding landscape.<br>Live. Tracked weekly.</h2>
-    <p class="fi-sub">Most consultants tell you funding is competitive. Mástoras tracks the landscape in real time — 160+ NI and all-island schemes, updated every week. What's open, what's closing, and what actually fits your profile.</p>
-    <div class="fi-stats">
-      <div class="fi-stat">
-        <span class="fi-stat-num">160+</span>
-        <span class="fi-stat-label">Schemes tracked</span>
+    <div class="fi-grid">
+
+      <div class="fi-left">
+        <span class="fi-eyebrow">NI Funding Intelligence</span>
+        <h2 class="fi-heading">The NI funding landscape.<br>Live. Tracked weekly.</h2>
+        <p class="fi-sub">Most consultants tell you funding is competitive. Mástoras tracks the landscape in real time — 160+ NI and all-island schemes, updated every week. What's open, what's closing, and what actually fits your profile.</p>
+        <div class="fi-stats">
+          <div class="fi-stat">
+            <span class="fi-stat-num" id="fi-schemes">160+</span>
+            <span class="fi-stat-label">Schemes tracked</span>
+          </div>
+          <div class="fi-stat">
+            <span class="fi-stat-num" id="fi-open">—</span>
+            <span class="fi-stat-label">Open right now</span>
+          </div>
+          <div class="fi-stat">
+            <span class="fi-stat-num">Weekly</span>
+            <span class="fi-stat-label">Automatic updates</span>
+          </div>
+        </div>
+        <div class="fi-ctas">
+          <a href="/funding-check/" class="btn-primary">Check how many schemes match your profile &rarr;</a>
+          <a href="/funding-digest/" class="fi-link">Browse the monthly digest &rarr;</a>
+        </div>
+        <p class="fi-note">Free. Instant. No sign-up required.</p>
       </div>
-      <div class="fi-stat">
-        <span class="fi-stat-num" id="fi-open">—</span>
-        <span class="fi-stat-label">Open right now</span>
+
+      <div class="fi-right">
+        <div class="fi-preview">
+          <div class="fi-preview-header">
+            <span>Mástoras Funding Check</span>
+            <span class="fi-preview-live">Live</span>
+          </div>
+          <div class="fi-preview-tags">
+            <span class="fi-preview-tag">Social Enterprise</span>
+            <span class="fi-preview-tag">Community &amp; Social</span>
+            <span class="fi-preview-tag">Belfast</span>
+            <span class="fi-preview-tag">£15,000</span>
+          </div>
+          <div class="fi-preview-result">
+            <span class="fi-preview-big">23</span>
+            <span class="fi-preview-big-label">potential funding matches</span>
+          </div>
+          <p class="fi-preview-section-label">Including</p>
+          <div class="fi-preview-fund">
+            <span class="fi-preview-fund-dot"></span>DfC Community Support Grant
+          </div>
+          <div class="fi-preview-fund">
+            <span class="fi-preview-fund-dot"></span>Community Foundation NI
+          </div>
+          <div class="fi-preview-fund">
+            <span class="fi-preview-fund-dot"></span>CFNI Development Fund
+          </div>
+        </div>
       </div>
-      <div class="fi-stat">
-        <span class="fi-stat-num">Weekly</span>
-        <span class="fi-stat-label">Automatic updates</span>
-      </div>
+
     </div>
-    <div class="fi-ctas">
-      <a href="/funding-check/" class="btn-primary">Check how many schemes match your profile &rarr;</a>
-      <a href="/funding-digest/" class="fi-link">Browse the monthly digest &rarr;</a>
-    </div>
-    <p class="fi-note">Free. Instant. No sign-up required.</p>
   </div>
 </section>
 
@@ -1175,13 +1308,43 @@ function toggleFaq(btn) {
   }
 }
 
-/* Live funding stats */
+/* Funding Intelligence — animated counters + live stats */
+var fiVisible = false;
+var fiOpenVal = null;
+
+function countUp(el, target, suffix, duration) {
+  var startTime = null;
+  function step(now) {
+    if (!startTime) startTime = now;
+    var p = Math.min((now - startTime) / duration, 1);
+    var eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.floor(eased * target) + (suffix || '');
+    if (p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+var fiObs = new IntersectionObserver(function(entries) {
+  if (entries[0].isIntersecting) {
+    fiVisible = true;
+    countUp(document.getElementById('fi-schemes'), 160, '+', 1400);
+    if (fiOpenVal !== null) countUp(document.getElementById('fi-open'), fiOpenVal, '', 1200);
+    fiObs.disconnect();
+  }
+}, { threshold: 0.2 });
+
+var fiSection = document.getElementById('funding-intelligence');
+if (fiSection) fiObs.observe(fiSection);
+
 fetch('https://api.mastoras.uk/digest')
   .then(function(r) { return r.ok ? r.json() : null; })
   .then(function(d) {
     if (!d || !d.stats) return;
+    var n = d.stats.total_open || 0;
+    fiOpenVal = n;
     var el = document.getElementById('fi-open');
-    if (el) el.textContent = d.stats.total_open || '—';
+    if (!el) return;
+    if (fiVisible) { countUp(el, n, '', 1200); } else { el.textContent = n; }
   })
   .catch(function() {});
 </script>
