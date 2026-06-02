@@ -580,6 +580,17 @@
 
           <div class="form-row">
             <div class="form-group">
+              <label for="contact_name">Contact name <span class="hint">(for your client record)</span></label>
+              <input type="text" id="contact_name" class="form-input" placeholder="e.g. Jane Murphy">
+            </div>
+            <div class="form-group">
+              <label for="client_email">Contact email <span class="hint">(links to Mástoras HQ)</span></label>
+              <input type="email" id="client_email" class="form-input" placeholder="jane@example.com">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
               <label for="org_type">Organisation type <span style="color:var(--red)">*</span></label>
               <select id="org_type" class="form-select">
                 <option value="">Select type…</option>
@@ -910,7 +921,9 @@
         council_area: council,
         years_trading: parseFloat(document.getElementById('years_trading').value) || 0,
         vat_registered: document.getElementById('vat_yes').classList.contains('active'),
-        previous_grants: prevGrants
+        previous_grants: prevGrants,
+        contact_name: document.getElementById('contact_name').value.trim() || null,
+        email: document.getElementById('client_email').value.trim() || null
       },
       project_profile: {
         project_name: document.getElementById('project_name').value.trim() || null,

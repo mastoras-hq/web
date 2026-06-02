@@ -1276,7 +1276,7 @@
         </div>
       </div>
 
-      <form class="contact-form" action="https://api.web3forms.com/submit" method="POST">
+      <form class="contact-form" id="contact-form" action="https://api.web3forms.com/submit" method="POST">
         <input type="hidden" name="access_key" value="7f041ae4-23cd-4020-9b0f-a3ed0443ba17">
         <input type="hidden" name="subject" value="New enquiry from Mástoras website">
         <input type="hidden" name="from_name" value="Mástoras Website">
@@ -1545,6 +1545,33 @@ fetch('https://api.mastoras.uk/digest')
 
   var card = g('fi-preview-card');
   if (card) cardObs.observe(card);
+}());
+
+/* Contact form → also capture into Mástoras HQ. web3forms still sends the email;
+   this fires a parallel record to the API. keepalive lets it survive the page navigation. */
+(function () {
+  var form = document.getElementById('contact-form');
+  if (!form) return;
+  form.addEventListener('submit', function () {
+    try {
+      var nameEl = document.getElementById('name');
+      var emailEl = document.getElementById('email');
+      var msgEl = document.getElementById('message');
+      var email = emailEl ? emailEl.value.trim() : '';
+      if (!email) return;  // let web3forms' own validation handle empties
+      fetch('https://api.mastoras.uk/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: nameEl ? nameEl.value.trim() : null,
+          email: email,
+          message: msgEl ? msgEl.value.trim() : null
+        }),
+        keepalive: true
+      }).catch(function () {});
+    } catch (e) {}
+    // No preventDefault — the normal web3forms POST + redirect proceeds.
+  });
 }());
 </script>
 
