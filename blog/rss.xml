@@ -3,8 +3,8 @@
   <channel>
     <title>Mástoras Blog - Business Clarity &amp; Storytelling</title>
     <description>Insights on business strategy, brand storytelling, grant writing, and consultancy for Northern Irish businesses and community organizations.</description>
-    <link>https://mastoras.netlify.app/blog</link>
-    <atom:link href="https://mastoras.netlify.app/blog/rss.xml" rel="self" type="application/rss+xml"/>
+    <link>https://mastoras.uk/blog</link>
+    <atom:link href="https://mastoras.uk/blog/rss.xml" rel="self" type="application/rss+xml"/>
     <language>en-gb</language>
     <lastBuildDate>Wed, 26 Mar 2026 12:00:00 GMT</lastBuildDate>
     <generator>Mástoras Consultancy</generator>
@@ -12,8 +12,8 @@
     <item>
       <title>Structure → Story → Soul: The Mástoras Approach to Business Clarity</title>
       <description>Discover how Mástoras helps Northern Irish businesses transform complex challenges into compelling narratives using our proven Structure → Story → Soul methodology. Learn about our comprehensive approach to business communication and strategic planning.</description>
-      <link>https://mastoras.netlify.app/blog/structure-story-soul</link>
-      <guid>https://mastoras.netlify.app/blog/structure-story-soul</guid>
+      <link>https://mastoras.uk/blog/structure-story-soul</link>
+      <guid>https://mastoras.uk/blog/structure-story-soul</guid>
       <pubDate>Wed, 26 Mar 2026 10:00:00 GMT</pubDate>
       <author>hello.mastoras@gmail.com (Gary Nicholl)</author>
       <category>Business Strategy</category>
@@ -25,8 +25,8 @@
     <item>
       <title>Welcome to Mástoras - Structure → Story → Soul</title>
       <description>How we help Northern Irish businesses cut through the noise with honest advice and compelling storytelling.</description>
-      <link>https://mastoras.netlify.app/blog/welcome-to-mastoras</link>
-      <guid>https://mastoras.netlify.app/blog/welcome-to-mastoras</guid>
+      <link>https://mastoras.uk/blog/welcome-to-mastoras</link>
+      <guid>https://mastoras.uk/blog/welcome-to-mastoras</guid>
       <pubDate>Wed, 26 Mar 2026 12:00:00 GMT</pubDate>
       <author>hello.mastoras@gmail.com (Gary Nicholl)</author>
       <category>Business Strategy</category>
