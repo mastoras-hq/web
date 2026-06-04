@@ -137,6 +137,34 @@
     .timeline-dot { width:8px; height:8px; border-radius:50%; background:var(--brass); margin-top:6px; flex-shrink:0; }
     .timeline-date { color:#aaa; font-size:12px; white-space:nowrap; }
 
+    /* CALLS */
+    .call-item { padding:12px 0; border-bottom:1px solid var(--rule); }
+    .call-item:last-child { border-bottom:none; }
+    .call-top { display:flex; justify-content:space-between; align-items:baseline; gap:10px; }
+    .call-when { font-weight:600; color:var(--slate); font-size:14px; }
+    .call-status { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; padding:2px 8px; border-radius:3px; white-space:nowrap; }
+    .cs-scheduled { background:#e7eff7; color:#2c5d8f; }
+    .cs-completed { background:#e6f3ec; color:#1a7a3f; }
+    .cs-no-show   { background:#fbeeee; color:#c0392b; }
+    .cs-cancelled { background:#f1f1f1; color:#888; }
+    .call-notes { font-size:13px; color:#777; margin-top:4px; }
+    .call-form { margin-top:14px; padding-top:14px; border-top:1px dashed var(--rule); display:none; }
+    .call-form.open { display:block; }
+    .call-form .row { display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
+    .call-input, .call-select { padding:9px 11px; border:1px solid var(--rule); border-radius:5px; font-family:inherit; font-size:13.5px; }
+    .call-input { flex:1; min-width:150px; }
+    .call-textarea { width:100%; padding:9px 11px; border:1px solid var(--rule); border-radius:5px; font-family:inherit; font-size:13.5px; min-height:54px; resize:vertical; margin-bottom:10px; }
+    .btn-log { background:var(--teal); color:#fff; border:none; border-radius:5px; padding:9px 16px; font-family:inherit; font-size:13.5px; font-weight:600; cursor:pointer; }
+    .btn-log:hover { background:#0c4c50; }
+    .btn-log-toggle { background:none; border:1px solid var(--teal); color:var(--teal); border-radius:5px; padding:7px 14px; font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; }
+    .btn-log-toggle:hover { background:rgba(15,89,94,0.05); }
+    .btn-add { background:var(--brass); color:#fff; border:none; border-radius:5px; padding:10px 16px; font-family:inherit; font-size:14px; font-weight:600; cursor:pointer; white-space:nowrap; }
+    .btn-add:hover { background:#9a7a48; }
+    .modal-box.wide { max-width:480px; }
+    .modal-row { margin-bottom:12px; }
+    .modal-row label { display:block; font-size:12px; font-weight:600; color:#888; margin-bottom:5px; }
+    .modal-err { display:none; color:var(--red); font-size:13px; margin-bottom:10px; }
+
     footer { border-top:1px solid var(--rule); padding:28px 0; margin-top:40px; background:var(--white); }
     .footer-inner { display:flex; justify-content:space-between; font-size:13px; color:#999; flex-wrap:wrap; gap:8px; }
 
@@ -160,6 +188,32 @@
     <p>Enter your API key to access the client system. It's stored in your browser for future visits.</p>
     <input type="password" class="modal-input" id="api-key-input" placeholder="Paste your API key" autocomplete="off">
     <button type="button" class="run-report-link" style="margin:0;border:none;cursor:pointer;width:100%;padding:12px;" onclick="saveApiKey()">Continue →</button>
+  </div>
+</div>
+
+<!-- LOG A CALL MODAL (new lead) -->
+<div class="modal-overlay" id="call-modal" style="display:none;">
+  <div class="modal-box wide">
+    <h2>Log a clarity call</h2>
+    <p>Record a call booking. If this person isn't a client yet, they'll be created as a lead automatically.</p>
+    <div class="modal-row"><label>Name</label><input type="text" class="modal-input" id="cm-name" placeholder="Their name"></div>
+    <div class="modal-row"><label>Email</label><input type="email" class="modal-input" id="cm-email" placeholder="their@email.com"></div>
+    <div class="modal-row"><label>Organisation (optional)</label><input type="text" class="modal-input" id="cm-org" placeholder="Org name"></div>
+    <div class="modal-row"><label>Date &amp; time of call</label><input type="datetime-local" class="modal-input" id="cm-when"></div>
+    <div class="modal-row"><label>Status</label>
+      <select class="modal-input" id="cm-status">
+        <option value="scheduled">Scheduled</option>
+        <option value="completed">Completed</option>
+        <option value="no-show">No-show</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+    </div>
+    <div class="modal-row"><label>Notes (optional)</label><textarea class="modal-input" id="cm-notes" style="min-height:60px;resize:vertical"></textarea></div>
+    <div class="modal-err" id="cm-error"></div>
+    <div style="display:flex;gap:10px;">
+      <button type="button" class="btn-log" style="flex:1;padding:12px" onclick="submitNewCall()">Log call</button>
+      <button type="button" class="btn-log-toggle" onclick="closeCallModal()">Cancel</button>
+    </div>
   </div>
 </div>
 
@@ -210,6 +264,7 @@
       <option value="Closed — Lost">Closed — Lost</option>
       <option value="Not a Fit">Not a Fit</option>
     </select>
+    <button type="button" class="btn-add" onclick="openCallModal()">+ Log a call</button>
   </div>
 
   <div class="table-wrap">
@@ -375,6 +430,7 @@
     var c = data.client;
     var reports = data.reports || [];
     var bricks = data.brick || [];
+    var calls = data.calls || [];
     var stats = data.stats || {};
 
     var statusOpts = STATUSES.map(function (s) {
@@ -406,11 +462,35 @@
         '<div style="color:#aaa;font-size:12px;margin-top:2px">' + fmtDate(b.created_at) + '</div></div>';
     }).join('') : '<p style="color:#aaa;font-size:13px">No BRICK assessment.</p>';
 
-    // Timeline (reports + bricks + created), newest first
+    var callsHtml = calls.length ? calls.map(function (cl) {
+      var st = cl.status || 'scheduled';
+      return '<div class="call-item"><div class="call-top">' +
+        '<span class="call-when">' + (cl.scheduled_for ? fmtDateTime(cl.scheduled_for) : 'No date set') + '</span>' +
+        '<span class="call-status cs-' + escHtml(st) + '">' + escHtml(st) + '</span></div>' +
+        (cl.notes ? '<div class="call-notes">' + escHtml(cl.notes) + '</div>' : '') +
+      '</div>';
+    }).join('') : '<p style="color:#aaa;font-size:13px">No calls logged.</p>';
+
+    var callFormHtml =
+      '<button type="button" class="btn-log-toggle" style="margin-top:14px" onclick="toggleCallForm()">+ Log a call</button>' +
+      '<div class="call-form" id="call-form">' +
+        '<div class="row">' +
+          '<input type="datetime-local" class="call-input" id="cf-when">' +
+          '<select class="call-select" id="cf-status">' +
+            '<option value="scheduled">Scheduled</option><option value="completed">Completed</option>' +
+            '<option value="no-show">No-show</option><option value="cancelled">Cancelled</option>' +
+          '</select>' +
+        '</div>' +
+        '<textarea class="call-textarea" id="cf-notes" placeholder="Notes (optional)"></textarea>' +
+        '<button type="button" class="btn-log" onclick="logCall(\'' + c.id + '\')">Save call</button>' +
+      '</div>';
+
+    // Timeline (reports + bricks + calls + created), newest first
     var events = [];
     events.push({ d: c.created_at, t: 'Client record created (' + escHtml(c.source||'manual') + ')' });
     reports.forEach(function (r) { events.push({ d: r.created_at, t: 'Funding report — ' + escHtml(r.top_fund || 'generated') }); });
     bricks.forEach(function (b) { events.push({ d: b.created_at, t: 'BRICK assessment (' + (b.total_score!=null?b.total_score+'/24':'') + ')' }); });
+    calls.forEach(function (cl) { events.push({ d: cl.scheduled_for || cl.created_at, t: 'Clarity call — ' + escHtml(cl.status||'scheduled') }); });
     events.sort(function (a,b) { return (b.d||'').localeCompare(a.d||''); });
     var timelineHtml = events.map(function (e) {
       return '<div class="timeline-item"><span class="timeline-dot"></span><div>' + e.t +
@@ -438,6 +518,7 @@
             '<div class="save-ind" id="notes-ind"></div>' +
           '</div>' +
           '<div class="panel"><h3>Funding Reports (' + reports.length + ')</h3>' + reportsHtml + '</div>' +
+          '<div class="panel"><h3>Clarity Calls (' + calls.length + ')</h3>' + callsHtml + callFormHtml + '</div>' +
         '</div>' +
         '<div>' +
           '<div class="mini-stats">' +
@@ -472,6 +553,60 @@
     patchClient(id, { notes: el.value }, function (ok) {
       if (ind) { ind.textContent = ok ? 'Saved ✓' : 'Save failed'; ind.className = 'save-ind' + (ok ? ' ok' : ''); }
     });
+  }
+
+  /* ── CLARITY CALLS ── */
+  function fmtDateTime(iso) {
+    if (!iso) return '—';
+    var d = new Date(iso);
+    return d.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' }) +
+      ', ' + d.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
+  }
+  function toLocalIso(val) { return val ? new Date(val).toISOString() : null; }
+
+  function toggleCallForm() {
+    var f = document.getElementById('call-form');
+    if (f) f.classList.toggle('open');
+  }
+
+  function logCall(clientId) {
+    var body = {
+      client_id: clientId,
+      scheduled_for: toLocalIso(document.getElementById('cf-when').value),
+      status: document.getElementById('cf-status').value,
+      notes: document.getElementById('cf-notes').value.trim() || null
+    };
+    fetch(API + '/calls', { method:'POST', headers: headers(), body: JSON.stringify(body) })
+    .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
+    .then(function () { openClient(clientId); })   // reload profile with the new call
+    .catch(function () { alert('Could not log the call — try again.'); });
+  }
+
+  function openCallModal() { document.getElementById('call-modal').style.display = 'flex'; }
+  function closeCallModal() {
+    document.getElementById('call-modal').style.display = 'none';
+    ['cm-name','cm-email','cm-org','cm-when','cm-notes'].forEach(function (id) {
+      var e = document.getElementById(id); if (e) e.value = '';
+    });
+    document.getElementById('cm-error').style.display = 'none';
+  }
+  function submitNewCall() {
+    var name = document.getElementById('cm-name').value.trim();
+    var email = document.getElementById('cm-email').value.trim();
+    var err = document.getElementById('cm-error');
+    if (!name && !email) { err.textContent = 'Enter at least a name or email.'; err.style.display = 'block'; return; }
+    var body = {
+      name: name || null,
+      email: email || null,
+      org_name: document.getElementById('cm-org').value.trim() || null,
+      scheduled_for: toLocalIso(document.getElementById('cm-when').value),
+      status: document.getElementById('cm-status').value,
+      notes: document.getElementById('cm-notes').value.trim() || null
+    };
+    fetch(API + '/calls', { method:'POST', headers: headers(), body: JSON.stringify(body) })
+    .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
+    .then(function () { closeCallModal(); loadClients(); })
+    .catch(function () { err.textContent = 'Could not log the call — try again.'; err.style.display = 'block'; });
   }
 </script>
 </body>
