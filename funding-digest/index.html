@@ -323,8 +323,10 @@
   function renderDigest(data, stale) {
     var statsRow = document.getElementById('stats-row');
     var updatedLabel = stale && data._cachedAt
-      ? new Date(data._cachedAt).toLocaleDateString('en-GB', {day:'numeric', month:'short'})
-      : new Date().toLocaleString('en-GB', {month:'long', year:'numeric'});
+      ? new Date(data._cachedAt).toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'})
+      : (data.generated_at
+          ? new Date(data.generated_at).toLocaleDateString('en-GB', {day:'numeric', month:'long', year:'numeric'})
+          : new Date().toLocaleDateString('en-GB', {day:'numeric', month:'long', year:'numeric'}));
     statsRow.innerHTML =
       '<div class="hero-stat"><div class="num">' + (data.stats.total_active || 0) + '</div><div class="lbl">Active schemes</div></div>' +
       '<div class="hero-stat"><div class="num">' + (data.stats.total_open || 0) + '</div><div class="lbl">Open now</div></div>' +
