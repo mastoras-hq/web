@@ -278,13 +278,7 @@
         <ol id="top-funds-ol"></ol>
       </div>
       <p class="result-message" id="result-message"></p>
-      <a href="https://calendly.com/garynicholl1515/20min" target="_blank" rel="noopener" class="btn-cta">
-        Get your full report — book a free call →
-      </a>
-      <p style="font-size:13px;color:#aaa;margin-top:16px;">
-        The full Mástoras Funding Match Report includes scores, application intelligence,
-        and a consultant's view for every matched scheme.
-      </p>
+      <div id="result-next"></div>
       <button type="button" class="btn-retry" onclick="resetForm()">← Check a different profile</button>
       <p style="font-size:12px;color:#bbb;margin-top:20px;line-height:1.5;border-top:1px solid var(--rule);padding-top:14px;">
         This check is early-stage guidance, not confirmation of eligibility. Funding criteria and deadlines
@@ -408,14 +402,39 @@
       document.getElementById('top-funds-list').style.display = 'block';
     }
 
-    var msg = count > 0
-      ? 'Your profile matched ' + count + ' funding scheme' + (count !== 1 ? 's' : '') + ' in the Mástoras database. ' +
-        'A full report gives you scores, application intelligence, and a consultant\'s view for every match — ' +
-        'so you know exactly which to prioritise and how to apply.'
-      : 'No exact matches found for this profile — but this can often be resolved by refining the organisation type or sector. ' +
-        'Book a call and we\'ll look at it together.';
+    var CAL = 'https://calendly.com/garynicholl1515/20min';
+    var msg, next;
+
+    if (count > 0) {
+      msg = 'Your profile matched ' + count + ' possible funding route' + (count !== 1 ? 's' : '') + '. ' +
+        'But a match isn\'t the same as a fit — the real question is which of these are genuinely worth pursuing, and whether the project is ready to apply.';
+      next =
+        '<a href="' + CAL + '" target="_blank" rel="noopener" class="btn-cta">Get your Funding Match Report — book a free call →</a>' +
+        '<p style="font-size:13px;color:#888;margin-top:14px;line-height:1.6;">' +
+          'The full report scores and ranks every match, with application intelligence and a consultant\'s view — ' +
+          'so you put effort into the right schemes, not the wrong ones.' +
+        '</p>' +
+        '<p style="font-size:13.5px;color:#666;margin-top:18px;padding-top:16px;border-top:1px solid var(--rule);line-height:1.6;">' +
+          '<strong>Not sure the project\'s ready to apply?</strong> That\'s often the bigger issue. A ' +
+          '<a href="/#services" style="color:var(--teal);font-weight:600;">Pre-Build Assessment or First Fix</a> ' +
+          'gets the idea clear and costed first — so the application actually lands.' +
+        '</p>';
+    } else {
+      msg = 'No clean matches for this profile — and that\'s useful to know. When nothing fits, the issue is usually the project, not the funding pool.';
+      next =
+        '<p style="font-size:14.5px;color:#555;margin-bottom:20px;line-height:1.7;">' +
+          'The fix isn\'t another application — it\'s getting the idea clear, costed and evidence-ready first. ' +
+          'That\'s exactly what Mástoras does before a penny of effort goes into a form.' +
+        '</p>' +
+        '<a href="' + CAL + '" target="_blank" rel="noopener" class="btn-cta">Talk it through — book a free call →</a>' +
+        '<p style="font-size:13.5px;color:#666;margin-top:18px;padding-top:16px;border-top:1px solid var(--rule);line-height:1.6;">' +
+          'A <a href="/#services" style="color:var(--teal);font-weight:600;">Pre-Build Assessment</a> stress-tests the idea before you commit; ' +
+          '<a href="/#services" style="color:var(--teal);font-weight:600;">The First Fix</a> clears your single biggest blocker.' +
+        '</p>';
+    }
 
     document.getElementById('result-message').textContent = msg;
+    document.getElementById('result-next').innerHTML = next;
 
     document.getElementById('form-section').style.display = 'none';
     document.getElementById('result-section').style.display = 'block';
