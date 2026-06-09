@@ -235,6 +235,15 @@
   </div>
 </section>
 
+<!-- ── DISCLAIMER ── -->
+<div class="wrap">
+  <p style="font-size:12px;color:#aaa;line-height:1.6;text-align:center;max-width:680px;margin:0 auto;padding:24px 0;border-top:1px solid var(--rule);">
+    This digest is tracked from public funding sources and reviewed regularly. It's early-stage guidance,
+    not confirmation of eligibility — funding criteria and deadlines change often, so always confirm the
+    details with the funder before applying.
+  </p>
+</div>
+
 <!-- ── FOOTER ── -->
 <footer>
   <div class="wrap">
@@ -309,49 +318,59 @@
     return '<p style="color:#aaa;font-size:14px;padding:12px 0">' + msg + '</p>';
   }
 
+  var CACHE_KEY = 'mastoras_digest_cache';
+
+  function renderDigest(data, stale) {
+    var statsRow = document.getElementById('stats-row');
+    var updatedLabel = stale && data._cachedAt
+      ? new Date(data._cachedAt).toLocaleDateString('en-GB', {day:'numeric', month:'short'})
+      : new Date().toLocaleString('en-GB', {month:'long', year:'numeric'});
+    statsRow.innerHTML =
+      '<div class="hero-stat"><div class="num">' + (data.stats.total_active || 0) + '</div><div class="lbl">Active schemes</div></div>' +
+      '<div class="hero-stat"><div class="num">' + (data.stats.total_open || 0) + '</div><div class="lbl">Open now</div></div>' +
+      '<div class="hero-stat"><div class="num">' + (data.stats.deadlines_next_90_days || 0) + '</div><div class="lbl">Deadlines in 90 days</div></div>' +
+      '<div class="hero-stat"><div class="num">' + updatedLabel + '</div><div class="lbl">Last updated</div></div>';
+
+    var recent = data.recently_opened || [];
+    document.getElementById('recent-count').textContent = recent.length + ' fund' + (recent.length !== 1 ? 's' : '');
+    document.getElementById('recent-grid').innerHTML = recent.length
+      ? recent.map(function(f) { return renderFundCard(f, 'new'); }).join('')
+      : emptyState('No fund changes detected in the last 30 days.');
+
+    var closing = data.closing_soon || [];
+    document.getElementById('closing-count').textContent = closing.length + ' fund' + (closing.length !== 1 ? 's' : '');
+    document.getElementById('closing-grid').innerHTML = closing.length
+      ? closing.map(function(f) { return renderFundCard(f, 'closing'); }).join('')
+      : emptyState('No funds with deadlines in the next 60 days.');
+
+    var watchlist = data.watchlist || [];
+    document.getElementById('watchlist-count').textContent = watchlist.length + ' fund' + (watchlist.length !== 1 ? 's' : '');
+    document.getElementById('watchlist-grid').innerHTML = watchlist.length
+      ? watchlist.map(function(f) { return renderFundCard(f, 'watchlist'); }).join('')
+      : emptyState('No funds on the radar at this time.');
+  }
+
+  function showFallback() {
+    var sr = document.getElementById('stats-row'); if (sr) sr.innerHTML = '';
+    var msg = '<div style="padding:8px 0"><p style="color:#888;font-size:15px;margin-bottom:10px">The live digest is refreshing right now.</p>' +
+      '<p style="font-size:14px"><a href="/funding-check/" style="color:var(--teal);font-weight:600">Run the Funding Check →</a> for an instant profile match, or ' +
+      '<a href="https://calendly.com/garynicholl1515/20min" target="_blank" rel="noopener" style="color:var(--teal);font-weight:600">book a free call</a>.</p></div>';
+    var rg = document.getElementById('recent-grid'); if (rg) rg.innerHTML = msg;
+    ['closing-grid','watchlist-grid'].forEach(function(id){ var el = document.getElementById(id); if (el) el.innerHTML = ''; });
+  }
+
   fetch(API + '/digest')
     .then(function(res) { return res.ok ? res.json() : Promise.reject(res.status); })
     .then(function(data) {
-      // Stats
-      var statsRow = document.getElementById('stats-row');
-      statsRow.innerHTML =
-        '<div class="hero-stat"><div class="num">' + (data.stats.total_active || 0) + '</div><div class="lbl">Active schemes</div></div>' +
-        '<div class="hero-stat"><div class="num">' + (data.stats.total_open || 0) + '</div><div class="lbl">Open now</div></div>' +
-        '<div class="hero-stat"><div class="num">' + (data.stats.deadlines_next_90_days || 0) + '</div><div class="lbl">Deadlines in 90 days</div></div>' +
-        '<div class="hero-stat"><div class="num">' + new Date().toLocaleString('en-GB', {month:'long', year:'numeric'}) + '</div><div class="lbl">Last updated</div></div>';
-
-      // Recently opened
-      var recentGrid = document.getElementById('recent-grid');
-      var recentCount = document.getElementById('recent-count');
-      var recent = data.recently_opened || [];
-      recentCount.textContent = recent.length + ' fund' + (recent.length !== 1 ? 's' : '');
-      recentGrid.innerHTML = recent.length
-        ? recent.map(function(f) { return renderFundCard(f, 'new'); }).join('')
-        : emptyState('No fund changes detected in the last 30 days.');
-
-      // Closing soon
-      var closingGrid = document.getElementById('closing-grid');
-      var closingCount = document.getElementById('closing-count');
-      var closing = data.closing_soon || [];
-      closingCount.textContent = closing.length + ' fund' + (closing.length !== 1 ? 's' : '');
-      closingGrid.innerHTML = closing.length
-        ? closing.map(function(f) { return renderFundCard(f, 'closing'); }).join('')
-        : emptyState('No funds with deadlines in the next 60 days.');
-
-      // Watchlist
-      var watchlistGrid = document.getElementById('watchlist-grid');
-      var watchlistCount = document.getElementById('watchlist-count');
-      var watchlist = data.watchlist || [];
-      watchlistCount.textContent = watchlist.length + ' fund' + (watchlist.length !== 1 ? 's' : '');
-      watchlistGrid.innerHTML = watchlist.length
-        ? watchlist.map(function(f) { return renderFundCard(f, 'watchlist'); }).join('')
-        : emptyState('No funds on the radar at this time.');
+      renderDigest(data, false);
+      try { data._cachedAt = Date.now(); localStorage.setItem(CACHE_KEY, JSON.stringify(data)); } catch (e) {}
     })
-    .catch(function(err) {
-      ['recent-grid','closing-grid','watchlist-grid','stats-row'].forEach(function(id) {
-        var el = document.getElementById(id);
-        if (el) el.innerHTML = '<p style="color:#aaa;font-size:14px">Unable to load digest data — try refreshing.</p>';
-      });
+    .catch(function() {
+      // Live pull failed — fall back to last cached digest so the page never looks empty.
+      var cached = null;
+      try { cached = JSON.parse(localStorage.getItem(CACHE_KEY)); } catch (e) {}
+      if (cached && cached.stats) { renderDigest(cached, true); }
+      else { showFallback(); }
     });
 </script>
 
