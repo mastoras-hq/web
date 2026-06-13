@@ -560,30 +560,35 @@
       letter-spacing: 0.07em; text-transform: uppercase;
       color: rgba(255,255,255,0.4); white-space: nowrap;
     }
+    .fi-register-caption {
+      font-size: 12px; color: rgba(255,255,255,0.55);
+      margin-bottom: 14px; line-height: 1.4;
+    }
     .fi-register-cols {
-      display: grid; grid-template-columns: 1fr 52px 64px; gap: 10px;
+      display: grid; grid-template-columns: 20px 1fr 42px; gap: 12px;
       font-size: 9.5px; font-weight: 700;
       letter-spacing: 0.1em; text-transform: uppercase;
       color: rgba(255,255,255,0.3);
       padding-bottom: 9px;
       border-bottom: 1px solid rgba(255,255,255,0.07);
     }
+    .fi-fit-col { text-align: right; }
     .fi-register-list { list-style: none; margin: 0; padding: 0; }
     .fi-register-list li {
-      display: grid; grid-template-columns: 1fr 52px 64px; gap: 10px;
+      display: grid; grid-template-columns: 20px 1fr 42px; gap: 12px;
       align-items: center;
       padding: 11px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
       font-size: 13px; color: rgba(255,255,255,0.74); line-height: 1.35;
     }
     .fi-register-list li:last-child { border-bottom: none; }
-    .fi-register-list li > span:nth-child(2) {
-      font-size: 11.5px; color: rgba(255,255,255,0.5);
+    .fi-rank {
+      font-family: 'Merriweather', serif;
+      font-size: 12px; color: rgba(255,255,255,0.38);
     }
-    .fi-register-list li > span:nth-child(3) {
-      font-size: 11.5px; font-weight: 600;
+    .fi-fit {
+      font-size: 13px; font-weight: 700;
+      color: var(--brass); text-align: right;
     }
-    .fi-st-open { color: #7bb37b; }
-    .fi-st-soon { color: var(--brass); }
     .fi-register-foot {
       font-size: 11px; color: rgba(255,255,255,0.34);
       margin-top: 14px; padding-top: 12px;
@@ -1132,16 +1137,18 @@
             <span>NI Funding Match</span>
             <span class="fi-register-rev" id="fi-register-rev">Reviewed regularly</span>
           </div>
+          <p class="fi-register-caption">Top matches, scored &amp; ranked by fit</p>
           <div class="fi-register-cols">
-            <span>Scheme</span><span>Region</span><span>Status</span>
+            <span class="fi-rank-col">#</span><span>Scheme</span><span class="fi-fit-col">Fit</span>
           </div>
           <ul class="fi-register-list">
-            <li><span>DfC Community Support</span><span>NI</span><span class="fi-st-open">Open</span></li>
-            <li><span>Community Foundation NI</span><span>NI</span><span class="fi-st-open">Open</span></li>
-            <li><span>Invest NI Digital Boost</span><span>NI</span><span class="fi-st-open">Open</span></li>
-            <li><span>Rural Business Development</span><span>All-isl</span><span class="fi-st-soon">Closing</span></li>
+            <li><span class="fi-rank">1</span><span>DfC Community Support Grant</span><span class="fi-fit">94%</span></li>
+            <li><span class="fi-rank">2</span><span>Community Foundation NI</span><span class="fi-fit">88%</span></li>
+            <li><span class="fi-rank">3</span><span>Invest NI Digital Boost</span><span class="fi-fit">81%</span></li>
+            <li><span class="fi-rank">4</span><span>UK Shared Prosperity Fund</span><span class="fi-fit">76%</span></li>
+            <li><span class="fi-rank">5</span><span>Rural Business Development</span><span class="fi-fit">69%</span></li>
           </ul>
-          <p class="fi-register-foot">Sample from 160+ schemes tracked · reviewed regularly</p>
+          <p class="fi-register-foot">Ranks your top 10 from 160+ schemes — not just a list of what's open</p>
         </div>
       </div>
 
