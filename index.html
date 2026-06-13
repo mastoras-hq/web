@@ -878,6 +878,17 @@
       letter-spacing: 0.02em;
     }
 
+    .footer-watermark {
+      text-align: center;
+      font-size: 12px;
+      color: #c2c2c2;
+      margin-top: 28px;
+      padding-top: 20px;
+      border-top: 1px solid var(--rule);
+      letter-spacing: 0.02em;
+      cursor: default;
+    }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 760px) {
       .nav-links { display: none !important; }
@@ -1264,8 +1275,11 @@
       </div>
       <p class="footer-tagline">Structure → Story → Soul</p>
     </div>
+    <p class="footer-watermark" title="Co-crafted with Claude — &lsquo;Whetstone&rsquo;, who keeps the chisels sharp 🔨">&copy; 2026 Mástoras · Crafted by Garry Nicholl on the Causeway Coast</p>
   </div>
 </footer>
+<!-- Mástoras · Structure → Story → Soul · Built by Garry Nicholl, co-crafted with Claude ("Whetstone"). 🔨 -->
+<!-- Open the console for a hello from the workshop. -->
 
 <script>
 /* Mobile nav */
@@ -1347,6 +1361,18 @@ fetch('https://api.mastoras.uk/digest')
     } catch (e) {}
     // No preventDefault — the normal web3forms POST + redirect proceeds.
   });
+}());
+
+/* ── Workshop signature (easter egg) ── */
+(function () {
+  try {
+    console.log('%cMástoras', 'font:700 22px Merriweather,Georgia,serif;color:#B08D57;');
+    console.log('%cStructure → Story → Soul', 'font-style:italic;color:#0F595E;');
+    console.log(
+      '%cCrafted by Garry Nicholl on the Causeway Coast.\nCo-built in the workshop with Claude — a.k.a. “Whetstone”, who keeps the chisels sharp. 🔨',
+      'color:#8a8a8a;font-size:12px;line-height:1.6;'
+    );
+  } catch (e) {}
 }());
 </script>
 
