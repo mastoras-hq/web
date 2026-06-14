@@ -140,6 +140,49 @@
     }
     .btn-retry:hover { color: var(--teal); }
 
+    /* ── FUNDING FIT REPORT PREVIEW ── */
+    .fit-report {
+      margin: 4px 0 26px; text-align: left;
+      border: 1px solid var(--rule); border-radius: 8px; overflow: hidden;
+      background: var(--white);
+    }
+    .fit-report-head { background: var(--slate); color: #fff; padding: 16px 20px; }
+    .fit-report-head .fr-title { font-family:'Merriweather',serif; font-size:15px; font-weight:700; }
+    .fit-report-head .fr-sub { font-size:12.5px; color:rgba(255,255,255,0.62); margin-top:3px; }
+    .fit-report-table { padding: 4px 20px 0; }
+    .fr-row {
+      display:grid; grid-template-columns:22px 1fr 58px 92px; gap:10px; align-items:center;
+      padding:11px 0; border-bottom:1px solid var(--rule); font-size:13.5px;
+    }
+    .fr-row:last-child { border-bottom:none; }
+    .fr-row.fr-head {
+      font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#a8a8a8;
+    }
+    .fr-rank { font-family:'Merriweather',serif; color:#bbb; font-size:12px; }
+    .fr-scheme { color:var(--slate); font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .fr-locked {
+      height:9px; border-radius:5px;
+      background:repeating-linear-gradient(45deg,#e8e3d9,#e8e3d9 5px,#f1ede5 5px,#f1ede5 10px);
+    }
+    .fr-verdict {
+      display:inline-flex; align-items:center; gap:5px; justify-self:start;
+      font-size:11px; color:#b3aa98; background:var(--linen);
+      border:1px solid var(--rule); border-radius:20px; padding:3px 9px; white-space:nowrap;
+    }
+    .fr-more {
+      display:flex; align-items:center; gap:7px;
+      padding:12px 0 14px; font-size:12.5px; color:#999;
+    }
+    .fit-report-foot { padding:18px 20px 20px; border-top:1px solid var(--rule); background:var(--linen); }
+    .fr-includes { font-size:13px; color:#555; margin-bottom:16px; line-height:1.65; }
+    .fr-includes strong { color: var(--slate); }
+    .btn-report {
+      display:block; text-align:center; background:var(--brass); color:#fff; text-decoration:none;
+      padding:15px 24px; border-radius:6px; font-weight:600; font-size:15.5px; transition:background 0.15s;
+    }
+    .btn-report:hover { background:#9a7a48; }
+    .fr-meta { font-size:12px; color:#999; margin-top:11px; text-align:center; line-height:1.5; }
+
     /* ── TRUST STRIP ── */
     .trust-strip { padding: 40px 0; background: var(--white); border-top: 1px solid var(--rule); }
     .trust-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 620px; margin: 0 auto; text-align: center; }
@@ -159,6 +202,8 @@
       .form-grid { grid-template-columns: 1fr; }
       .trust-grid { grid-template-columns: 1fr; gap: 16px; }
       .nav-links { display: none; }
+      .fr-row { grid-template-columns: 20px 1fr auto; gap: 8px; }
+      .fr-fit { display: none; }
     }
   </style>
 </head>
@@ -324,10 +369,68 @@
 
 <script>
   var API = 'https://api.mastoras.uk';
+  var lastProfile = {};
 
   function escHtml(str) {
     if (!str) return '';
     return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // Build the locked Funding Fit Report preview (only shown when matches > 0).
+  // Rows are the visitor's REAL top matches; the Fit + Verdict columns are
+  // locked (we never fabricate scores), with the real report contents named below.
+  function buildFitReport(count, topFunds, profile) {
+    var shown = (topFunds || []).slice(0, 5);
+    var rows = shown.map(function(f, i) {
+      return '<div class="fr-row">' +
+        '<span class="fr-rank">' + (i + 1) + '</span>' +
+        '<span class="fr-scheme">' + escHtml(f) + '</span>' +
+        '<span class="fr-locked fr-fit" aria-hidden="true"></span>' +
+        '<span class="fr-verdict">🔒 locked</span>' +
+      '</div>';
+    }).join('');
+
+    var moreCount = count - shown.length;
+    var more = moreCount > 0
+      ? '<div class="fr-more">🔒 + ' + moreCount + ' more, scored &amp; ranked</div>'
+      : '';
+
+    var p = profile || {};
+    var subject = encodeURIComponent('Funding Fit Report request');
+    var body = encodeURIComponent(
+      'Hi Garry,\n\n' +
+      'I\'d like the full Funding Fit Report (£195).\n\n' +
+      'My free-check profile to start:\n' +
+      '- Organisation type: ' + (p.orgType || '') + '\n' +
+      '- Sector: ' + (p.sector || '') + '\n' +
+      '- Council area: ' + (p.council || '') + '\n' +
+      '- Funding ask: £' + (p.fundingAsk || '') + '\n' +
+      '- Free check matched: ' + count + ' schemes\n\n' +
+      'I understand the full report goes deeper and you\'ll need more detail from me.\n\n' +
+      'Thanks,'
+    );
+    var mailto = 'mailto:hello@mastoras.uk?subject=' + subject + '&body=' + body;
+
+    return '' +
+      '<div class="fit-report">' +
+        '<div class="fit-report-head">' +
+          '<div class="fr-title">The full Funding Fit Report</div>' +
+          '<div class="fr-sub">Beyond the match — a reasoned fit, built for your profile</div>' +
+        '</div>' +
+        '<div class="fit-report-table">' +
+          '<div class="fr-row fr-head"><span>#</span><span>Scheme</span><span class="fr-fit">Fit</span><span>Verdict</span></div>' +
+          rows +
+          more +
+        '</div>' +
+        '<div class="fit-report-foot">' +
+          '<p class="fr-includes">Each scheme <strong>scored out of 100 and ranked</strong> — with why it fits, ' +
+          '<strong>the one thing to fix</strong> before you apply, the deadline and application intelligence ' +
+          '(criteria, tips, pitfalls), Garry\'s view, and a <strong>first-draft application</strong> to build on.</p>' +
+          '<a href="' + mailto + '" class="btn-report">Get the full Funding Fit Report — £195 →</a>' +
+          '<p class="fr-meta">Scored by the engine, reasoned and written by Garry. Built from a fuller profile ' +
+          'than the four questions above. PDF in ~3 working days.</p>' +
+        '</div>' +
+      '</div>';
   }
 
   function runCheck() {
@@ -369,6 +472,8 @@
       },
     };
 
+    lastProfile = { orgType: orgType, sector: sector, council: council, fundingAsk: fundingAsk };
+
     fetch(API + '/taster', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -394,27 +499,15 @@
     document.getElementById('result-label').textContent =
       'potential funding scheme' + (count !== 1 ? 's' : '') + ' matched your profile';
 
-    if (topFunds.length > 0) {
-      var ol = document.getElementById('top-funds-ol');
-      ol.innerHTML = topFunds.map(function(f) {
-        return '<li>' + escHtml(f) + '</li>';
-      }).join('');
-      document.getElementById('top-funds-list').style.display = 'block';
-    }
-
     var CAL = 'https://calendly.com/garynicholl1515/20min';
     var msg, next;
 
     if (count > 0) {
       msg = 'Your profile matched ' + count + ' possible funding route' + (count !== 1 ? 's' : '') + '. ' +
-        'But a match isn\'t the same as a fit — the real question is which of these are genuinely worth pursuing, and whether the project is ready to apply.';
+        'But a match isn\'t the same as a fit — the real questions are which of these are genuinely worth pursuing, and whether the project is ready to apply.';
       next =
-        '<a href="' + CAL + '" target="_blank" rel="noopener" class="btn-cta">Get your Funding Match Report — book a free call →</a>' +
-        '<p style="font-size:13px;color:#888;margin-top:14px;line-height:1.6;">' +
-          'The full report scores and ranks every match, with application intelligence and a consultant\'s view — ' +
-          'so you put effort into the right schemes, not the wrong ones.' +
-        '</p>' +
-        '<p style="font-size:13.5px;color:#666;margin-top:18px;padding-top:16px;border-top:1px solid var(--rule);line-height:1.6;">' +
+        buildFitReport(count, topFunds, lastProfile) +
+        '<p style="font-size:13.5px;color:#666;margin-top:4px;padding-top:18px;border-top:1px solid var(--rule);line-height:1.6;">' +
           '<strong>Not sure the project\'s ready to apply?</strong> That\'s often the bigger issue. A ' +
           '<a href="/#services" style="color:var(--teal);font-weight:600;">Pre-Build Assessment or First Fix</a> ' +
           'gets the idea clear and costed first — so the application actually lands.' +
