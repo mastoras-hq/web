@@ -2,214 +2,269 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Primary SEO -->
   <title>Structure → Story → Soul | Mástoras Blog</title>
   <meta name="description" content="Most businesses can describe what they do. Fewer can explain why it matters. Here's the three-layer approach Mástoras uses with every client.">
   <link rel="canonical" href="https://mastoras.uk/blog/structure-story-soul">
-
   <meta name="author" content="Garry Nicholl — Mástoras">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
 
-  <!-- AI Search Optimization -->
-  <meta name="keywords" content="business strategy Northern Ireland, brand storytelling, business clarity, consultancy methodology, business transformation, brand narrative, business consulting">
-  <meta name="article:author" content="Garry Nicholl">
-  <meta name="article:published_time" content="2026-03-26T10:00:00Z">
-  <meta name="article:section" content="Business Strategy">
-  <meta name="article:tag" content="Business Consulting">
-  <meta name="article:tag" content="Brand Storytelling">
-  <meta name="article:tag" content="Northern Ireland Business">
-
-  <!-- Open Graph / Facebook -->
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://mastoras.uk/blog/structure-story-soul">
   <meta property="og:title" content="Structure → Story → Soul: The Mástoras Approach">
-  <meta property="og:description" content="How we help Northern Irish businesses transform complex challenges into compelling narratives using our proven methodology.">
+  <meta property="og:description" content="How structure, story, and soul turn a complex business into a narrative people understand.">
   <meta property="og:image" content="https://mastoras.uk/mastoras-logo.png">
-  <meta property="og:site_name" content="Mástoras">
-  <meta property="og:locale" content="en_GB">
 
-  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Structure → Story → Soul: Business Clarity Method">
-  <meta name="twitter:description" content="Transform your business challenges into compelling success stories.">
+  <meta name="twitter:description" content="Get the thinking straight first, and the story tends to tell itself.">
   <meta name="twitter:image" content="https://mastoras.uk/mastoras-logo.png">
 
-  <!-- Article Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "headline": "Structure → Story → Soul: The Mástoras Approach to Business Clarity",
-    "description": "Discover how Mástoras helps Northern Irish businesses transform complex challenges into compelling narratives using our proven Structure → Story → Soul methodology.",
-    "image": "https://mastoras.uk/mastoras-logo.png",
-    "author": {
-      "@type": "Person",
-      "@id": "https://mastoras.uk/#founder",
-      "name": "Garry Nicholl",
-      "jobTitle": "Founder & Lead Consultant",
-      "description": "Experienced business consultant specializing in clarity, storytelling, and strategic planning."
-    },
+    "url": "https://mastoras.uk/blog/structure-story-soul",
+    "datePublished": "2026-03-26T10:00:00Z",
+    "author": { "@type": "Person", "@id": "https://mastoras.uk/#garry-nicholl", "name": "Garry Nicholl" },
     "publisher": {
       "@type": "Organization",
       "@id": "https://mastoras.uk/#organization",
       "name": "Mástoras",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://mastoras.uk/mastoras-logo.png"
-      }
+      "logo": { "@type": "ImageObject", "url": "https://mastoras.uk/mastoras-logo.png" }
     },
-    "datePublished": "2026-03-26T10:00:00Z",
-    "dateModified": "2026-03-26T10:00:00Z",
-    "mainEntityOfPage": {
-      "@type": "WebPage",
-      "@id": "https://mastoras.uk/blog/structure-story-soul"
-    },
-    "articleSection": "Business Strategy",
-    "keywords": ["business strategy", "brand storytelling", "business clarity", "consultancy methodology"],
-    "about": [
-      {
-        "@type": "Thing",
-        "name": "Business Consulting",
-        "description": "Professional services for business strategy and planning"
-      },
-      {
-        "@type": "Thing",
-        "name": "Brand Storytelling",
-        "description": "Creating compelling narratives for business brands"
-      }
-    ],
-    "mentions": {
-      "@type": "Place",
-      "name": "Northern Ireland",
-      "sameAs": "https://en.wikipedia.org/wiki/Northern_Ireland"
-    }
+    "articleSection": "Brand & Story",
+    "description": "How structure, story, and soul turn a complex business into a narrative people understand — the Mástoras approach to getting clear before you pitch."
   }
   </script>
 
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
-  <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     :root {
-      --linen: #F4F1EC;
-      --slate: #2E3440;
-      --brass: #B08D57;
-      --teal: #0F595E;
+      --slate:    #2E3440;
+      --linen:    #F4F1EC;
+      --brass:    #B08D57;
+      --teal:     #0F595E;
+      --graphite: #222222;
+      --white:    #ffffff;
+      --rule:     #e2e8f0;
     }
-    body { font-family: system-ui, -apple-system, sans-serif; color: var(--slate); background: var(--linen); }
-    h1, h2, h3 { font-family: Georgia, serif; color: var(--slate); }
-    .blog-content { max-width: 65ch; line-height: 1.7; }
-    .testimonial { border-left: 4px solid var(--brass); padding-left: 1.5rem; font-style: italic; }
-    .case-study { background: white; border: 1px solid #e0d9cd; border-radius: 8px; padding: 2rem; margin: 2rem 0; }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 17px; line-height: 1.75; color: var(--graphite);
+      background: var(--white); -webkit-font-smoothing: antialiased;
+    }
+    h1, h2, h3 { font-family: 'Merriweather', Georgia, serif; color: var(--slate); line-height: 1.25; }
+    a { color: var(--teal); }
+    img { max-width: 100%; height: auto; display: block; }
+    .wrap { max-width: 1060px; margin: 0 auto; padding: 0 32px; }
+
+    /* ── HEADER ── */
+    header { background: var(--white); border-bottom: 1px solid var(--rule); position: sticky; top: 0; z-index: 200; }
+    .header-inner { display: flex; justify-content: space-between; align-items: center; height: 72px; }
+    .wordmark { text-decoration: none; display: flex; align-items: center; }
+    .wordmark img { height: 52px; width: auto; }
+    .nav-links { display: flex; align-items: center; gap: 32px; }
+    .nav-links a { color: var(--graphite); text-decoration: none; font-size: 14px; font-weight: 500; }
+    .nav-links a:hover { color: var(--teal); }
+    .nav-cta { background: var(--teal); color: #fff !important; padding: 10px 22px; font-size: 13.5px; font-weight: 600; text-decoration: none; border-radius: 6px; transition: background 0.15s; }
+    .nav-cta:hover { background: #0c4c50; }
+    .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 8px; flex-direction: column; gap: 5px; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: var(--slate); }
+    .mobile-nav { display: none; background: var(--white); border-bottom: 1px solid var(--rule); padding: 16px 32px 24px; }
+    .mobile-nav.open { display: block; }
+    .mobile-nav a { display: block; color: var(--graphite); text-decoration: none; font-size: 16px; font-weight: 500; padding: 12px 0; border-bottom: 1px solid var(--rule); }
+    .mobile-nav a:last-child { border-bottom: none; }
+    .mobile-nav a:hover { color: var(--teal); }
+
+    /* ── ARTICLE ── */
+    .article-wrap { max-width: 720px; margin: 0 auto; padding: 72px 32px 96px; }
+    .article-meta { display: flex; align-items: center; gap: 16px; margin-bottom: 40px; flex-wrap: wrap; }
+    .article-tag { font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; background: var(--linen); color: var(--brass); padding: 4px 10px; border-radius: 3px; }
+    .article-meta time, .article-meta .read-time { font-size: 13px; color: #999; }
+    .article-title { font-size: clamp(1.7em, 4vw, 2.4em); margin-bottom: 28px; line-height: 1.2; letter-spacing: -0.02em; }
+    .article-intro { font-size: 1.05em; color: #4a4a4a; line-height: 1.8; margin-bottom: 48px; padding-bottom: 48px; border-bottom: 1px solid var(--rule); }
+    .article-body h2 { font-size: 1.3em; margin: 48px 0 20px; letter-spacing: -0.01em; }
+    .article-body h3 { font-size: 1.1em; margin: 32px 0 12px; }
+    .article-body p { margin-bottom: 24px; color: #2a2a2a; }
+    .article-body strong { color: var(--slate); }
+
+    /* ── CTA BLOCK ── */
+    .article-cta { background: var(--slate); color: white; padding: 40px; border-radius: 8px; margin-top: 64px; text-align: center; }
+    .article-cta h3 { font-size: 1.3em; color: white; margin-bottom: 12px; }
+    .article-cta p { color: rgba(255,255,255,0.72); font-size: 15px; margin-bottom: 28px; line-height: 1.65; }
+    .cta-buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary { background: var(--teal); color: white; padding: 13px 26px; border-radius: 5px; text-decoration: none; font-weight: 600; font-size: 15px; transition: background 0.15s; }
+    .btn-primary:hover { background: #0c4c50; color: white; }
+    .btn-outline { border: 1.5px solid rgba(255,255,255,0.35); color: white; padding: 13px 26px; border-radius: 5px; text-decoration: none; font-weight: 600; font-size: 15px; transition: all 0.15s; }
+    .btn-outline:hover { border-color: rgba(255,255,255,0.7); color: white; }
+
+    /* ── AUTHOR ── */
+    .author-block { display: flex; align-items: center; gap: 20px; padding: 36px 0; border-top: 1px solid var(--rule); margin-top: 64px; }
+    .author-img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+    .author-name { font-weight: 600; font-size: 15px; color: var(--slate); margin-bottom: 2px; }
+    .author-role { font-size: 13px; color: #888; }
+
+    /* ── RELATED ── */
+    .related { background: var(--linen); padding: 36px 40px; border-radius: 8px; margin-top: 48px; }
+    .related h3 { font-size: 0.85em; letter-spacing: 0.1em; text-transform: uppercase; color: #888; margin-bottom: 16px; }
+    .related a { display: block; color: var(--slate); text-decoration: none; font-weight: 500; font-size: 15px; padding: 8px 0; border-bottom: 1px solid #ddd; }
+    .related a:last-child { border-bottom: none; }
+    .related a:hover { color: var(--teal); }
+
+    /* ── FOOTER ── */
+    footer { background: var(--slate); color: rgba(255,255,255,0.5); text-align: center; padding: 40px 32px; font-size: 13px; }
+    footer a { color: rgba(255,255,255,0.5); text-decoration: none; }
+    footer a:hover { color: white; }
+    .footer-links { display: flex; gap: 24px; justify-content: center; margin-top: 10px; flex-wrap: wrap; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .article-wrap { padding: 48px 20px 72px; }
+      .article-cta { padding: 28px 24px; }
+      .related { padding: 28px 24px; }
+      .author-block { flex-direction: column; text-align: center; }
+    }
   </style>
 </head>
-<body class="max-w-4xl mx-auto px-6 py-12">
+<body>
 
-  <!-- Breadcrumb Navigation -->
-  <nav aria-label="Breadcrumb" class="text-sm text-gray-600 mb-8">
-    <a href="/" class="hover:text-teal-600">Home</a> →
-    <a href="/blog" class="hover:text-teal-600">Blog</a> →
-    <span>Structure → Story → Soul</span>
-  </nav>
-
-  <!-- Article Header -->
-  <header class="mb-12">
-    <h1 class="text-4xl font-bold mb-4">Structure → Story → Soul: The Mástoras Approach to Business Clarity</h1>
-    <div class="flex items-center gap-4 text-gray-600 mb-6">
-      <span>By Garry Nicholl</span>
-      <span>•</span>
-      <time datetime="2026-03-26">March 26, 2026</time>
-      <span>•</span>
-      <span>5 min read</span>
-    </div>
-    <p class="text-xl text-gray-700 leading-relaxed">
-      How Mástoras turns unclear business thinking into something you can actually use — the Structure → Story → Soul approach.
-    </p>
-  </header>
-
-  <!-- Article Content -->
-  <article class="blog-content">
-
-    <p class="lead text-lg mb-8">
-      Every business has a story to tell. But having a story isn't enough. You need one that makes sense to the person hearing it — clear enough that they understand what you do and why it matters.
-    </p>
-
-    <p>
-      That's where our Structure → Story → Soul approach comes in. It's not just a process; it's a philosophy for business communication that we've developed and refined working with founders, tradespeople, and community organisations across Northern Ireland.
-    </p>
-
-    <h2 class="text-2xl font-bold mt-12 mb-6">The Three Pillars</h2>
-
-    <h3 class="text-xl font-semibold mt-8 mb-4">1. Structure: The Foundation</h3>
-    <p>
-      Before you can tell a compelling story, you need a solid foundation. Structure is about organizing your business thinking — clarifying your value proposition, identifying your target audience, and mapping out your strategic objectives.
-    </p>
-    <p>
-      We call this the "Clarity Check" — a comprehensive assessment that cuts through the confusion and gives you a clear roadmap for success.
-    </p>
-
-    <h3 class="text-xl font-semibold mt-8 mb-4">2. Story: The Connection</h3>
-    <p>
-      Once you have structure, it's time to bring it to life. Story is about crafting narratives that resonate emotionally with your audience. Whether it's a brand story, a funding application, or a marketing campaign, we help you transform dry facts into compelling narratives.
-    </p>
-    <p>
-      This is the "Story Reframe" — taking your business message and presenting it in a way that people can't ignore.
-    </p>
-
-    <h3 class="text-xl font-semibold mt-8 mb-4">3. Soul: The Impact</h3>
-    <p>
-      The final pillar is soul — the authentic, human element that makes your business memorable. Soul is about connecting with your audience on a deeper level, building trust, and creating lasting relationships.
-    </p>
-    <p>
-      This is where the work stops sounding like everyone else's, and starts sounding like you.
-    </p>
-
-    <h2 class="text-2xl font-bold mt-12 mb-6">Why This Approach Works</h2>
-
-    <p>
-      The approach works because it starts with clarity, not clever words. Get the thinking straight first, and the story tends to tell itself — to funders, to customers, to whoever needs to understand what you're doing.
-    </p>
-
-    <p>
-      Whether you're a startup seeking investment, a tradesperson wanting to stand out, or a community organisation applying for funding, this approach helps you explain what you do without losing people along the way.
-    </p>
-
-    <h2 class="text-2xl font-bold mt-12 mb-6">If your message keeps getting lost</h2>
-
-    <p>
-      If you're tired of your business message not landing, it's worth a different approach. Structure → Story → Soul is the same method behind every piece of Mástoras work — founders, trades, and community organisations getting clear before they pitch, sell, or apply.
-    </p>
-
-    <p>
-      <a href="https://calendly.com/garynicholl1515/20min" class="text-teal-600 font-semibold hover:text-teal-800">
-        Book a free 20-minute call
-      </a> to talk through where your message is losing people.
-    </p>
-
-  </article>
-
-  <!-- Article Footer -->
-  <footer class="mt-16 pt-8 border-t border-gray-200">
-    <div class="flex flex-wrap gap-2 mb-6">
-      <span class="text-sm text-gray-600">Tags:</span>
-      <a href="/blog/tag/business-strategy" class="text-sm text-teal-600 hover:text-teal-800">Business Strategy</a>,
-      <a href="/blog/tag/brand-storytelling" class="text-sm text-teal-600 hover:text-teal-800">Brand Storytelling</a>,
-      <a href="/blog/tag/consultancy" class="text-sm text-teal-600 hover:text-teal-800">Consultancy</a>,
-      <a href="/blog/tag/northern-ireland" class="text-sm text-teal-600 hover:text-teal-800">Northern Ireland</a>
-    </div>
-
-    <div class="flex items-center justify-between">
-      <a href="/blog" class="text-teal-600 hover:text-teal-800">← Back to Blog</a>
-      <div class="flex gap-4">
-        <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://mastoras.uk/blog/structure-story-soul"
-           class="text-gray-600 hover:text-blue-600">Share on LinkedIn</a>
-        <a href="https://twitter.com/intent/tweet?url=https://mastoras.uk/blog/structure-story-soul&text=Structure%20%E2%86%92%20Story%20%E2%86%92%20Soul:%20The%20M%C3%A1storas%20Approach%20to%20Business%20Clarity"
-           class="text-gray-600 hover:text-blue-400">Share on Twitter</a>
+  <header>
+    <div class="wrap">
+      <div class="header-inner">
+        <a href="https://mastoras.uk" class="wordmark" aria-label="Mástoras home">
+          <img src="../mastoras-logo.png" alt="Mástoras">
+        </a>
+        <nav class="nav-links" aria-label="Main navigation">
+          <a href="https://mastoras.uk/#services">Services</a>
+          <a href="https://mastoras.uk/blog">Blog</a>
+          <a href="https://mastoras.uk/#funding-intelligence">NI Funding</a>
+          <a href="https://mastoras.uk/#contact">Contact</a>
+          <a href="https://calendly.com/garynicholl1515/20min" target="_blank" rel="noopener" class="nav-cta">Book a Call</a>
+        </nav>
+        <button class="hamburger" onclick="toggleMobileNav()" aria-label="Open navigation" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
       </div>
     </div>
+    <div class="mobile-nav" id="mobile-nav">
+      <a href="https://mastoras.uk/#services" onclick="closeMobileNav()">Services</a>
+      <a href="https://mastoras.uk/blog" onclick="closeMobileNav()">Blog</a>
+      <a href="https://mastoras.uk/#funding-intelligence" onclick="closeMobileNav()">NI Funding</a>
+      <a href="https://mastoras.uk/#contact" onclick="closeMobileNav()">Contact</a>
+      <a href="https://calendly.com/garynicholl1515/20min" target="_blank" rel="noopener" style="color:var(--teal);font-weight:600;">Book a Call →</a>
+    </div>
+  </header>
+
+  <main>
+    <article class="article-wrap">
+
+      <div class="article-meta">
+        <span class="article-tag">Brand &amp; Story</span>
+        <time datetime="2026-03-26">March 26, 2026</time>
+        <span class="read-time">5 min read</span>
+      </div>
+
+      <h1 class="article-title">Structure → Story → Soul: The Mástoras Approach to Business Clarity</h1>
+
+      <p class="article-intro">How Mástoras turns unclear business thinking into something you can actually use — the Structure → Story → Soul approach.</p>
+
+      <div class="article-body">
+
+        <p>Every business has a story to tell. But having a story isn't enough. You need one that makes sense to the person hearing it — clear enough that they understand what you do and why it matters.</p>
+
+        <p>That's where the Structure → Story → Soul approach comes in. It's not just a process; it's a way of thinking about business communication, refined working with founders, tradespeople, and community organisations across Northern Ireland.</p>
+
+        <h2>The three layers</h2>
+
+        <h3>1. Structure: the foundation</h3>
+        <p>Before you can tell a clear story, you need a solid foundation. Structure is about organising your business thinking — what you actually offer, who it's for, and what the real objective is. Get this straight and everything downstream gets easier.</p>
+
+        <h3>2. Story: the connection</h3>
+        <p>Once you have structure, it's time to bring it to life. Story is about putting the thinking into words that land — whether it's a brand message, a funding application, or a sales conversation. The facts stay the same; the framing changes how people hear them.</p>
+
+        <h3>3. Soul: the part that's yours</h3>
+        <p>The final layer is soul — the human element that makes the work memorable. This is where it stops sounding like everyone else's and starts sounding like you. It's the difference between a competent message and one people remember.</p>
+
+        <h2>Why this approach works</h2>
+
+        <p>It works because it starts with clarity, not clever words. Get the thinking straight first, and the story tends to tell itself — to funders, to customers, to whoever needs to understand what you're doing.</p>
+
+        <p>Whether you're a startup seeking investment, a tradesperson wanting to stand out, or a community organisation applying for funding, this approach helps you explain what you do without losing people along the way.</p>
+
+        <h2>If your message keeps getting lost</h2>
+
+        <p>If you're tired of your business message not landing, it's worth a different approach. Structure → Story → Soul is the same method behind every piece of Mástoras work — founders, trades, and community organisations getting clear before they pitch, sell, or apply.</p>
+
+      </div>
+
+      <!-- CTA -->
+      <div class="article-cta">
+        <h3>Struggling to explain what you do?</h3>
+        <p>A Brand Story Sprint turns scattered thinking into a narrative you can actually use — for every pitch, proposal, and sales conversation. Start with a free 20-minute call and we'll find where your message is losing people.</p>
+        <div class="cta-buttons">
+          <a href="https://calendly.com/garynicholl1515/20min" target="_blank" rel="noopener" class="btn-primary">Book a free 20-min call →</a>
+          <a href="https://mastoras.uk/#services" class="btn-outline">See the services</a>
+        </div>
+      </div>
+
+      <!-- Author -->
+      <div class="author-block">
+        <img src="../garry-nicholl.jpg.png" alt="Garry Nicholl" class="author-img">
+        <div>
+          <p class="author-name">Garry Nicholl</p>
+          <p class="author-role">Founder, Mástoras — Clarity &amp; Story Consultancy</p>
+        </div>
+      </div>
+
+      <!-- Related -->
+      <div class="related">
+        <h3>Related reading</h3>
+        <a href="five-questions-every-new-client.html">The Five Questions I Ask Every New Client</a>
+        <a href="pre-build-assessment-case-study.html">Before You Sign the Lease: A Real Pre-Build Assessment</a>
+        <a href="wrong-grant-northern-ireland.html">You're Probably Applying for the Wrong Grant</a>
+      </div>
+
+    </article>
+  </main>
+
+  <footer>
+    <p>© 2026 Mástoras · Clarity &amp; Story Consultancy · Causeway Coast and Glens, Northern Ireland</p>
+    <div class="footer-links">
+      <a href="https://mastoras.uk">mastoras.uk</a>
+      <a href="https://mastoras.uk/blog">Blog</a>
+      <a href="mailto:hello@mastoras.uk">hello@mastoras.uk</a>
+      <a href="https://mastoras.uk/privacy-policy.html">Privacy Policy</a>
+    </div>
   </footer>
+
+  <script>
+    function toggleMobileNav() {
+      var nav = document.getElementById('mobile-nav');
+      var btn = document.querySelector('.hamburger');
+      var open = nav.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open);
+    }
+    function closeMobileNav() {
+      document.getElementById('mobile-nav').classList.remove('open');
+      document.querySelector('.hamburger').setAttribute('aria-expanded', 'false');
+    }
+  </script>
 
 </body>
 </html>

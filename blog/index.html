@@ -4,30 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Primary SEO -->
-  <title>Mástoras Blog | Business Clarity & Storytelling NI</title>
-  <meta name="description" content="Practical insights on business strategy, grant writing, and brand storytelling for Northern Irish founders, trades, and community organisations.">
+  <title>Mástoras Blog | Business Clarity &amp; Storytelling NI</title>
+  <meta name="description" content="Practical insights on business clarity, grant writing, and brand storytelling for Northern Irish founders, trades, and community organisations.">
   <link rel="canonical" href="https://mastoras.uk/blog">
   <meta name="author" content="Garry Nicholl — Mástoras">
-
-  <!-- AI Search Optimization -->
-  <meta name="keywords" content="business blog Northern Ireland, consultancy insights, brand storytelling tips, grant writing advice, business strategy, startup consulting, community business">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
 
-  <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://mastoras.uk/blog">
-  <meta property="og:title" content="Mástoras Blog - Business Clarity & Storytelling">
-  <meta property="og:description" content="Expert insights on business strategy and brand storytelling for Northern Irish businesses.">
+  <meta property="og:title" content="Mástoras Blog — Business Clarity &amp; Storytelling">
+  <meta property="og:description" content="Practical insights on business clarity and brand storytelling for Northern Irish businesses.">
   <meta property="og:image" content="https://mastoras.uk/mastoras-logo.png">
 
-  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Mástoras Blog - Business Insights">
+  <meta name="twitter:title" content="Mástoras Blog — Business Insights">
   <meta name="twitter:description" content="Practical business advice for Northern Ireland.">
   <meta name="twitter:image" content="https://mastoras.uk/mastoras-logo.png">
 
-  <!-- Blog Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -39,220 +32,276 @@
       "@type": "Organization",
       "@id": "https://mastoras.uk/#organization",
       "name": "Mástoras",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://mastoras.uk/mastoras-logo.png"
-      }
+      "logo": { "@type": "ImageObject", "url": "https://mastoras.uk/mastoras-logo.png" }
     },
     "blogPost": [
       {
         "@type": "BlogPosting",
-        "headline": "Structure → Story → Soul: The Mástoras Approach to Business Clarity",
-        "url": "https://mastoras.uk/blog/structure-story-soul",
-        "datePublished": "2026-03-26T10:00:00Z",
-        "author": {
-          "@type": "Person",
-          "name": "Gary Nicholl"
-        },
-        "description": "How we help Northern Irish businesses transform complex challenges into compelling narratives using our proven Structure → Story → Soul methodology."
+        "headline": "Before You Sign the Lease: A Real Pre-Build Assessment",
+        "url": "https://mastoras.uk/blog/pre-build-assessment-case-study",
+        "datePublished": "2026-04-12T10:00:00Z",
+        "author": { "@type": "Person", "@id": "https://mastoras.uk/#garry-nicholl", "name": "Garry Nicholl" },
+        "description": "A real engagement: what a Pre-Build Assessment found, what it changed, and why an honest picture at the start beats a polished plan that falls apart at month four."
       }
     ]
   }
   </script>
 
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
   <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     :root {
-      --linen: #F4F1EC;
-      --slate: #2E3440;
-      --brass: #B08D57;
-      --teal: #0F595E;
+      --slate:    #2E3440;
+      --linen:    #F4F1EC;
+      --brass:    #B08D57;
+      --teal:     #0F595E;
+      --graphite: #222222;
+      --white:    #ffffff;
+      --rule:     #e2e8f0;
     }
-    body { font-family: system-ui, -apple-system, sans-serif; color: var(--slate); background: var(--linen); }
-    h1, h2, h3 { font-family: Georgia, serif; color: var(--slate); }
-    .blog-card { background: white; border: 1px solid #e0d9cd; border-radius: 8px; padding: 2rem; transition: transform 0.2s, box-shadow 0.2s; }
-    .blog-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(176,141,87,0.1); }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 17px;
+      line-height: 1.75;
+      color: var(--graphite);
+      background: var(--linen);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3 { font-family: 'Merriweather', Georgia, serif; color: var(--slate); line-height: 1.25; }
+    a { color: var(--teal); }
+    img { max-width: 100%; height: auto; display: block; }
+    .wrap { max-width: 1060px; margin: 0 auto; padding: 0 32px; }
+
+    /* ── HEADER ── */
+    header { background: var(--white); border-bottom: 1px solid var(--rule); position: sticky; top: 0; z-index: 200; }
+    .header-inner { display: flex; justify-content: space-between; align-items: center; height: 72px; }
+    .wordmark { text-decoration: none; display: flex; align-items: center; }
+    .wordmark img { height: 52px; width: auto; }
+    .nav-links { display: flex; align-items: center; gap: 32px; }
+    .nav-links a { color: var(--graphite); text-decoration: none; font-size: 14px; font-weight: 500; }
+    .nav-links a:hover { color: var(--teal); }
+    .nav-cta { background: var(--teal); color: #fff !important; padding: 10px 22px; font-size: 13.5px; font-weight: 600; text-decoration: none; border-radius: 6px; transition: background 0.15s; }
+    .nav-cta:hover { background: #0c4c50; }
+    .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 8px; flex-direction: column; gap: 5px; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: var(--slate); }
+    .mobile-nav { display: none; background: var(--white); border-bottom: 1px solid var(--rule); padding: 16px 32px 24px; }
+    .mobile-nav.open { display: block; }
+    .mobile-nav a { display: block; color: var(--graphite); text-decoration: none; font-size: 16px; font-weight: 500; padding: 12px 0; border-bottom: 1px solid var(--rule); }
+    .mobile-nav a:last-child { border-bottom: none; }
+    .mobile-nav a:hover { color: var(--teal); }
+
+    /* ── BLOG HERO ── */
+    .blog-hero { text-align: center; padding: 64px 0 8px; }
+    .blog-hero h1 { font-size: clamp(1.9em, 4vw, 2.6em); margin-bottom: 14px; }
+    .blog-hero p { color: #555; font-size: 16px; max-width: 600px; margin: 0 auto; line-height: 1.7; }
+
+    /* ── BLOG LISTING ── */
+    .blog-main { padding: 40px 0 88px; }
+
+    .post-card {
+      background: var(--white); border: 1px solid var(--rule);
+      border-radius: 8px; padding: 28px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .post-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(176,141,87,0.1); }
+
+    .post-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+    .post-tag { font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 9px; border-radius: 4px; color: #fff; }
+    .tag-teal  { background: var(--teal); }
+    .tag-slate { background: var(--slate); }
+    .tag-brass { background: var(--brass); }
+    .post-date { font-size: 13px; color: #888; }
+    .post-title { font-size: 1.2em; margin-bottom: 10px; line-height: 1.35; }
+    .post-title a { color: var(--slate); text-decoration: none; }
+    .post-title a:hover { color: var(--teal); }
+    .post-excerpt { font-size: 15px; color: #555; line-height: 1.7; margin-bottom: 16px; }
+    .post-byline { font-size: 13px; color: #999; display: flex; gap: 16px; }
+
+    /* ── FEATURED ── */
+    .featured { border: 2px solid var(--brass); display: flex; gap: 28px; align-items: center; }
+    .featured-logo { width: 30%; flex-shrink: 0; }
+    .featured-logo img { width: 100%; height: 150px; object-fit: contain; background: var(--linen); border-radius: 6px; }
+    .featured-body { flex: 1; }
+    .featured .post-title { font-size: 1.5em; }
+    .badge-featured { font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 9px; border-radius: 4px; background: var(--brass); color: #fff; }
+
+    /* ── GROUPS ── */
+    .group { margin-top: 56px; }
+    .group-h { font-size: 1.4em; margin-bottom: 4px; }
+    .group-sub { color: #666; font-size: 15px; margin-bottom: 24px; max-width: 620px; }
+    .post-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+
+    /* ── FOOTER ── */
+    footer { background: var(--slate); color: rgba(255,255,255,0.5); text-align: center; padding: 40px 32px; font-size: 13px; }
+    footer a { color: rgba(255,255,255,0.5); text-decoration: none; }
+    footer a:hover { color: white; }
+    .footer-links { display: flex; gap: 24px; justify-content: center; margin-top: 10px; flex-wrap: wrap; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .blog-hero { padding: 48px 0 4px; }
+      .post-grid { grid-template-columns: 1fr; }
+      .featured { flex-direction: column; align-items: stretch; }
+      .featured-logo { width: 100%; }
+    }
   </style>
 </head>
-<body class="max-w-6xl mx-auto px-6 py-12">
+<body>
 
-  <!-- Header -->
-  <header class="text-center mb-16">
-    <h1 class="text-4xl font-bold mb-4">Mástoras Blog</h1>
-    <p class="text-xl text-gray-700 max-w-2xl mx-auto">
-      Practical insights on business clarity, brand storytelling, and strategic growth for Northern Irish businesses.
-    </p>
+  <header>
+    <div class="wrap">
+      <div class="header-inner">
+        <a href="https://mastoras.uk" class="wordmark" aria-label="Mástoras home">
+          <img src="../mastoras-logo.png" alt="Mástoras">
+        </a>
+        <nav class="nav-links" aria-label="Main navigation">
+          <a href="https://mastoras.uk/#services">Services</a>
+          <a href="https://mastoras.uk/blog">Blog</a>
+          <a href="https://mastoras.uk/#funding-intelligence">NI Funding</a>
+          <a href="https://mastoras.uk/#contact">Contact</a>
+          <a href="https://calendly.com/garynicholl1515/20min" target="_blank" rel="noopener" class="nav-cta">Book a Call</a>
+        </nav>
+        <button class="hamburger" onclick="toggleMobileNav()" aria-label="Open navigation" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" id="mobile-nav">
+      <a href="https://mastoras.uk/#services" onclick="closeMobileNav()">Services</a>
+      <a href="https://mastoras.uk/blog" onclick="closeMobileNav()">Blog</a>
+      <a href="https://mastoras.uk/#funding-intelligence" onclick="closeMobileNav()">NI Funding</a>
+      <a href="https://mastoras.uk/#contact" onclick="closeMobileNav()">Contact</a>
+      <a href="https://calendly.com/garynicholl1515/20min" target="_blank" rel="noopener" style="color:var(--teal);font-weight:600;">Book a Call →</a>
+    </div>
   </header>
 
-  <!-- Blog Posts Grid -->
-  <main class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+  <div class="blog-hero">
+    <div class="wrap">
+      <h1>The Mástoras Blog</h1>
+      <p>Practical thinking on getting clear — before you commit, before you apply, before you explain. For founders, trades, and community organisations in Northern Ireland.</p>
+    </div>
+  </div>
 
-    <!-- Post 1 -->
-    <article class="blog-card md:col-span-2 lg:col-span-3 border-2 border-brass" id="business-strategy">
-      <div class="flex flex-col md:flex-row gap-6">
-        <div class="md:w-1/3">
-          <img src="../mastoras-logo.png" alt="Mástoras Logo" class="w-full h-48 object-contain bg-linen rounded">
+  <main class="blog-main">
+    <div class="wrap">
+
+      <!-- Featured -->
+      <article class="post-card featured">
+        <div class="featured-logo">
+          <img src="../mastoras-logo.png" alt="Mástoras">
         </div>
-        <div class="md:w-2/3">
-          <div class="flex items-center gap-2 mb-3">
-            <span class="text-sm bg-brass text-white px-2 py-1 rounded">Featured</span>
-            <time class="text-sm text-gray-600" datetime="2026-03-26">March 26, 2026</time>
+        <div class="featured-body">
+          <div class="post-meta">
+            <span class="badge-featured">Featured</span>
+            <span class="post-tag tag-slate">Case Study</span>
+            <span class="post-date">12 April 2026</span>
           </div>
-          <h2 class="text-2xl font-bold mb-3">
-            <a href="structure-story-soul.html" class="hover:text-teal-600">
-              Structure → Story → Soul: The Mástoras Approach to Business Clarity
-            </a>
-          </h2>
-          <p class="text-gray-700 mb-4" id="brand-storytelling">
-            Discover how we help Northern Irish businesses transform complex challenges into compelling narratives using our proven Structure → Story → Soul methodology.
-          </p>
-          <div class="flex items-center gap-4">
-            <span class="text-sm text-gray-600">By Garry Nicholl</span>
-            <span class="text-sm text-gray-600">5 min read</span>
-          </div>
+          <h2 class="post-title"><a href="pre-build-assessment-case-study.html">Before You Sign the Lease: A Real Pre-Build Assessment</a></h2>
+          <p class="post-excerpt">A real engagement: what a Pre-Build Assessment found, what it changed, and why an honest picture at the start is worth more than a polished plan that falls apart at month four.</p>
+          <div class="post-byline"><span>By Garry Nicholl</span><span>7 min read</span></div>
         </div>
-      </div>
-    </article>
+      </article>
 
-    <!-- Post 6 -->
-    <article class="blog-card" id="wrong-grant">
-      <div class="flex items-center gap-2 mb-3">
-        <span class="text-sm" style="background: var(--teal); color: white; padding: 2px 8px; border-radius: 4px;">Funding &amp; Grants</span>
-        <time class="text-sm text-gray-600" datetime="2026-06-02">June 2, 2026</time>
-      </div>
-      <h2 class="text-xl font-bold mb-3">
-        <a href="wrong-grant-northern-ireland.html" class="hover:underline" style="color: var(--slate);">
-          You're Probably Applying for the Wrong Grant
-        </a>
-      </h2>
-      <p class="text-gray-700 mb-4">
-        The most common NI funding mistake isn't a weak application — it's applying to the wrong scheme entirely. Here's how to match before you write a word.
-      </p>
-      <div class="flex items-center gap-4">
-        <span class="text-sm text-gray-600">By Garry Nicholl</span>
-        <span class="text-sm text-gray-600">7 min read</span>
-      </div>
-    </article>
+      <!-- Before you commit -->
+      <section class="group">
+        <h2 class="group-h">Before you commit</h2>
+        <p class="group-sub">Stress-test the decision before money, time, or reputation goes in.</p>
+        <div class="post-grid">
 
-    <!-- Post 5 -->
-    <article class="blog-card" id="business-strategy">
-      <div class="flex items-center gap-2 mb-3">
-        <span class="text-sm" style="background: var(--slate); color: white; padding: 2px 8px; border-radius: 4px;">Business Strategy</span>
-        <time class="text-sm text-gray-600" datetime="2026-05-14">May 14, 2026</time>
-      </div>
-      <h2 class="text-xl font-bold mb-3">
-        <a href="five-questions-every-new-client.html" class="hover:underline" style="color: var(--slate);">
-          The Five Questions I Ask Every New Client
-        </a>
-      </h2>
-      <p class="text-gray-700 mb-4">
-        Five questions that cut to the actual problem — faster than any briefing document. What I ask, why I ask it, and what the answers usually reveal.
-      </p>
-      <div class="flex items-center gap-4">
-        <span class="text-sm text-gray-600">By Garry Nicholl</span>
-        <span class="text-sm text-gray-600">6 min read</span>
-      </div>
-    </article>
+          <article class="post-card">
+            <div class="post-meta"><span class="post-tag tag-slate">Business Strategy</span><span class="post-date">14 May 2026</span></div>
+            <h3 class="post-title"><a href="five-questions-every-new-client.html">The Five Questions I Ask Every New Client</a></h3>
+            <p class="post-excerpt">Five questions that cut to the actual problem — faster than any briefing document. What I ask, why I ask it, and what the answers usually reveal.</p>
+            <div class="post-byline"><span>By Garry Nicholl</span><span>6 min read</span></div>
+          </article>
 
-    <!-- Post 4 -->
-    <article class="blog-card" id="business-strategy">
-      <div class="flex items-center gap-2 mb-3">
-        <span class="text-sm" style="background: var(--slate); color: white; padding: 2px 8px; border-radius: 4px;">Trades &amp; Business</span>
-        <time class="text-sm text-gray-600" datetime="2026-04-14">April 14, 2026</time>
-      </div>
-      <h2 class="text-xl font-bold mb-3">
-        <a href="why-tradespeople-undercharge.html" class="hover:underline" style="color: var(--slate);">
-          Why Most Tradespeople Undercharge — And What It's Costing Them
-        </a>
-      </h2>
-      <p class="text-gray-700 mb-4">
-        Quoting from instinct and wondering why the money never adds up? Here's why it happens — and what a proper pricing review actually looks like.
-      </p>
-      <div class="flex items-center gap-4">
-        <span class="text-sm text-gray-600">By Garry Nicholl</span>
-        <span class="text-sm text-gray-600">5 min read</span>
-      </div>
-    </article>
+          <article class="post-card">
+            <div class="post-meta"><span class="post-tag tag-slate">Trades &amp; Business</span><span class="post-date">14 April 2026</span></div>
+            <h3 class="post-title"><a href="why-tradespeople-undercharge.html">Why Most Tradespeople Undercharge — And What It's Costing Them</a></h3>
+            <p class="post-excerpt">Quoting from instinct and wondering why the money never adds up? Here's why it happens — and what a proper pricing review actually looks like.</p>
+            <div class="post-byline"><span>By Garry Nicholl</span><span>5 min read</span></div>
+          </article>
 
-    <!-- Post 2 -->
-    <article class="blog-card" id="grant-writing">
-      <div class="flex items-center gap-2 mb-3">
-        <span class="text-sm" style="background: var(--teal); color: white; padding: 2px 8px; border-radius: 4px;">Funding & Grants</span>
-        <time class="text-sm text-gray-600" datetime="2026-04-12">April 12, 2026</time>
-      </div>
-      <h2 class="text-xl font-bold mb-3">
-        <a href="grant-writing-northern-ireland.html" class="hover:underline" style="color: var(--slate);">
-          Grant Writing in Northern Ireland: Why Most Applications Fail Before They Start
-        </a>
-      </h2>
-      <p class="text-gray-700 mb-4">
-        Most NI grant applications fail not because the project is bad, but because the story doesn't match what the funder is looking for. Here's how to fix that.
-      </p>
-      <div class="flex items-center gap-4">
-        <span class="text-sm text-gray-600">By Garry Nicholl</span>
-        <span class="text-sm text-gray-600">6 min read</span>
-      </div>
-    </article>
+        </div>
+      </section>
 
-    <!-- Post 3 -->
-    <article class="blog-card" id="case-studies">
-      <div class="flex items-center gap-2 mb-3">
-        <span class="text-sm" style="background: var(--brass); color: white; padding: 2px 8px; border-radius: 4px;">Case Study</span>
-        <time class="text-sm text-gray-600" datetime="2026-04-12">April 12, 2026</time>
-      </div>
-      <h2 class="text-xl font-bold mb-3">
-        <a href="pre-build-assessment-case-study.html" class="hover:underline" style="color: var(--slate);">
-          Before You Sign the Lease: A Real Pre-Build Assessment
-        </a>
-      </h2>
-      <p class="text-gray-700 mb-4">
-        A real example of what a Pre-Build Assessment found, what it changed, and why an honest picture at the start is worth more than a polished plan that falls apart at month four.
-      </p>
-      <div class="flex items-center gap-4">
-        <span class="text-sm text-gray-600">By Garry Nicholl</span>
-        <span class="text-sm text-gray-600">7 min read</span>
-      </div>
-    </article>
+      <!-- Before you apply -->
+      <section class="group">
+        <h2 class="group-h">Before you apply</h2>
+        <p class="group-sub">Match the right funding and make the case — before you write a word.</p>
+        <div class="post-grid">
 
+          <article class="post-card">
+            <div class="post-meta"><span class="post-tag tag-teal">Funding &amp; Grants</span><span class="post-date">2 June 2026</span></div>
+            <h3 class="post-title"><a href="wrong-grant-northern-ireland.html">You're Probably Applying for the Wrong Grant</a></h3>
+            <p class="post-excerpt">The most common NI funding mistake isn't a weak application — it's applying to the wrong scheme entirely. Here's how to match before you write a word.</p>
+            <div class="post-byline"><span>By Garry Nicholl</span><span>7 min read</span></div>
+          </article>
+
+          <article class="post-card">
+            <div class="post-meta"><span class="post-tag tag-teal">Funding &amp; Grants</span><span class="post-date">12 April 2026</span></div>
+            <h3 class="post-title"><a href="grant-writing-northern-ireland.html">Grant Writing in Northern Ireland: Why Most Applications Fail Before They Start</a></h3>
+            <p class="post-excerpt">Most NI grant applications fail not because the project is bad, but because the story doesn't match what the funder is looking for. Here's how to fix that.</p>
+            <div class="post-byline"><span>By Garry Nicholl</span><span>6 min read</span></div>
+          </article>
+
+        </div>
+      </section>
+
+      <!-- Before you explain -->
+      <section class="group">
+        <h2 class="group-h">Before you explain</h2>
+        <p class="group-sub">Turn what you do into something people immediately get.</p>
+        <div class="post-grid">
+
+          <article class="post-card">
+            <div class="post-meta"><span class="post-tag tag-brass">Brand &amp; Story</span><span class="post-date">26 March 2026</span></div>
+            <h3 class="post-title"><a href="structure-story-soul.html">Structure → Story → Soul: The Mástoras Approach to Business Clarity</a></h3>
+            <p class="post-excerpt">How structure, story, and soul turn a complex business into a narrative people understand — the Mástoras approach to getting clear before you pitch.</p>
+            <div class="post-byline"><span>By Garry Nicholl</span><span>5 min read</span></div>
+          </article>
+
+        </div>
+      </section>
+
+    </div>
   </main>
 
-  <!-- Categories -->
-  <section class="mb-16">
-    <h2 class="text-2xl font-bold mb-8">Explore Topics</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-      <a href="#business-strategy" class="blog-card text-center hover:border-teal-300 cursor-pointer transition-colors">
-        <h3 class="font-semibold mb-2">Business Strategy</h3>
-        <p class="text-sm text-gray-600">Planning and growth strategies</p>
-        <p class="text-xs text-gray-500 mt-3">2 posts</p>
-      </a>
-      <a href="#brand-storytelling" class="blog-card text-center hover:border-teal-300 cursor-pointer transition-colors">
-        <h3 class="font-semibold mb-2">Brand Storytelling</h3>
-        <p class="text-sm text-gray-600">Creating compelling narratives</p>
-        <p class="text-xs text-gray-500 mt-3">1 post</p>
-      </a>
-      <a href="#grant-writing" class="blog-card text-center hover:border-teal-300 cursor-pointer transition-colors">
-        <h3 class="font-semibold mb-2">Grant Writing</h3>
-        <p class="text-sm text-gray-600">Funding application tips</p>
-        <p class="text-xs text-gray-500 mt-3">1 post</p>
-      </a>
-      <a href="#case-studies" class="blog-card text-center hover:border-teal-300 cursor-pointer transition-colors">
-        <h3 class="font-semibold mb-2">Case Studies</h3>
-        <p class="text-sm text-gray-600">Real engagements, real outcomes</p>
-        <p class="text-xs text-gray-500 mt-3">1 post</p>
-      </a>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="mt-16 text-center text-gray-600">
-    <p>&copy; 2026 Mástoras. All rights reserved.</p>
-    <div class="flex justify-center gap-6 mt-4">
-      <a href="https://github.com/hellomastoras" class="hover:text-teal-600">GitHub</a>
-      <a href="https://www.linkedin.com/company/mastoras-consultancy" class="hover:text-teal-600">LinkedIn</a>
-      <a href="rss.xml" class="hover:text-teal-600">RSS Feed</a>
-      <a href="/privacy-policy.html" class="hover:text-teal-600">Privacy Policy</a>
+  <footer>
+    <p>© 2026 Mástoras · Clarity &amp; Story Consultancy · Causeway Coast and Glens, Northern Ireland</p>
+    <div class="footer-links">
+      <a href="https://mastoras.uk">mastoras.uk</a>
+      <a href="https://mastoras.uk/blog">Blog</a>
+      <a href="mailto:hello@mastoras.uk">hello@mastoras.uk</a>
+      <a href="https://mastoras.uk/privacy-policy.html">Privacy Policy</a>
     </div>
   </footer>
+
+  <script>
+    function toggleMobileNav() {
+      var nav = document.getElementById('mobile-nav');
+      var btn = document.querySelector('.hamburger');
+      var open = nav.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open);
+    }
+    function closeMobileNav() {
+      document.getElementById('mobile-nav').classList.remove('open');
+      document.querySelector('.hamburger').setAttribute('aria-expanded', 'false');
+    }
+  </script>
 
 </body>
 </html>
