@@ -70,6 +70,8 @@
     .result-section { display: none; background: white; border-radius: 6px; border: 2px solid var(--teal); padding: 36px; margin-bottom: 32px; text-align: center; }
     .result-score { font-family: Georgia, serif; font-size: 3rem; color: var(--teal); font-weight: bold; }
     .result-band { font-size: 1.1rem; font-weight: 600; margin: 8px 0 16px; }
+    .decision-badge { display: inline-flex; align-items: center; gap: 9px; border: 1.5px solid; border-radius: 30px; padding: 8px 20px; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; background: #fff; }
+    .decision-badge .db-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
     .result-desc { color: #555; font-size: 15px; line-height: 1.65; max-width: 500px; margin: 0 auto 28px; }
     .btn-cta { display: inline-block; background: var(--teal); color: white; padding: 14px 28px; border-radius: 4px; text-decoration: none; font-weight: 600; font-size: 16px; }
 
@@ -496,7 +498,12 @@
 
         if (sbRes.ok || w3Data.success) {
           document.getElementById('result-score-num').textContent = score + '/24';
-          document.getElementById('result-band-title').textContent = band ? band.title : '';
+          var bc = band ? band.colour : '#888';
+          document.getElementById('result-band-title').innerHTML = band
+            ? '<span class="decision-badge" style="color:' + bc + ';border-color:' + bc + '">' +
+                '<span class="db-dot" style="background:' + bc + '"></span>' + band.title +
+              '</span>'
+            : '';
           document.getElementById('result-band-desc').textContent = band ? band.desc : '';
           const resultSection = document.getElementById('result-section');
           resultSection.style.display = 'block';

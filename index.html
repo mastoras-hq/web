@@ -712,6 +712,16 @@
     .about-aside-contact { font-size: 13.5px; color: #888; line-height: 1.9; }
     .about-aside-contact a { color: #888; text-decoration: underline; text-underline-offset: 2px; }
     .svc-sub-link { font-size: 13px; margin-top: 10px; }
+    .svc-verdicts { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+    .svc-verdict {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11.5px; font-weight: 600; letter-spacing: 0.03em;
+      padding: 4px 12px; border-radius: 30px; border: 1px solid;
+    }
+    .svc-verdict::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; display: inline-block; }
+    .v-go    { color: #2f9e57; border-color: rgba(39,174,96,0.4); }
+    .v-pause { color: #c2812a; border-color: rgba(194,129,42,0.45); }
+    .v-stop  { color: #c0392b; border-color: rgba(192,57,43,0.4); }
     .svc-sub-link a { color: var(--teal); text-decoration: none; font-weight: 500; }
     .svc-sub-link a:hover { text-decoration: underline; }
     .contact-tool-note { font-size: 13.5px; color: #777; border-top: 1px solid #e0d9cd; padding-top: 14px; margin-top: 4px; }
@@ -986,7 +996,12 @@
       <div class="svc">
         <div class="svc-left">
           <p class="svc-name">Pre-Build Assessment</p>
-          <p class="svc-desc">Before you commit money or reputation to a new idea — stress-test it properly. Decision memo, route comparisons, clear Proceed / Pause / Stop recommendation, and an exit strategy built in from day one. Three tiers depending on complexity.</p>
+          <p class="svc-desc">Before you commit money or reputation to a new idea — stress-test it properly. Decision memo, route comparisons, a clear recommendation, and an exit strategy built in from day one. Three tiers depending on complexity.</p>
+          <div class="svc-verdicts" aria-label="Every Pre-Build ends in a clear call">
+            <span class="svc-verdict v-go">Proceed</span>
+            <span class="svc-verdict v-pause">Pause</span>
+            <span class="svc-verdict v-stop">Stop</span>
+          </div>
           <p class="svc-sub-link"><a href="/readiness-check">Not sure if your idea is ready? Try the free BRICK →</a></p>
         </div>
         <span class="svc-price">Lite £300 · Std £450 · Plus £650</span>
