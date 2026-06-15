@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Free Tools | Mástoras — Get clear before you commit</title>
+  <meta name="description" content="Two free Mástoras tools for Northern Ireland: the BRICK (is your idea ready?) and the Funding Check (which NI schemes fit you?). No sign-up, no cost.">
+  <link rel="canonical" href="https://mastoras.uk/tools/">
+  <meta name="author" content="Garry Nicholl — Mástoras">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://mastoras.uk/tools/">
+  <meta property="og:title" content="Free Tools | Mástoras">
+  <meta property="og:description" content="Two free tools to get clear before you commit or apply — the BRICK and the Funding Check.">
+  <meta property="og:image" content="https://mastoras.uk/mastoras-logo.png">
+
+  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZZ15XT7EEJ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-ZZ15XT7EEJ');
+  </script>
+
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --slate:    #2E3440;
+      --linen:    #F4F1EC;
+      --brass:    #B08D57;
+      --teal:     #0F595E;
+      --graphite: #222222;
+      --white:    #ffffff;
+      --rule:     #e2e8f0;
+    }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 17px; line-height: 1.75; color: var(--graphite);
+      background: var(--linen); -webkit-font-smoothing: antialiased;
+    }
+    h1, h2, h3 { font-family: 'Merriweather', Georgia, serif; color: var(--slate); line-height: 1.25; }
+    a { color: var(--teal); }
+    img { max-width: 100%; height: auto; display: block; }
+    .wrap { max-width: 1060px; margin: 0 auto; padding: 0 32px; }
+
+    /* ── HEADER ── */
+    header { background: var(--white); border-bottom: 1px solid var(--rule); position: sticky; top: 0; z-index: 200; }
+    .header-inner { display: flex; justify-content: space-between; align-items: center; height: 72px; }
+    .wordmark { text-decoration: none; display: flex; align-items: center; }
+    .wordmark img { height: 52px; width: auto; }
+    .nav-links { display: flex; align-items: center; gap: 32px; }
+    .nav-links a { color: var(--graphite); text-decoration: none; font-size: 14px; font-weight: 500; }
+    .nav-links a:hover { color: var(--teal); }
+    .nav-links a.current { color: var(--teal); }
+    .nav-cta { background: var(--teal); color: #fff !important; padding: 10px 22px; font-size: 13.5px; font-weight: 600; text-decoration: none; border-radius: 6px; transition: background 0.15s; }
+    .nav-cta:hover { background: #0c4c50; }
+    .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 8px; flex-direction: column; gap: 5px; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: var(--slate); }
+    .mobile-nav { display: none; background: var(--white); border-bottom: 1px solid var(--rule); padding: 16px 32px 24px; }
+    .mobile-nav.open { display: block; }
+    .mobile-nav a { display: block; color: var(--graphite); text-decoration: none; font-size: 16px; font-weight: 500; padding: 12px 0; border-bottom: 1px solid var(--rule); }
+    .mobile-nav a:last-child { border-bottom: none; }
+    .mobile-nav a:hover { color: var(--teal); }
+
+    /* ── HERO ── */
+    .tools-hero { text-align: center; padding: 64px 0 8px; }
+    .tools-eyebrow {
+      display: inline-block; font-size: 11px; font-weight: 700;
+      letter-spacing: 0.16em; text-transform: uppercase; color: var(--brass);
+      margin-bottom: 18px;
+    }
+    .tools-hero h1 { font-size: clamp(1.8em, 4vw, 2.5em); margin-bottom: 16px; letter-spacing: -0.01em; }
+    .tools-hero p { color: #555; font-size: 16.5px; max-width: 600px; margin: 0 auto; line-height: 1.7; }
+
+    /* ── TOOL CARDS ── */
+    .tools-main { padding: 44px 0 80px; }
+    .tools-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+
+    .tool-card {
+      background: var(--white); border: 1px solid var(--rule);
+      border-radius: 10px; padding: 36px 32px;
+      display: flex; flex-direction: column;
+    }
+    .tool-stage {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--brass); margin-bottom: 14px;
+    }
+    .tool-name { font-size: 1.5em; margin-bottom: 12px; }
+    .tool-desc { font-size: 15.5px; color: #555; line-height: 1.7; margin-bottom: 20px; }
+    .tool-points { list-style: none; margin: 0 0 26px; padding: 0; }
+    .tool-points li {
+      font-size: 14px; color: #4a4a4a; line-height: 1.5;
+      padding: 6px 0 6px 22px; position: relative;
+    }
+    .tool-points li::before {
+      content: ''; position: absolute; left: 0; top: 13px;
+      width: 7px; height: 7px; border-radius: 50%; background: var(--teal);
+    }
+    .tool-cta-row { margin-top: auto; }
+    .tool-btn {
+      display: inline-block; background: var(--teal); color: #fff;
+      padding: 14px 28px; border-radius: 6px; text-decoration: none;
+      font-weight: 600; font-size: 15px; transition: background 0.15s;
+    }
+    .tool-btn:hover { background: #0c4c50; color: #fff; }
+    .tool-meta { font-size: 12.5px; color: #999; margin-top: 12px; }
+
+    /* ── SECONDARY (digest) + CTA ── */
+    .tools-secondary {
+      margin-top: 28px; background: var(--slate); border-radius: 10px;
+      padding: 28px 32px; display: flex; align-items: center;
+      justify-content: space-between; gap: 20px; flex-wrap: wrap;
+    }
+    .tools-secondary .ts-copy { color: rgba(255,255,255,0.78); font-size: 15px; max-width: 620px; line-height: 1.6; }
+    .tools-secondary .ts-copy strong { color: #fff; }
+    .ts-link { color: #fff; font-weight: 600; font-size: 15px; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(255,255,255,0.4); white-space: nowrap; }
+    .ts-link:hover { text-decoration-color: #fff; }
+
+    .tools-foot { text-align: center; margin-top: 40px; font-size: 15px; color: #666; }
+    .tools-foot a { font-weight: 600; }
+
+    /* ── FOOTER ── */
+    footer { background: var(--slate); color: rgba(255,255,255,0.5); text-align: center; padding: 40px 32px; font-size: 13px; margin-top: 24px; }
+    footer a { color: rgba(255,255,255,0.5); text-decoration: none; }
+    footer a:hover { color: white; }
+    .footer-links { display: flex; gap: 24px; justify-content: center; margin-top: 10px; flex-wrap: wrap; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 760px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .tools-grid { grid-template-columns: 1fr; }
+      .tools-secondary { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="wrap">
+      <div class="header-inner">
+        <a href="https://mastoras.uk" class="wordmark" aria-label="Mástoras home">
+          <img src="../mastoras-logo.png" alt="Mástoras">
+        </a>
+        <nav class="nav-links" aria-label="Main navigation">
+          <a href="https://mastoras.uk/#services">Services</a>
+          <a href="/tools/" class="current">Free Tools</a>
+          <a href="https://mastoras.uk/blog">Blog</a>
+          <a href="https://mastoras.uk/#about">About</a>
+          <a href="https://calendly.com/garynicholl1515/20min" target="_blank" rel="noopener" class="nav-cta">Book a Call</a>
+        </nav>
+        <button class="hamburger" onclick="toggleMobileNav()" aria-label="Open navigation" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" id="mobile-nav">
+      <a href="https://mastoras.uk/#services" onclick="closeMobileNav()">Services</a>
+      <a href="/tools/" onclick="closeMobileNav()">Free Tools</a>
+      <a href="https://mastoras.uk/blog" onclick="closeMobileNav()">Blog</a>
+      <a href="https://mastoras.uk/#about" onclick="closeMobileNav()">About</a>
+      <a href="https://calendly.com/garynicholl1515/20min" target="_blank" rel="noopener" style="color:var(--teal);font-weight:600;">Book a Call →</a>
+    </div>
+  </header>
+
+  <div class="tools-hero">
+    <div class="wrap">
+      <span class="tools-eyebrow">Free · No sign-up</span>
+      <h1>Get clear before you commit a penny</h1>
+      <p>Two free tools that do the thinking most people skip — one for the idea, one for the funding. Use either on its own, or both together.</p>
+    </div>
+  </div>
+
+  <main class="tools-main">
+    <div class="wrap">
+
+      <div class="tools-grid">
+
+        <!-- BRICK -->
+        <div class="tool-card">
+          <span class="tool-stage">Before you commit</span>
+          <h2 class="tool-name">The BRICK</h2>
+          <p class="tool-desc">Is the idea actually ready to build on? The Business Readiness &amp; Idea Clarity Kit scores your idea across the things that usually decide whether it holds — honestly, before you spend money on it.</p>
+          <ul class="tool-points">
+            <li>12 quick questions, scored out of 24</li>
+            <li>An instant verdict — from "not ready yet" to "ready to build"</li>
+            <li>The low scores are the useful part: they show what to fix first</li>
+          </ul>
+          <div class="tool-cta-row">
+            <a href="/readiness-check" class="tool-btn">Start the BRICK →</a>
+            <p class="tool-meta">~5 minutes · result on screen</p>
+          </div>
+        </div>
+
+        <!-- Funding Check -->
+        <div class="tool-card">
+          <span class="tool-stage">Before you apply</span>
+          <h2 class="tool-name">Funding Check</h2>
+          <p class="tool-desc">Which schemes actually fit you? Answer four questions and the Mástoras NI Funding Match shows how many of 160+ tracked NI and all-island schemes match your profile — so you chase the right ones, not all of them.</p>
+          <ul class="tool-points">
+            <li>Four questions: org type, sector, council, funding ask</li>
+            <li>Your match count and top schemes, instantly</li>
+            <li>Tracked from public sources and reviewed regularly</li>
+          </ul>
+          <div class="tool-cta-row">
+            <a href="/funding-check/" class="tool-btn">Check your funding →</a>
+            <p class="tool-meta">~90 seconds · no sign-up</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Digest (secondary) -->
+      <div class="tools-secondary">
+        <p class="ts-copy"><strong>Just seeing what's open?</strong> The monthly NI Funding Digest lists recently opened schemes, what's closing soon, and what's on the radar — tracked from public sources.</p>
+        <a href="/funding-digest/" class="ts-link">Browse the digest →</a>
+      </div>
+
+      <!-- Not sure -->
+      <p class="tools-foot">Not sure which you need? <a href="https://calendly.com/garynicholl1515/20min" target="_blank" rel="noopener">Book a free 20-minute call</a> and I'll point you to the right starting place.</p>
+
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2026 Mástoras · Clarity &amp; Story Consultancy · Causeway Coast and Glens, Northern Ireland</p>
+    <div class="footer-links">
+      <a href="https://mastoras.uk">mastoras.uk</a>
+      <a href="https://mastoras.uk/blog">Blog</a>
+      <a href="mailto:hello@mastoras.uk">hello@mastoras.uk</a>
+      <a href="https://mastoras.uk/privacy-policy.html">Privacy Policy</a>
+    </div>
+  </footer>
+
+  <script>
+    function toggleMobileNav() {
+      var nav = document.getElementById('mobile-nav');
+      var btn = document.querySelector('.hamburger');
+      var open = nav.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open);
+    }
+    function closeMobileNav() {
+      document.getElementById('mobile-nav').classList.remove('open');
+      document.querySelector('.hamburger').setAttribute('aria-expanded', 'false');
+    }
+  </script>
+
+</body>
+</html>
