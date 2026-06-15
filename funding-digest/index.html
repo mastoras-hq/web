@@ -107,6 +107,8 @@
     .fund-card-radar { font-size: 13px; color: var(--graphite); margin-bottom: 8px; font-style: italic; }
     .fund-card-link { font-size: 13px; color: var(--teal); text-decoration: none; font-weight: 500; }
     .fund-card-link:hover { text-decoration: underline; }
+    .fund-card-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--rule); }
+    .fund-card-checked { font-size: 11.5px; color: #a3a3a3; }
 
     /* ── CTA BANNER ── */
     .cta-banner {
@@ -275,10 +277,17 @@
   }
 
   function regionBadge(fund) {
-    if (fund.region === 'All-Island') {
-      return '<span class="badge badge-region">All-Island</span>';
-    }
-    return '';
+    if (!fund.region) return '';
+    return '<span class="badge badge-region">' + escHtml(fund.region) + '</span>';
+  }
+
+  // Trust signal: when the source link was last confirmed live by the monitor.
+  function checkedLine(fund) {
+    if (!fund.last_verified) return '';
+    var d = new Date(fund.last_verified);
+    if (isNaN(d.getTime())) return '';
+    var label = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+    return '<span class="fund-card-checked">Source checked ' + label + '</span>';
   }
 
   function renderFundCard(fund, mode) {
@@ -310,7 +319,8 @@
         (fund.grant_size ? '<span class="badge badge-region">' + escHtml(fund.grant_size) + '</span>' : '') +
         regionBadge(fund) + extraBadge +
       '</div>' +
-      deadlineHtml + radarHtml + link +
+      deadlineHtml + radarHtml +
+      ((link || checkedLine(fund)) ? '<div class="fund-card-foot">' + link + checkedLine(fund) + '</div>' : '') +
       '</div>';
   }
 
