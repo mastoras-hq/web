@@ -508,6 +508,30 @@
     .flag-btn.closebtn { color:#9a7320; } .flag-btn.closebtn:hover { border-color:#9a7320; background:#fdf3e3; }
     .flag-btn.dismiss { color:#888; } .flag-btn.dismiss:hover { border-color:#888; background:var(--linen); }
     .flag-empty { font-size:13px; color:var(--green); padding:8px 0; }
+    /* Discovered-fund candidate cards */
+    .cand-card { background:var(--white); border:1px solid var(--rule); border-left:3px solid var(--teal); border-radius:6px; padding:14px 16px; margin-bottom:12px; }
+    .cand-card.dup { border-left-color:#9a7320; }
+    .cand-top { display:flex; justify-content:space-between; align-items:baseline; gap:10px; }
+    .cand-name { font-weight:600; color:var(--slate); font-size:14.5px; }
+    .cand-prov { font-size:12px; color:#888; }
+    .cand-badges { display:flex; gap:6px; flex-wrap:wrap; margin:7px 0; }
+    .cand-badge { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; padding:2px 7px; border-radius:3px; white-space:nowrap; }
+    .cb-live { background:#e8f5ec; color:#1e7e44; }
+    .cb-region { background:#eef2f3; color:var(--teal); }
+    .cb-conf { background:#f3f0ea; color:#7a6b50; }
+    .cb-dup { background:#fdf3e3; color:#9a7320; }
+    .cand-grid { font-size:12.5px; color:#555; margin:6px 0; line-height:1.7; }
+    .cand-grid b { color:var(--slate); font-weight:600; }
+    .cand-url { font-size:12px; margin:4px 0 8px; word-break:break-all; }
+    .cand-url a { color:var(--teal); }
+    .cand-evidence { margin:6px 0 4px; }
+    .cand-evidence summary { font-size:12px; color:var(--teal); cursor:pointer; font-weight:600; }
+    .cand-evidence pre { white-space:pre-wrap; font-family:'DM Sans',sans-serif; font-size:11.5px; color:#666; background:var(--linen); border-radius:5px; padding:8px 10px; margin:6px 0 0; }
+    .cand-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+    .cand-btn { border:1px solid var(--rule); background:var(--white); border-radius:5px; padding:6px 12px; font-family:'DM Sans',sans-serif; font-size:12.5px; font-weight:600; cursor:pointer; }
+    .cand-btn.approve { color:#1e7e44; } .cand-btn.approve:hover { border-color:#1e7e44; background:#e8f5ec; }
+    .cand-btn.edit { color:var(--teal); } .cand-btn.edit:hover { border-color:var(--teal); background:rgba(15,89,94,0.05); }
+    .cand-btn.reject { color:#c0392b; } .cand-btn.reject:hover { border-color:#c0392b; background:#fbeeee; }
 
     /* ── FOOTER ── */
     footer {
@@ -875,6 +899,15 @@
 
     <div class="admin-reports">
       <div class="admin-report-head">
+        <h3>Discovered funds — pending review</h3>
+        <button type="button" class="btn-refresh" onclick="loadCandidates()">↻ Refresh</button>
+      </div>
+      <p class="admin-muted" style="margin:0 0 12px">New schemes found by the discovery agent. Each source link was checked live before it reached this queue. Nothing is added to the fund database until you approve it.</p>
+      <div id="candidates-list"><p class="admin-muted">Loading…</p></div>
+    </div>
+
+    <div class="admin-reports">
+      <div class="admin-report-head">
         <h3>Flagged for review</h3>
         <button type="button" class="btn-refresh" onclick="loadFlags()">↻ Refresh</button>
       </div>
@@ -937,7 +970,7 @@
 
   function showAdminSection() {
     var el = document.getElementById('admin-section');
-    if (el) { el.style.display = 'block'; loadFlags(); loadRuns(); loadChanges(); }
+    if (el) { el.style.display = 'block'; loadCandidates(); loadFlags(); loadRuns(); loadChanges(); }
   }
 
   /* ── API KEY MODAL ── */
@@ -1602,6 +1635,73 @@
       }).join('');
     })
     .catch(function () { el.innerHTML = '<p class="admin-muted">Could not load changes.</p>'; });
+  }
+
+  /* ── DISCOVERED FUND CANDIDATES ── */
+  function loadCandidates() {
+    var el = document.getElementById('candidates-list');
+    el.innerHTML = '<p class="admin-muted">Loading…</p>';
+    fetch(API + '/admin/candidates', { headers: { 'X-API-Key': state.apiKey } })
+    .then(function (r) { return r.ok ? r.json() : []; })
+    .then(function (cands) {
+      if (!cands.length) { el.innerHTML = '<p class="flag-empty">✓ No candidates waiting — the discovery agent will drop new schemes here for approval.</p>'; return; }
+      el.innerHTML = cands.map(renderCandidate).join('');
+    })
+    .catch(function () { el.innerHTML = '<p class="admin-muted">Could not load candidates.</p>'; });
+  }
+
+  function renderCandidate(c) {
+    var dup = !!c.dedupe_match;
+    var conf = (c.confidence != null) ? Math.round(c.confidence * 100) + '% confidence' : '';
+    var checked = c.url_checked_at ? (' · checked ' + escHtml((c.url_checked_at || '').slice(0,10))) : '';
+    var badges = '<span class="cand-badge cb-live">✓ link live' + checked + '</span>';
+    if (c.region) badges += '<span class="cand-badge cb-region">' + escHtml(c.region) + '</span>';
+    if (conf) badges += '<span class="cand-badge cb-conf">' + escHtml(conf) + '</span>';
+    if (dup) badges += '<span class="cand-badge cb-dup">⚠ ' + escHtml(c.dedupe_match) + '</span>';
+
+    var rows = [];
+    if (c.grant_size) rows.push('<b>Grant:</b> ' + escHtml(c.grant_size));
+    if (c.deadline_date || c.deadline_type) rows.push('<b>Deadline:</b> ' + escHtml(c.deadline_date || c.deadline_type));
+    if (c.org_type && c.org_type.length) rows.push('<b>Who:</b> ' + escHtml(c.org_type.join(', ')));
+    if (c.sector_focus && c.sector_focus.length) rows.push('<b>Sectors:</b> ' + escHtml(c.sector_focus.join(', ')));
+    var grid = rows.length ? '<div class="cand-grid">' + rows.join('<br>') + '</div>' : '';
+
+    var evidence = '';
+    if (c.evidence && Object.keys(c.evidence).length) {
+      var lines = Object.keys(c.evidence).map(function (k) { return k + ': ' + c.evidence[k]; }).join('\n');
+      evidence = '<details class="cand-evidence"><summary>Show source evidence</summary><pre>' + escHtml(lines) + '</pre></details>';
+    }
+
+    return '<div class="cand-card' + (dup ? ' dup' : '') + '">' +
+      '<div class="cand-top"><span class="cand-name">' + escHtml(c.fund_name || '(unnamed)') + '</span>' +
+        '<span class="cand-prov">' + escHtml(c.provider || '') + '</span></div>' +
+      '<div class="cand-badges">' + badges + '</div>' +
+      grid +
+      '<div class="cand-url"><a href="' + escHtml(c.source_url || '') + '" target="_blank" rel="noopener">' + escHtml(c.source_url || '—') + '</a></div>' +
+      evidence +
+      '<div class="cand-actions">' +
+        '<button type="button" class="cand-btn approve" onclick="candidateAction(\'' + escHtml(c.id) + '\',\'approve\')">✓ Approve</button>' +
+        '<button type="button" class="cand-btn reject" onclick="candidateReject(\'' + escHtml(c.id) + '\')">✕ Reject</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function candidateAction(id, action, body) {
+    var payload = body || { candidate_id: id, action: action };
+    fetch(API + '/admin/candidates/action', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-API-Key': state.apiKey },
+      body: JSON.stringify(payload)
+    })
+    .then(function (r) { if (!r.ok) return r.json().then(function (e) { throw new Error(e.detail || ''); }); return r.json(); })
+    .then(function () { loadCandidates(); })
+    .catch(function (e) { alert('Action failed — ' + (e.message || 'try again.')); });
+  }
+
+  function candidateReject(id) {
+    var note = prompt('Reject this candidate? Optional note (why):');
+    if (note === null) return;  // cancelled
+    candidateAction(id, 'reject', { candidate_id: id, action: 'reject', review_note: note || null });
   }
 
   /* ── REVIEW QUEUE ── */
