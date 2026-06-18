@@ -520,6 +520,12 @@
     .cb-region { background:#eef2f3; color:var(--teal); }
     .cb-conf { background:#f3f0ea; color:#7a6b50; }
     .cb-dup { background:#fdf3e3; color:#9a7320; }
+    .cb-stale { background:#fbeeee; color:#c0392b; }
+    .enrich-form { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:0 0 16px; padding:12px; background:var(--linen); border-radius:6px; }
+    .enrich-form input { font-family:'DM Sans',sans-serif; font-size:13px; padding:8px 10px; border:1px solid var(--rule); border-radius:5px; }
+    .enrich-form input#enrich-url { flex:1 1 280px; }
+    .enrich-form input#enrich-provider { flex:0 1 180px; }
+    .enrich-form #enrich-status { flex-basis:100%; font-size:12px; }
     .cand-grid { font-size:12.5px; color:#555; margin:6px 0; line-height:1.7; }
     .cand-grid b { color:var(--slate); font-weight:600; }
     .cand-url { font-size:12px; margin:4px 0 8px; word-break:break-all; }
@@ -902,7 +908,13 @@
         <h3>Discovered funds — pending review</h3>
         <button type="button" class="btn-refresh" onclick="loadCandidates()">↻ Refresh</button>
       </div>
-      <p class="admin-muted" style="margin:0 0 12px">New schemes found by the discovery agent. Each source link was checked live before it reached this queue. Nothing is added to the fund database until you approve it.</p>
+      <p class="admin-muted" style="margin:0 0 12px">New schemes found by the discovery agent. Each source link was checked live before it reached this queue. Nothing is added to the fund database until you approve it. <strong>Source confidence</strong> = how sure the engine is it read the funder's page correctly — it is <em>not</em> a client match score.</p>
+      <div class="enrich-form">
+        <input type="url" id="enrich-url" placeholder="Paste a funder scheme URL to enrich…" />
+        <input type="text" id="enrich-provider" placeholder="Funder name (optional)" />
+        <button type="button" class="btn-admin" id="btn-enrich" onclick="enrichUrl()">Enrich URL</button>
+        <span id="enrich-status" class="admin-muted"></span>
+      </div>
       <div id="candidates-list"><p class="admin-muted">Loading…</p></div>
     </div>
 
@@ -1650,13 +1662,45 @@
     .catch(function () { el.innerHTML = '<p class="admin-muted">Could not load candidates.</p>'; });
   }
 
+  function enrichUrl() {
+    var url = (document.getElementById('enrich-url').value || '').trim();
+    var prov = (document.getElementById('enrich-provider').value || '').trim();
+    var statusEl = document.getElementById('enrich-status');
+    var btn = document.getElementById('btn-enrich');
+    if (!/^https?:\/\//.test(url)) { statusEl.textContent = 'Enter a valid http(s) URL.'; return; }
+    btn.disabled = true; statusEl.textContent = 'Fetching + reading the page… (10–30s)';
+    fetch(API + '/admin/enrich-url', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-API-Key': state.apiKey },
+      body: JSON.stringify({ url: url, provider: prov || null })
+    })
+    .then(function (r) { if (!r.ok) return r.json().then(function (e) { throw new Error(e.detail || 'failed'); }); return r.json(); })
+    .then(function (d) {
+      btn.disabled = false;
+      if (d.status === 'ok') {
+        statusEl.textContent = '✓ Added: ' + (d.fund_name || 'candidate') + (d.dedupe_match ? ' (possible duplicate)' : '');
+        document.getElementById('enrich-url').value = '';
+        document.getElementById('enrich-provider').value = '';
+        loadCandidates();
+      } else {
+        statusEl.textContent = '✕ Not added — ' + (d.result === 'rejected_validation'
+          ? 'the URL did not validate live (dead, blocked, or scheme name not on the page).'
+          : (d.error || d.result || 'could not enrich.'));
+      }
+    })
+    .catch(function (e) { btn.disabled = false; statusEl.textContent = '✕ ' + (e.message || 'failed'); });
+  }
+
   function renderCandidate(c) {
     var dup = !!c.dedupe_match;
-    var conf = (c.confidence != null) ? Math.round(c.confidence * 100) + '% confidence' : '';
+    var conf = (c.confidence != null) ? 'Source confidence ' + Math.round(c.confidence * 100) + '%' : '';
     var checked = c.url_checked_at ? (' · checked ' + escHtml((c.url_checked_at || '').slice(0,10))) : '';
+    var stale = c.deadline_date && /^\d{4}-\d{2}-\d{2}$/.test(c.deadline_date) &&
+                (c.deadline_date < new Date().toISOString().slice(0,10));
     var badges = '<span class="cand-badge cb-live">✓ link live' + checked + '</span>';
     if (c.region) badges += '<span class="cand-badge cb-region">' + escHtml(c.region) + '</span>';
-    if (conf) badges += '<span class="cand-badge cb-conf">' + escHtml(conf) + '</span>';
+    if (conf) badges += '<span class="cand-badge cb-conf" title="How sure the engine is it read the funder page correctly — not a client match score">' + escHtml(conf) + '</span>';
+    if (stale) badges += '<span class="cand-badge cb-stale">⚠ deadline passed — verify</span>';
     if (dup) badges += '<span class="cand-badge cb-dup">⚠ ' + escHtml(c.dedupe_match) + '</span>';
 
     var rows = [];
