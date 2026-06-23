@@ -901,6 +901,13 @@
         <div class="admin-result" id="result-radar"></div>
       </div>
 
+      <div class="admin-card">
+        <h3>AI Discovery</h3>
+        <p>Search the wider NI funding landscape for new schemes, validate + enrich each, and drop candidates into the review queue above. Costs a few £ per run.</p>
+        <button type="button" class="btn-admin" id="btn-discovery" onclick="runDiscovery()">Run now</button>
+        <div class="admin-result" id="result-discovery"></div>
+      </div>
+
     </div>
 
     <div class="admin-reports">
@@ -1579,6 +1586,12 @@
     _adminRun('/admin/run-radar', 'btn-radar', 'result-radar',
       'Starting radar…',
       function (d) { setTimeout(function () { loadRuns(); }, 30000); return d.status || 'Started.'; });
+  }
+
+  function runDiscovery() {
+    _adminRun('/admin/run-discovery', 'btn-discovery', 'result-discovery',
+      'Searching the funding landscape… (1–2 min)',
+      function (d) { setTimeout(function () { loadCandidates(); loadRuns(); }, 90000); return d.status || 'Started.'; });
   }
 
   /* ── ADMIN REPORTS ── */
