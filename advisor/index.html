@@ -539,6 +539,34 @@
     .cand-btn.edit { color:var(--teal); } .cand-btn.edit:hover { border-color:var(--teal); background:rgba(15,89,94,0.05); }
     .cand-btn.reject { color:#c0392b; } .cand-btn.reject:hover { border-color:#c0392b; background:#fbeeee; }
 
+    /* ── CHANGE PROPOSALS (existing-fund re-verification) ── */
+    .prop-card { background:var(--white); border:1px solid var(--rule); border-left:3px solid #9a7320; border-radius:6px; padding:14px 16px; margin-bottom:12px; }
+    .prop-card.verify { border-left-color:#c0392b; }
+    .prop-top { display:flex; justify-content:space-between; align-items:baseline; gap:10px; }
+    .prop-name { font-weight:600; color:var(--slate); font-size:14.5px; }
+    .prop-prov { font-size:12px; color:#888; }
+    .prop-badges { display:flex; gap:6px; flex-wrap:wrap; margin:7px 0; }
+    .prop-badge { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; padding:2px 7px; border-radius:3px; white-space:nowrap; background:var(--linen); color:#555; }
+    .prop-badge.be { background:#eef3f3; color:var(--teal); }
+    .prop-badge.warn { background:#fbeeee; color:#c0392b; }
+    .prop-badge.conf { background:#f0ece2; color:#9a7320; }
+    .prop-url { font-size:12px; margin:4px 0 8px; word-break:break-all; }
+    .prop-url a { color:var(--teal); }
+    .prop-table { width:100%; border-collapse:collapse; font-size:12.5px; margin:6px 0; }
+    .prop-table th { text-align:left; font-size:10.5px; text-transform:uppercase; letter-spacing:0.04em; color:#999; font-weight:700; padding:3px 6px; border-bottom:1px solid var(--rule); }
+    .prop-table td { padding:5px 6px; vertical-align:top; border-bottom:1px solid var(--linen); color:#555; }
+    .prop-table td.fld { font-weight:600; color:var(--slate); white-space:nowrap; }
+    .prop-old { color:#b04a3a; text-decoration:line-through; }
+    .prop-new { color:#1e7e44; font-weight:600; }
+    .prop-chk { width:22px; text-align:center; }
+    .prop-evidence { margin:6px 0 4px; }
+    .prop-evidence summary { font-size:12px; color:var(--teal); cursor:pointer; font-weight:600; }
+    .prop-evidence pre { white-space:pre-wrap; font-family:'DM Sans',sans-serif; font-size:11.5px; color:#666; background:var(--linen); border-radius:5px; padding:8px 10px; margin:6px 0 0; }
+    .prop-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; align-items:center; }
+    .prop-btn { border:1px solid var(--rule); background:var(--white); border-radius:5px; padding:6px 12px; font-family:'DM Sans',sans-serif; font-size:12.5px; font-weight:600; cursor:pointer; }
+    .prop-btn.apply { color:#1e7e44; } .prop-btn.apply:hover { border-color:#1e7e44; background:#e8f5ec; }
+    .prop-btn.dismiss { color:#777; } .prop-btn.dismiss:hover { border-color:#999; background:#f3f3f3; }
+
     /* ── FOOTER ── */
     footer {
       background: var(--white); border-top: 1px solid var(--rule); padding: 36px 0;
@@ -908,6 +936,14 @@
         <div class="admin-result" id="result-discovery"></div>
       </div>
 
+      <div class="admin-card">
+        <h3>Re-verify Existing Funds</h3>
+        <p>Re-read the source page of every active fund and propose grounded corrections (wrong grant sizes, passed deadlines, fillable blanks) into the “Proposed updates” queue above. Costs a few £; leave the box blank to do all, or set a limit.</p>
+        <input type="number" id="refresh-limit" placeholder="limit (optional)" min="1" style="width:110px" />
+        <button type="button" class="btn-admin" id="btn-refresh-funds" onclick="runRefresh()">Run now</button>
+        <div class="admin-result" id="result-refresh"></div>
+      </div>
+
     </div>
 
     <div class="admin-reports">
@@ -923,6 +959,15 @@
         <span id="enrich-status" class="admin-muted"></span>
       </div>
       <div id="candidates-list"><p class="admin-muted">Loading…</p></div>
+    </div>
+
+    <div class="admin-reports">
+      <div class="admin-report-head">
+        <h3>Proposed updates — existing funds</h3>
+        <button type="button" class="btn-refresh" onclick="loadProposals()">↻ Refresh</button>
+      </div>
+      <p class="admin-muted" style="margin:0 0 12px">Re-verification of funds already in the database. Each fund's source page was re-read and grounded; only genuine differences in the <strong>factual</strong> fields (grant size, deadline, region, stage) — or blanks now fillable — appear here. Tick the changes you accept and apply them. Nothing changes in the fund database until you apply it; dismissing still records that the source was re-checked today.</p>
+      <div id="proposals-list"><p class="admin-muted">Loading…</p></div>
     </div>
 
     <div class="admin-reports">
@@ -989,7 +1034,7 @@
 
   function showAdminSection() {
     var el = document.getElementById('admin-section');
-    if (el) { el.style.display = 'block'; loadCandidates(); loadFlags(); loadRuns(); loadChanges(); }
+    if (el) { el.style.display = 'block'; loadCandidates(); loadProposals(); loadFlags(); loadRuns(); loadChanges(); }
   }
 
   /* ── API KEY MODAL ── */
@@ -1594,6 +1639,14 @@
       function (d) { setTimeout(function () { loadCandidates(); loadRuns(); }, 90000); return d.status || 'Started.'; });
   }
 
+  function runRefresh() {
+    var lim = (document.getElementById('refresh-limit').value || '').trim();
+    var path = '/admin/run-refresh' + (lim ? ('?limit=' + encodeURIComponent(lim)) : '');
+    _adminRun(path, 'btn-refresh-funds', 'result-refresh',
+      'Re-reading funder pages… proposals appear above as funds complete.',
+      function (d) { setTimeout(function () { loadProposals(); loadRuns(); }, 60000); return d.status || 'Started.'; });
+  }
+
   /* ── ADMIN REPORTS ── */
   function fmtWhen(iso) {
     if (!iso) return '—';
@@ -1759,6 +1812,127 @@
     var note = prompt('Reject this candidate? Optional note (why):');
     if (note === null) return;  // cancelled
     candidateAction(id, 'reject', { candidate_id: id, action: 'reject', review_note: note || null });
+  }
+
+  /* ── CHANGE PROPOSALS (existing-fund re-verification) ── */
+  function loadProposals() {
+    var el = document.getElementById('proposals-list');
+    el.innerHTML = '<p class="admin-muted">Loading…</p>';
+    fetch(API + '/admin/proposals', { headers: { 'X-API-Key': state.apiKey } })
+    .then(function (r) { return r.ok ? r.json() : []; })
+    .then(function (props) {
+      if (!props.length) { el.innerHTML = '<p class="flag-empty">✓ No proposed updates — run “Re-verify Existing Funds” to re-check the database against live funder pages.</p>'; return; }
+      el.innerHTML = props.map(renderProposal).join('');
+    })
+    .catch(function () { el.innerHTML = '<p class="admin-muted">Could not load proposals.</p>'; });
+  }
+
+  function _fmtVal(v) {
+    if (v === null || v === undefined || v === '') return '(blank)';
+    if (Array.isArray(v)) return v.join(', ');
+    return String(v);
+  }
+
+  function renderProposal(p) {
+    var diff = p.diff || {};
+    var flags = p.flags || {};
+    var name = escHtml(p.fund_name || p.fund_id || '(unknown fund)');
+    var prov = escHtml(p.fund_provider || '');
+    var url = escHtml(p.source_url || '');
+
+    // Lightweight "verify URL" card — the scheme name no longer appears on the page.
+    if (flags.name_missing || p.url_status === 'name_missing') {
+      return '<div class="prop-card verify">' +
+        '<div class="prop-top"><span class="prop-name">' + name + '</span><span class="prop-prov">' + prov + '</span></div>' +
+        '<div class="prop-badges"><span class="prop-badge warn">⚠ scheme name not found on page</span></div>' +
+        '<p class="admin-muted" style="margin:4px 0 6px">The page still loads, but the scheme name is no longer on it — the fund may have moved or been replaced. Check the link and fix or close the fund.</p>' +
+        '<div class="prop-url"><a href="' + url + '" target="_blank" rel="noopener">' + (url || '—') + '</a></div>' +
+        '<div class="prop-actions">' +
+          '<button type="button" class="prop-btn dismiss" onclick="dismissProposal(\'' + escHtml(p.id) + '\')">Dismiss (mark checked)</button>' +
+        '</div></div>';
+    }
+
+    var badges = '';
+    if (p.fetch_backend === 'firecrawl') badges += '<span class="prop-badge be">via Firecrawl</span>';
+    if (p.confidence != null) badges += '<span class="prop-badge conf">Source confidence ' + Math.round(p.confidence * 100) + '%</span>';
+    if (flags.low_confidence != null) badges += '<span class="prop-badge warn">⚠ low confidence — verify</span>';
+    if (flags.deadline_passed) badges += '<span class="prop-badge warn">⚠ deadline passed</span>';
+
+    var pid = escHtml(p.id);
+    var rows = Object.keys(diff).map(function (f) {
+      var cb = 'cb_' + pid + '_' + f;
+      return '<tr>' +
+        '<td class="prop-chk"><input type="checkbox" id="' + cb + '" data-field="' + escHtml(f) + '" checked></td>' +
+        '<td class="fld">' + escHtml(f) + '</td>' +
+        '<td><span class="prop-old">' + escHtml(_fmtVal(diff[f].old)) + '</span><br>' +
+            '<span class="prop-new">' + escHtml(_fmtVal(diff[f].new)) + '</span></td>' +
+      '</tr>';
+    }).join('');
+
+    var statusRow = '';
+    if (flags.status_suggested) {
+      statusRow = '<tr>' +
+        '<td class="prop-chk"><input type="checkbox" id="cb_' + pid + '_status" checked></td>' +
+        '<td class="fld">status</td>' +
+        '<td><span class="prop-old">' + escHtml(p.fund_status || 'open') + '</span><br>' +
+            '<span class="prop-new">' + escHtml(flags.status_suggested) + ' (deadline passed)</span></td>' +
+      '</tr>';
+    }
+
+    var table = (rows || statusRow)
+      ? '<table class="prop-table"><tr><th></th><th>Field</th><th>Stored → Proposed</th></tr>' + rows + statusRow + '</table>'
+      : '';
+
+    var evidence = '';
+    if (p.evidence && Object.keys(p.evidence).length) {
+      var lines = Object.keys(p.evidence).map(function (k) { return k + ': ' + p.evidence[k]; }).join('\n');
+      evidence = '<details class="prop-evidence"><summary>Show source evidence</summary><pre>' + escHtml(lines) + '</pre></details>';
+    }
+
+    return '<div class="prop-card">' +
+      '<div class="prop-top"><span class="prop-name">' + name + '</span><span class="prop-prov">' + prov + '</span></div>' +
+      '<div class="prop-badges">' + badges + '</div>' +
+      '<div class="prop-url"><a href="' + url + '" target="_blank" rel="noopener">' + (url || '—') + '</a></div>' +
+      table + evidence +
+      '<div class="prop-actions">' +
+        '<button type="button" class="prop-btn apply" onclick="applyProposal(\'' + pid + '\')">✓ Apply selected</button>' +
+        '<button type="button" class="prop-btn dismiss" onclick="dismissProposal(\'' + pid + '\')">Dismiss</button>' +
+      '</div></div>';
+  }
+
+  function applyProposal(id) {
+    var fields = [];
+    document.querySelectorAll('#proposals-list input[type=checkbox][id^="cb_' + id + '_"]').forEach(function (cb) {
+      if (cb.dataset.field && cb.checked) fields.push(cb.dataset.field);
+    });
+    var statusBox = document.getElementById('cb_' + id + '_status');
+    var payload = { proposal_id: id, action: 'apply', fields: fields };
+    if (statusBox && statusBox.checked) payload.set_status = 'closed';
+    if (!fields.length && !payload.set_status) { alert('Tick at least one change to apply, or use Dismiss.'); return; }
+    fetch(API + '/admin/proposals/action', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-API-Key': state.apiKey },
+      body: JSON.stringify(payload)
+    })
+    .then(function (r) { if (!r.ok) return r.json().then(function (e) { throw new Error(e.detail || ''); }); return r.json(); })
+    .then(function (d) {
+      if (d.superseded && d.superseded.length) alert('Applied ' + (d.applied_fields || []).join(', ') + '.\nSkipped (changed since proposal): ' + d.superseded.join(', '));
+      loadProposals();
+    })
+    .catch(function (e) { alert('Apply failed — ' + (e.message || 'try again.')); });
+  }
+
+  function dismissProposal(id) {
+    var note = prompt('Dismiss this proposal? (the source is still marked re-checked today). Optional note:');
+    if (note === null) return;
+    fetch(API + '/admin/proposals/action', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-API-Key': state.apiKey },
+      body: JSON.stringify({ proposal_id: id, action: 'dismiss', review_note: note || null })
+    })
+    .then(function (r) { if (!r.ok) return r.json().then(function (e) { throw new Error(e.detail || ''); }); return r.json(); })
+    .then(function () { loadProposals(); })
+    .catch(function (e) { alert('Dismiss failed — ' + (e.message || 'try again.')); });
   }
 
   /* ── REVIEW QUEUE ── */
