@@ -4,7 +4,7 @@
   var SUPABASE_URL = 'https://pxrfgltynqdceyozpovq.supabase.co';
   // Publishable browser key: safe to expose only because all business tables
   // deny anon/authenticated direct access. Never place the service-role key here.
-  var SUPABASE_PUBLISHABLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4cmZnbHR5bnFkY2V5b3pwb3ZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3Nzk3MTAsImV4cCI6MjA5NDM1NTcxMH0.k8AXov5w5TdnxDdQ21OVz0rrzuSEvtxWi-yrrc-j4cw';
+  var SUPABASE_PUBLISHABLE_KEY = 'MASTORAS_SUPABASE_PUBLISHABLE_KEY';
   var API_ORIGIN = 'https://api.mastoras.uk';
 
   if (!window.supabase || !window.supabase.createClient) {

@@ -36,7 +36,7 @@ for (const entry of await readdir(root, { withFileTypes: true })) {
 const replacements = new Map([
   ['REPLACE_WITH_CLOUDFLARE_TURNSTILE_SITE_KEY', siteKey],
   ['https://pxrfgltynqdceyozpovq.supabase.co', supabaseUrl],
-  ['eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4cmZnbHR5bnFkY2V5b3pwb3ZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3Nzk3MTAsImV4cCI6MjA5NDM1NTcxMH0.k8AXov5w5TdnxDdQ21OVz0rrzuSEvtxWi-yrrc-j4cw', supabasePublishableKey],
+  ['MASTORAS_SUPABASE_PUBLISHABLE_KEY', supabasePublishableKey],
   ['https://api.mastoras.uk', apiOrigin],
 ]);
 
