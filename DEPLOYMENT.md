@@ -4,6 +4,8 @@
    and `API_ORIGIN` as environment-specific Cloudflare build variables.
 2. Run `npm ci && npm run build`; deploy `dist/` (Wrangler is configured for it).
 3. Use a preview deployment with the staging API/Auth redirect URLs first.
+   Cloudflare's documented always-pass test widget may be used only in preview;
+   production must use the hostname-restricted live widget.
 4. Verify `_headers` on actual responses, including CSP and no-store/noindex for
    Advisor, HQ, login and callback.
 5. Add `Strict-Transport-Security` only after HTTPS, redirects and all subdomains

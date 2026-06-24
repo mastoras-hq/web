@@ -7,6 +7,7 @@
     "check:js": "node --check assets/js/auth-bootstrap.js && node --check assets/js/safe-dom.js && node scripts/security-check.mjs"
   },
   "devDependencies": {
-    "@playwright/test": "1.61.1"
+    "@playwright/test": "1.61.1",
+    "wrangler": "4.104.0"
   }
 }
