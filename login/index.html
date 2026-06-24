@@ -56,7 +56,10 @@
       message.textContent = 'Sending your secure sign-in link…';
       var result = await window.mastorasAuth.client.auth.signInWithOtp({
         email: document.getElementById('email').value.trim(),
-        options: { emailRedirectTo: location.origin + '/auth/callback/?returnTo=' + encodeURIComponent(returnTo) }
+        options: {
+          shouldCreateUser: false,
+          emailRedirectTo: location.origin + '/auth/callback/?returnTo=' + encodeURIComponent(returnTo)
+        }
       });
       button.disabled = false;
       message.textContent = result.error
