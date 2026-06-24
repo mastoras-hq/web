@@ -73,7 +73,8 @@ test('BRICK displays the server-calculated score', async ({ page }) => {
   await page.locator('#email').fill('founder@example.com');
   await page.locator('#idea').fill('A useful project idea');
   for (let question = 1; question <= 12; question += 1) {
-    await page.locator(`#q${question}-1`).check();
+    await page.locator(`label[for="q${question}-1"]`).click();
+    await expect(page.locator(`#q${question}-1`)).toBeChecked();
   }
   await page.locator('#consent').check();
   await injectTurnstile(page, '#brick-form');
