@@ -1,6 +1,7 @@
 # Static deployment
 
-1. Set `TURNSTILE_SITE_KEY` as a Cloudflare build variable.
+1. Set `TURNSTILE_SITE_KEY`, `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`,
+   and `API_ORIGIN` as environment-specific Cloudflare build variables.
 2. Run `npm ci && npm run build`; deploy `dist/` (Wrangler is configured for it).
 3. Use a preview deployment with the staging API/Auth redirect URLs first.
 4. Verify `_headers` on actual responses, including CSP and no-store/noindex for
@@ -13,4 +14,5 @@
    wording have been reviewed.
 
 The source remains static HTML/CSS/native JavaScript. The build only copies files
-and injects the public Turnstile site key; no framework or client secret is added.
+and injects public, environment-specific endpoints and browser keys; no framework
+or client secret is added. Staging must use the staging Supabase project and API.

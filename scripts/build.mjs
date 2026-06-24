@@ -4,8 +4,25 @@ import { extname, join, relative } from 'node:path';
 const root = process.cwd();
 const out = join(root, 'dist');
 const siteKey = process.env.TURNSTILE_SITE_KEY;
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabasePublishableKey = process.env.SUPABASE_PUBLISHABLE_KEY;
+const apiOrigin = process.env.API_ORIGIN;
 if (!siteKey || !/^0x[\w-]+$/.test(siteKey)) {
   throw new Error('TURNSTILE_SITE_KEY must be configured for a deployable build.');
+}
+for (const [name, value] of Object.entries({ SUPABASE_URL: supabaseUrl, API_ORIGIN: apiOrigin })) {
+  let parsed;
+  try {
+    parsed = new URL(value);
+  } catch {
+    throw new Error(`${name} must be configured as a valid HTTPS URL.`);
+  }
+  if (parsed.protocol !== 'https:' || parsed.origin !== value) {
+    throw new Error(`${name} must be configured as an HTTPS origin without a path.`);
+  }
+}
+if (!supabasePublishableKey || !/^[A-Za-z0-9._-]{20,}$/.test(supabasePublishableKey)) {
+  throw new Error('SUPABASE_PUBLISHABLE_KEY must be configured for a deployable build.');
 }
 
 const excluded = new Set(['.git', '.github', 'dist', 'node_modules', 'scripts', 'tests', 'work']);
@@ -16,15 +33,23 @@ for (const entry of await readdir(root, { withFileTypes: true })) {
   await cp(join(root, entry.name), join(out, entry.name), { recursive: true });
 }
 
-async function replaceHtml(directory) {
+const replacements = new Map([
+  ['REPLACE_WITH_CLOUDFLARE_TURNSTILE_SITE_KEY', siteKey],
+  ['https://pxrfgltynqdceyozpovq.supabase.co', supabaseUrl],
+  ['eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4cmZnbHR5bnFkY2V5b3pwb3ZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3Nzk3MTAsImV4cCI6MjA5NDM1NTcxMH0.k8AXov5w5TdnxDdQ21OVz0rrzuSEvtxWi-yrrc-j4cw', supabasePublishableKey],
+  ['https://api.mastoras.uk', apiOrigin],
+]);
+
+async function injectPublicConfiguration(directory) {
   for (const entry of await readdir(directory, { withFileTypes: true })) {
     const path = join(directory, entry.name);
-    if (entry.isDirectory()) await replaceHtml(path);
-    else if (extname(entry.name) === '.html') {
-      const source = await readFile(path, 'utf8');
-      await writeFile(path, source.replaceAll('REPLACE_WITH_CLOUDFLARE_TURNSTILE_SITE_KEY', siteKey));
+    if (entry.isDirectory()) await injectPublicConfiguration(path);
+    else if (['_headers'].includes(entry.name) || ['.html', '.js'].includes(extname(entry.name))) {
+      let source = await readFile(path, 'utf8');
+      for (const [placeholder, value] of replacements) source = source.replaceAll(placeholder, value);
+      await writeFile(path, source);
     }
   }
 }
-await replaceHtml(out);
+await injectPublicConfiguration(out);
 console.log(`Built static site at ${relative(root, out)}`);

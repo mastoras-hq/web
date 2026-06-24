@@ -33,7 +33,7 @@ async function injectTurnstile(page, selector) {
 
 test('contact submission uses the Mástoras API once', async ({ page }) => {
   let calls = 0;
-  await page.route('https://api.mastoras.uk/contact', async route => {
+  await page.route('https://api.example.test/contact', async route => {
     calls += 1;
     await route.fulfill({ status: 200, contentType: 'application/json', body: '{"status":"ok"}' });
   });
@@ -49,7 +49,7 @@ test('contact submission uses the Mástoras API once', async ({ page }) => {
 });
 
 test('funding taster renders API matches', async ({ page }) => {
-  await page.route('https://api.mastoras.uk/taster', route => route.fulfill({
+  await page.route('https://api.example.test/taster', route => route.fulfill({
     status: 200, contentType: 'application/json',
     body: JSON.stringify({ match_count: 2, top_funds: ['Fund A', 'Fund B'] }),
   }));
@@ -64,7 +64,7 @@ test('funding taster renders API matches', async ({ page }) => {
 });
 
 test('BRICK displays the server-calculated score', async ({ page }) => {
-  await page.route('https://api.mastoras.uk/brick', route => route.fulfill({
+  await page.route('https://api.example.test/brick', route => route.fulfill({
     status: 200, contentType: 'application/json',
     body: JSON.stringify({ status: 'ok', id: 'test', score: 12, band: 'Needs more evidence' }),
   }));

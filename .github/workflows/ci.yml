@@ -17,6 +17,9 @@ jobs:
       - run: npm run build
         env:
           TURNSTILE_SITE_KEY: 0x0000000000000000000000000000000000000000
+          SUPABASE_URL: https://example.supabase.co
+          SUPABASE_PUBLISHABLE_KEY: ci_publishable_key_000000000000000000000000
+          API_ORIGIN: https://api.example.test
       - run: npx playwright install --with-deps chromium
       - run: npm test
       - uses: gitleaks/gitleaks-action@v2
