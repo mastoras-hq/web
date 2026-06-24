@@ -1,2 +1,9 @@
 [extend]
 useDefault = true
+
+[allowlist]
+description = "Supabase publishable keys are intentionally browser-visible and RLS-limited"
+regexTarget = "secret"
+regexes = [
+  '''^sb_publishable_[A-Za-z0-9_-]+$''',
+]
