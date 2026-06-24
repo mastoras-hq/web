@@ -3,10 +3,21 @@ import { extname, join, relative } from 'node:path';
 
 const root = process.cwd();
 const out = join(root, 'dist');
-const siteKey = process.env.TURNSTILE_SITE_KEY;
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabasePublishableKey = process.env.SUPABASE_PUBLISHABLE_KEY;
-const apiOrigin = process.env.API_ORIGIN;
+const workersBranch = process.env.WORKERS_CI_BRANCH;
+const isWorkersPreview = process.env.WORKERS_CI === '1'
+  && Boolean(workersBranch)
+  && workersBranch !== 'main';
+const workersPreviewDefaults = isWorkersPreview ? {
+  TURNSTILE_SITE_KEY: '1x00000000000000000000AA',
+  SUPABASE_URL: 'https://xikmgfphozqfdxsuoazh.supabase.co',
+  SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_ajuQ3lBuKmkcAlPLcMqKwg_qsatcg1g',
+  API_ORIGIN: 'https://api-staging-staging-0815.up.railway.app',
+} : {};
+const siteKey = process.env.TURNSTILE_SITE_KEY || workersPreviewDefaults.TURNSTILE_SITE_KEY;
+const supabaseUrl = process.env.SUPABASE_URL || workersPreviewDefaults.SUPABASE_URL;
+const supabasePublishableKey = process.env.SUPABASE_PUBLISHABLE_KEY
+  || workersPreviewDefaults.SUPABASE_PUBLISHABLE_KEY;
+const apiOrigin = process.env.API_ORIGIN || workersPreviewDefaults.API_ORIGIN;
 const turnstileTestSiteKeys = new Set([
   // Cloudflare's documented visible test widget that always passes.
   '1x00000000000000000000AA',
