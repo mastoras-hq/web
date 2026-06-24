@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Sign in — Mástoras</title>
+  <style>
+    :root { --slate:#2E3440; --teal:#0F595E; --linen:#F4F1EC; --brass:#B08D57; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; display:grid; place-items:center; padding:24px;
+      background:var(--linen); color:var(--slate); font-family:Arial,sans-serif; }
+    main { width:min(430px,100%); background:#fff; border:1px solid #ded8ce;
+      border-top:4px solid var(--teal); border-radius:6px; padding:34px; }
+    h1 { margin:0 0 8px; font-family:Georgia,serif; }
+    p { line-height:1.6; color:#626975; }
+    label { display:block; margin:24px 0 7px; font-weight:700; font-size:14px; }
+    input { width:100%; padding:13px; border:1px solid #c9c4bc; border-radius:4px; font-size:16px; }
+    button { width:100%; margin-top:14px; padding:13px; border:0; border-radius:4px;
+      background:var(--teal); color:#fff; font-weight:700; cursor:pointer; }
+    button:disabled { opacity:.6; cursor:wait; }
+    #message { min-height:24px; margin-top:14px; font-size:14px; }
+    .wordmark { color:var(--brass); text-transform:uppercase; letter-spacing:.12em;
+      font-size:12px; font-weight:700; }
+  </style>
+</head>
+<body>
+<main>
+  <div class="wordmark">Mástoras · Internal</div>
+  <h1>Sign in</h1>
+  <p>Enter the approved founder email. Supabase will send a secure magic link; no password or permanent API key is stored.</p>
+  <form id="login-form">
+    <label for="email">Email address</label>
+    <input id="email" type="email" autocomplete="email" required maxlength="254">
+    <button id="submit" type="submit">Send magic link →</button>
+  </form>
+  <p id="message" role="status" aria-live="polite"></p>
+</main>
+<script src="/assets/vendor/supabase-2.108.2.js"></script>
+<script src="/assets/js/auth-bootstrap.js"></script>
+<script>
+  (function () {
+    var form = document.getElementById('login-form');
+    var button = document.getElementById('submit');
+    var message = document.getElementById('message');
+    var returnTo = new URLSearchParams(location.search).get('returnTo') || '/advisor/';
+    if (!returnTo.startsWith('/') || returnTo.startsWith('//')) returnTo = '/advisor/';
+
+    window.mastorasAuth.getSession().then(function (session) {
+      if (session) location.replace(returnTo);
+    });
+
+    form.addEventListener('submit', async function (event) {
+      event.preventDefault();
+      button.disabled = true;
+      message.textContent = 'Sending your secure sign-in link…';
+      var result = await window.mastorasAuth.client.auth.signInWithOtp({
+        email: document.getElementById('email').value.trim(),
+        options: { emailRedirectTo: location.origin + '/auth/callback/?returnTo=' + encodeURIComponent(returnTo) }
+      });
+      button.disabled = false;
+      message.textContent = result.error
+        ? 'The link could not be sent. Check the approved email and try again.'
+        : 'Check your inbox. The link can be used once and expires shortly.';
+    });
+  }());
+</script>
+</body>
+</html>

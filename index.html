@@ -1109,7 +1109,7 @@
   <div class="wrap">
     <div class="about-grid">
       <div class="about-aside">
-        <img src="garry-nicholl.jpg.png" alt="Garry Nicholl — founder of Mástoras" class="about-headshot">
+        <img src="garry-nicholl-480.webp" srcset="garry-nicholl-480.webp 480w, garry-nicholl-960.webp 960w" sizes="(max-width: 700px) 90vw, 480px" width="480" height="596" loading="lazy" alt="Garry Nicholl — founder of Mástoras" class="about-headshot">
         <p class="about-aside-name">Garry Nicholl</p>
         <span class="about-aside-role">Founder, Mástoras</span>
         <p class="about-aside-contact">
@@ -1156,7 +1156,7 @@
           <a href="/funding-digest/" class="fi-link">Browse the monthly digest &rarr;</a>
         </div>
         <p class="fi-note">Free. Instant. No sign-up required.</p>
-        <p class="fi-note" style="margin-top:10px;">The full Funding Fit Report — with application intelligence, scored chances, and a consultant's view — is available as a standalone service. <a href="#contact" style="color:rgba(255,255,255,0.6);text-decoration:underline;text-underline-offset:3px;">Ask about a report →</a></p>
+        <p class="fi-note" style="margin-top:10px;">The full Funding Fit Report — with application intelligence, a funding fit score, and a consultant's view — is available as a standalone service. <a href="#contact" style="color:rgba(255,255,255,0.6);text-decoration:underline;text-underline-offset:3px;">Ask about a report →</a></p>
       </div>
 
       <div class="fi-right">
@@ -1240,12 +1240,8 @@
         </div>
       </div>
 
-      <form class="contact-form" id="contact-form" action="https://api.web3forms.com/submit" method="POST">
-        <input type="hidden" name="access_key" value="7f041ae4-23cd-4020-9b0f-a3ed0443ba17">
-        <input type="hidden" name="subject" value="New enquiry from Mástoras website">
-        <input type="hidden" name="from_name" value="Mástoras Website">
-        <input type="hidden" name="redirect" value="https://mastoras.uk/#contact">
-        <input type="checkbox" name="botcheck" style="display:none">
+      <form class="contact-form" id="contact-form" method="POST">
+        <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
 
         <div class="form-group">
           <label for="name">Name</label>
@@ -1272,10 +1268,15 @@
         </div>
         <div class="form-group">
           <label for="message">What are you working on?</label>
-          <textarea id="message" name="message" placeholder="A few words about your situation — what you're building and where you're stuck."></textarea>
+          <textarea id="message" name="message" required placeholder="A few words about your situation — what you're building and where you're stuck."></textarea>
         </div>
+        <label style="display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.5;margin-bottom:16px">
+          <input type="checkbox" id="contact-consent" required style="width:auto;margin-top:3px">
+          <span>I agree that Mástoras may store these details to respond to my enquiry. See the <a href="/privacy-policy.html">Privacy Policy</a>.</span>
+        </label>
+        <div class="cf-turnstile" data-sitekey="REPLACE_WITH_CLOUDFLARE_TURNSTILE_SITE_KEY" data-action="contact"></div>
         <button type="submit" class="form-submit">Send Enquiry →</button>
-        <p class="form-note">No obligation. I'll reply within one working day.</p>
+        <p class="form-note" id="contact-status">No obligation. I'll reply within one working day.</p>
       </form>
     </div>
   </div>
@@ -1353,30 +1354,45 @@ fetch('https://api.mastoras.uk/digest')
   })
   .catch(function() {});
 
-/* Contact form → also capture into Mástoras HQ. web3forms still sends the email;
-   this fires a parallel record to the API. keepalive lets it survive the page navigation. */
+/* Contact form: the API stores the enquiry and notification in one transaction. */
 (function () {
   var form = document.getElementById('contact-form');
   if (!form) return;
-  form.addEventListener('submit', function () {
+  form.addEventListener('submit', async function (event) {
+    event.preventDefault();
+    var button = form.querySelector('button[type="submit"]');
+    var status = document.getElementById('contact-status');
+    var token = form.querySelector('[name="cf-turnstile-response"]');
+    if (!form.reportValidity() || !token || !token.value) {
+      status.textContent = 'Please complete every required field and the verification check.';
+      return;
+    }
+    button.disabled = true;
+    status.textContent = 'Sending…';
     try {
-      var nameEl = document.getElementById('name');
-      var emailEl = document.getElementById('email');
-      var msgEl = document.getElementById('message');
-      var email = emailEl ? emailEl.value.trim() : '';
-      if (!email) return;  // let web3forms' own validation handle empties
-      fetch('https://api.mastoras.uk/contact', {
+      var service = document.getElementById('service').value;
+      var message = document.getElementById('message').value.trim();
+      var response = await fetch('https://api.mastoras.uk/contact', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'X-Turnstile-Token': token.value },
         body: JSON.stringify({
-          name: nameEl ? nameEl.value.trim() : null,
-          email: email,
-          message: msgEl ? msgEl.value.trim() : null
-        }),
-        keepalive: true
-      }).catch(function () {});
-    } catch (e) {}
-    // No preventDefault — the normal web3forms POST + redirect proceeds.
+          name: document.getElementById('name').value.trim(),
+          email: document.getElementById('email').value.trim(),
+          message: service ? 'Service: ' + service + '\n\n' + message : message,
+          website: form.elements.website.value,
+          consent: document.getElementById('contact-consent').checked,
+          privacy_policy_version: '2026-06-23'
+        })
+      });
+      if (!response.ok) throw new Error('submission failed');
+      form.reset();
+      status.textContent = 'Enquiry sent. I’ll reply within one working day.';
+      button.textContent = 'Sent ✓';
+    } catch (error) {
+      status.textContent = 'I could not send that just now. Please try again or email hello@mastoras.uk.';
+      button.disabled = false;
+      if (window.turnstile) window.turnstile.reset();
+    }
   });
 }());
 
@@ -1392,6 +1408,7 @@ fetch('https://api.mastoras.uk/digest')
   } catch (e) {}
 }());
 </script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
 <script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js"></script>
 <script>

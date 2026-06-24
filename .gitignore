@@ -9,3 +9,5 @@ desktop.ini
 .env*
 !.env.example
 .gstack/
+dist/
+node_modules/

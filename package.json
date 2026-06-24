@@ -1,0 +1,12 @@
+{
+  "name": "mastoras-site",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "playwright test",
+    "check:js": "node --check assets/js/auth-bootstrap.js && node --check assets/js/safe-dom.js && node scripts/security-check.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.61.1"
+  }
+}

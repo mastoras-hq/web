@@ -1,0 +1,6 @@
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Supabase browser publishable key is intentionally public"
+paths = ['''assets/js/auth-bootstrap\.js''']

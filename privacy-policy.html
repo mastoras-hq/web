@@ -522,6 +522,15 @@
       </div>
 
       <p>We will never use your data for automated decision-making that produces legal or similarly significant effects without human review.</p>
+
+      <h3>3.1 Artificial Intelligence Processing</h3>
+      <p>
+        Mástoras uses AI-assisted tools to extract facts from public funding sources and, when you
+        request advisory work, to help prepare report or application drafts. A person reviews the
+        result before it is relied upon. We minimise the client information sent for drafting and do
+        not send contact details where they are not needed. AI output may contain errors and is not
+        treated as a funding decision or a prediction of award.
+      </p>
     </div>
 
     <!-- 4 -->
@@ -577,8 +586,8 @@
           <tbody>
             <tr>
               <td><strong>Supabase Inc.</strong></td>
-              <td>Secure cloud database storage of reports, fund data and enquiry submissions</td>
-              <td>EU (eu-west-2, Ireland)</td>
+              <td>Authentication and secure cloud database/storage for reports, documents and submissions</td>
+              <td>Configured project region (to be confirmed in the service register)</td>
             </tr>
             <tr>
               <td><strong>Railway Corp.</strong></td>
@@ -587,8 +596,23 @@
             </tr>
             <tr>
               <td><strong>Cloudflare Inc.</strong></td>
-              <td>DNS, DDoS protection and security for mastoras.uk</td>
+              <td>DNS, DDoS protection, bot verification and security for mastoras.uk</td>
               <td>USA / global CDN (see Section 7)</td>
+            </tr>
+            <tr>
+              <td><strong>Resend Inc.</strong></td>
+              <td>Transactional email notifications about enquiries, assessments and system operations</td>
+              <td>USA (see Section 7)</td>
+            </tr>
+            <tr>
+              <td><strong>Anthropic PBC</strong></td>
+              <td>AI-assisted analysis and drafting using minimised project and organisation information</td>
+              <td>USA (see Section 7)</td>
+            </tr>
+            <tr>
+              <td><strong>Firecrawl</strong></td>
+              <td>Fetching publicly available funder pages where ordinary retrieval is insufficient; client data is not required</td>
+              <td>USA (see Section 7)</td>
             </tr>
           </tbody>
         </table>
@@ -648,19 +672,25 @@
               <td>90 days</td>
               <td>Security and incident investigation</td>
             </tr>
+            <tr>
+              <td>Abuse-prevention rate-limit records</td>
+              <td>24 hours</td>
+              <td>Website and API security; identifiers are stored as keyed hashes</td>
+            </tr>
           </tbody>
         </table>
       </div>
 
-      <p>When data reaches the end of its retention period, it is securely deleted or irreversibly anonymised.</p>
+      <p>Retention is enforced automatically unless a record is subject to a legal hold. When data reaches the end of its retention period, it is securely deleted or irreversibly anonymised.</p>
     </div>
 
     <!-- 7 -->
     <div class="policy-section" id="transfers">
       <h2>7. International Data Transfers</h2>
       <p>
-        Our primary database (Supabase) is hosted in the <strong>EU (Ireland)</strong>,
-        keeping the majority of your data within the UK/EU adequacy framework.
+        Our primary database and storage region is selected in Supabase and recorded in our internal
+        service register. Its exact location and transfer mechanism must be confirmed during the
+        legal review of this policy before publication.
       </p>
       <p>
         Our API server (Railway) is hosted in the <strong>United States</strong>. Data passes through

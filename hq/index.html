@@ -200,16 +200,6 @@
 </head>
 <body>
 
-<!-- API KEY MODAL -->
-<div class="modal-overlay" id="api-key-modal" style="display:none;">
-  <div class="modal-box">
-    <h2>Mástoras HQ</h2>
-    <p>Enter your API key to access the client system. It's stored in your browser for future visits.</p>
-    <input type="password" class="modal-input" id="api-key-input" placeholder="Paste your API key" autocomplete="off">
-    <button type="button" class="run-report-link" style="margin:0;border:none;cursor:pointer;width:100%;padding:12px;" onclick="saveApiKey()">Continue →</button>
-  </div>
-</div>
-
 <!-- LOG A CALL MODAL (new lead) -->
 <div class="modal-overlay" id="call-modal" style="display:none;">
   <div class="modal-box wide">
@@ -318,36 +308,30 @@
   </div>
 </footer>
 
+<script src="/assets/vendor/supabase-2.108.2.js"></script>
+<script src="/assets/js/auth-bootstrap.js"></script>
 <script>
   var API = 'https://api.mastoras.uk';
-  var state = { apiKey: localStorage.getItem('mastoras_api_key') || '', clients: [], notesTimer: null };
+  var state = { clients: [], notesTimer: null };
 
   /* ── INIT ── */
   window.addEventListener('DOMContentLoaded', function () {
-    if (!state.apiKey) {
-      document.getElementById('api-key-modal').style.display = 'flex';
-    } else {
+    mastorasAuth.requireSession().then(function () {
       loadClients();
-    }
+    }).catch(function () {});
   });
 
-  function saveApiKey() {
-    var k = document.getElementById('api-key-input').value.trim();
-    if (!k) return;
-    state.apiKey = k;
-    localStorage.setItem('mastoras_api_key', k);
-    document.getElementById('api-key-modal').style.display = 'none';
-    loadClients();
-  }
-  document.getElementById('api-key-input').addEventListener('keydown', function (e) {
-    if (e.key === 'Enter') saveApiKey();
-  });
-
-  function headers() { return { 'X-API-Key': state.apiKey, 'Content-Type': 'application/json' }; }
+  function headers() { return { 'Content-Type': 'application/json' }; }
 
   function escHtml(s) {
     if (s === null || s === undefined) return '';
-    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+  function safeHttpUrl(value) {
+    try {
+      var parsed = new URL(value);
+      return parsed.protocol === 'http:' || parsed.protocol === 'https:' ? parsed.href : '';
+    } catch (_) { return ''; }
   }
   function fmtDate(iso) {
     if (!iso) return '—';
@@ -671,7 +655,6 @@
     // Note: don't set Content-Type — the browser sets the multipart boundary. Only send the API key.
     fetch(API + '/clients/' + clientId + '/documents', {
       method: 'POST',
-      headers: { 'X-API-Key': state.apiKey },
       body: fd
     })
     .then(function (r) {
@@ -685,7 +668,7 @@
   function downloadDoc(docId) {
     fetch(API + '/documents/' + docId + '/download', { headers: headers() })
     .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
-    .then(function (data) { if (data.url) window.open(data.url, '_blank'); })
+    .then(function (data) { var url = safeHttpUrl(data.url); if (url) window.open(url, '_blank', 'noopener'); })
     .catch(function () { alert('Could not open the document — try again.'); });
   }
 
