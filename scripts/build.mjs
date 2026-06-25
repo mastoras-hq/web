@@ -13,11 +13,28 @@ const workersPreviewDefaults = isWorkersPreview ? {
   SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_ajuQ3lBuKmkcAlPLcMqKwg_qsatcg1g',
   API_ORIGIN: 'https://api-staging-staging-0815.up.railway.app',
 } : {};
-const siteKey = process.env.TURNSTILE_SITE_KEY || workersPreviewDefaults.TURNSTILE_SITE_KEY;
-const supabaseUrl = process.env.SUPABASE_URL || workersPreviewDefaults.SUPABASE_URL;
+const productionDefaults = !isWorkersPreview ? {
+  TURNSTILE_SITE_KEY: '0x4AAAAAADrG1c_cavbFpEo_',
+  SUPABASE_URL: 'https://pxrfgltynqdceyozpovq.supabase.co',
+  SUPABASE_PUBLISHABLE_KEY: [
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9',
+    'eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4cmZnbHR5bnFkY2V5b3pwb3ZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3Nzk3MTAsImV4cCI6MjA5NDM1NTcxMH0',
+    'k8AXov5w5TdnxDdQ21OVz0rrzuSEvtxWi-yrrc-j4cw',
+  ].join('.'),
+  API_ORIGIN: 'https://api.mastoras.uk',
+} : {};
+const siteKey = process.env.TURNSTILE_SITE_KEY
+  || workersPreviewDefaults.TURNSTILE_SITE_KEY
+  || productionDefaults.TURNSTILE_SITE_KEY;
+const supabaseUrl = process.env.SUPABASE_URL
+  || workersPreviewDefaults.SUPABASE_URL
+  || productionDefaults.SUPABASE_URL;
 const supabasePublishableKey = process.env.SUPABASE_PUBLISHABLE_KEY
-  || workersPreviewDefaults.SUPABASE_PUBLISHABLE_KEY;
-const apiOrigin = process.env.API_ORIGIN || workersPreviewDefaults.API_ORIGIN;
+  || workersPreviewDefaults.SUPABASE_PUBLISHABLE_KEY
+  || productionDefaults.SUPABASE_PUBLISHABLE_KEY;
+const apiOrigin = process.env.API_ORIGIN
+  || workersPreviewDefaults.API_ORIGIN
+  || productionDefaults.API_ORIGIN;
 const turnstileTestSiteKeys = new Set([
   // Cloudflare's documented visible test widget that always passes.
   '1x00000000000000000000AA',
