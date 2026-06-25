@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Completing sign in — Mástoras</title>
+</head>
+<body>
+  <p id="status">Completing secure sign in…</p>
+  <script src="/assets/vendor/supabase-2.108.2.js"></script>
+  <script src="/assets/js/auth-bootstrap.js"></script>
+  <script>
+    (async function () {
+      var returnTo = new URLSearchParams(location.search).get('returnTo') || '/advisor/';
+      if (!returnTo.startsWith('/') || returnTo.startsWith('//')) returnTo = '/advisor/';
+      try {
+        await window.mastorasAuth.requireSession();
+        location.replace(returnTo);
+      } catch (error) {
+        document.getElementById('status').textContent = 'Sign in failed. Returning to login…';
+        setTimeout(function () { location.replace('/login/'); }, 1200);
+      }
+    }());
+  </script>
+</body>
+</html>

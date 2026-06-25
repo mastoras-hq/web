@@ -603,16 +603,6 @@
 </head>
 <body>
 
-<!-- ── API KEY MODAL ── -->
-<div class="modal-overlay" id="api-key-modal" style="display:none">
-  <div class="modal-box">
-    <h2>Connect to Mástoras Advisor</h2>
-    <p>Enter your API key to use this tool. It will be saved in your browser and remembered on future visits.</p>
-    <input type="password" class="modal-input" id="api-key-input" placeholder="Paste your API key here" autocomplete="off">
-    <button type="button" class="btn-submit" onclick="saveApiKey()" style="margin-top:0">Save Key &amp; Continue →</button>
-  </div>
-</div>
-
 <!-- ── REPORT VIEW MODAL ── -->
 <div class="report-modal" id="report-modal">
   <div class="report-modal-box">
@@ -633,7 +623,7 @@
         <a href="https://mastoras.uk/#services">Services</a>
         <a href="https://mastoras.uk/#about">About</a>
         <a href="/blog">Blog</a>
-        <a href="#" onclick="showApiKeyModal(); return false;" class="api-key-link">⚙ API Key</a>
+        <a href="#" onclick="mastorasAuth.signOut(); return false;" class="api-key-link">Sign out</a>
         <a href="https://calendly.com/garynicholl1515/20min" target="_blank" rel="noopener" class="nav-cta">Book a Call</a>
       </nav>
       <button type="button" class="hamburger" onclick="toggleMobileNav()" aria-label="Open navigation" aria-expanded="false">
@@ -645,7 +635,7 @@
     <a href="https://mastoras.uk/#services">Services</a>
     <a href="https://mastoras.uk/#about">About</a>
     <a href="/blog">Blog</a>
-    <a href="#" onclick="showApiKeyModal(); return false;">⚙ Update API Key</a>
+    <a href="#" onclick="mastorasAuth.signOut(); return false;">Sign out</a>
   </div>
 </header>
 
@@ -1010,10 +1000,11 @@
   </div>
 </footer>
 
+<script src="/assets/vendor/supabase-2.108.2.js"></script>
+<script src="/assets/js/auth-bootstrap.js"></script>
 <script>
   /* ── STATE ── */
   var state = {
-    apiKey: localStorage.getItem('mastoras_api_key') || '',
     lastPayload: null,
     lastReportId: null,
     fundNotes: {}
@@ -1023,13 +1014,11 @@
 
   /* ── INIT ── */
   window.addEventListener('DOMContentLoaded', function () {
-    setVat(false);
-    if (!state.apiKey) {
-      showApiKeyModal();
-    } else {
+    setVat(null);
+    mastorasAuth.requireSession().then(function () {
       loadPreviousReports();
       showAdminSection();
-    }
+    }).catch(function () {});
   });
 
   function showAdminSection() {
@@ -1037,30 +1026,10 @@
     if (el) { el.style.display = 'block'; loadCandidates(); loadProposals(); loadFlags(); loadRuns(); loadChanges(); }
   }
 
-  /* ── API KEY MODAL ── */
-  function showApiKeyModal() {
-    document.getElementById('api-key-modal').style.display = 'flex';
-    setTimeout(function () { document.getElementById('api-key-input').focus(); }, 100);
-  }
-
-  function saveApiKey() {
-    var key = document.getElementById('api-key-input').value.trim();
-    if (!key) return;
-    state.apiKey = key;
-    localStorage.setItem('mastoras_api_key', key);
-    document.getElementById('api-key-modal').style.display = 'none';
-    loadPreviousReports();
-    showAdminSection();
-  }
-
-  document.getElementById('api-key-input').addEventListener('keydown', function (e) {
-    if (e.key === 'Enter') saveApiKey();
-  });
-
   /* ── VAT + EFFORT TOGGLES ── */
   function setVat(yes) {
-    document.getElementById('vat_yes').classList.toggle('active', yes);
-    document.getElementById('vat_no').classList.toggle('active', !yes);
+    document.getElementById('vat_yes').classList.toggle('active', yes === true);
+    document.getElementById('vat_no').classList.toggle('active', yes === false);
   }
 
   function setEffort(el) {
@@ -1085,8 +1054,8 @@
         stage: document.getElementById('stage').value,
         location: council,
         council_area: council,
-        years_trading: parseFloat(document.getElementById('years_trading').value) || 0,
-        vat_registered: document.getElementById('vat_yes').classList.contains('active'),
+        years_trading: document.getElementById('years_trading').value ? parseFloat(document.getElementById('years_trading').value) : null,
+        vat_registered: document.getElementById('vat_yes').classList.contains('active') ? true : (document.getElementById('vat_no').classList.contains('active') ? false : null),
         previous_grants: prevGrants,
         contact_name: document.getElementById('contact_name').value.trim() || null,
         email: document.getElementById('client_email').value.trim() || null
@@ -1095,7 +1064,7 @@
         project_name: document.getElementById('project_name').value.trim() || null,
         description: document.getElementById('description').value.trim(),
         funding_ask: parseFloat(document.getElementById('funding_ask').value) || 0,
-        total_cost: parseFloat(document.getElementById('total_cost').value) || 0,
+        total_cost: document.getElementById('total_cost').value ? parseFloat(document.getElementById('total_cost').value) : null,
         tags: tags,
         evidence_available: evidence
       },
@@ -1170,7 +1139,7 @@
 
     fetch(API + '/report', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-API-Key': state.apiKey },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     })
     .then(function (res) {
@@ -1187,7 +1156,8 @@
     .catch(function (err) {
       var msg = err.message;
       if (msg === '401') {
-        showError('Invalid API key. Click ⚙ API Key in the header to update it.');
+        showError('Your session has expired. Sign in again to continue.');
+        setTimeout(function () { window.location.href = '/login/?returnTo=' + encodeURIComponent('/advisor/'); }, 800);
       } else {
         showError('Error ' + msg + ' — check your connection and try again.');
       }
@@ -1221,6 +1191,15 @@
       var scoreColour = score >= 70 ? 'var(--green)' : score >= 40 ? 'var(--amber)' : 'var(--red)';
       var status = (m.status || '').toLowerCase();
       var statusClass = status === 'open' ? 'badge-status-open' : status === 'rolling' ? 'badge-status-rolling' : status.indexOf('clos') === 0 && status !== 'closed' ? 'badge-status-closing' : status === 'closed' ? 'badge-status-closed' : 'badge-neutral';
+      var eligibility = m.eligibility_status || 'needs_information';
+      var eligibilityLabel = eligibility === 'eligible' ? 'Eligibility checks passed' : 'Needs information';
+      var eligibilityClass = eligibility === 'eligible' ? 'badge-status-open' : 'badge-status-closing';
+      var missingHtml = '';
+      if (m.missing_information && m.missing_information.length) {
+        missingHtml = '<div class="risk-block"><p class="block-label">Information still needed</p><ul class="block-list">' +
+          m.missing_information.map(function (item) { return '<li>' + escHtml(item) + '</li>'; }).join('') +
+          '</ul></div>';
+      }
 
       var whyHtml = '';
       if (m.why_it_fits && m.why_it_fits.length) {
@@ -1259,7 +1238,8 @@
         }
       }
 
-      var fundLink = m.source_url ? '<a href="' + escHtml(m.source_url) + '" target="_blank" rel="noopener" class="fund-link">View fund →</a>' : '';
+      var fundUrl = safeHttpUrl(m.source_url);
+      var fundLink = fundUrl ? '<a href="' + escHtml(fundUrl) + '" target="_blank" rel="noopener" class="fund-link">View fund →</a>' : '';
 
       html += '<div class="match-card">' +
         '<div class="match-header">' +
@@ -1267,12 +1247,14 @@
           '<div style="text-align:right"><span class="match-score" style="color:' + scoreColour + '">' + score + '<span style="font-size:11px;font-weight:400;color:#aaa">/100</span></span></div>' +
         '</div>' +
         '<div class="score-bar-track"><div class="score-bar-fill" style="background:' + scoreColour + ';width:' + score + '%"></div></div>' +
+        '<p style="font-size:11px;color:#888;margin:5px 0 0">Funding fit score · ' + escHtml(m.score_coverage || 0) + '/100 profile coverage · confidence ' + Math.round((m.match_confidence || 0) * 100) + '%</p>' +
         '<div class="badge-row">' +
           '<span class="badge ' + statusClass + '">' + escHtml(m.status || 'Unknown') + '</span>' +
+          '<span class="badge ' + eligibilityClass + '">' + eligibilityLabel + '</span>' +
           (m.grant_size ? '<span class="badge badge-neutral">' + escHtml(m.grant_size) + '</span>' : '') +
           (m.effort_level ? '<span class="badge badge-neutral">Effort: ' + escHtml(m.effort_level) + '</span>' : '') +
         '</div>' +
-        whyHtml + riskHtml + intelHtml + fundLink +
+        whyHtml + riskHtml + missingHtml + intelHtml + fundLink +
         '<div class="consultant-note-wrap">' +
           '<p class="form-section-title" style="margin:12px 0 6px">Consultant\'s View <span style="font-weight:400;color:#bbb;text-transform:none;letter-spacing:0">(optional — appears in PDF)</span></p>' +
           '<textarea class="form-textarea consultant-note-input" rows="3" placeholder="Add your professional view on this fund for the client…" data-fund-id="' + escHtml(m.fund_id) + '" onchange="saveNote(this)">' + escHtml(state.fundNotes[m.fund_id] || '') + '</textarea>' +
@@ -1298,7 +1280,7 @@
     var pdfPayload = Object.assign({}, state.lastPayload, { fund_notes: state.fundNotes });
     fetch(API + '/report/pdf', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-API-Key': state.apiKey },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(pdfPayload)
     })
     .then(function (res) {
@@ -1331,8 +1313,7 @@
   var _amountTimers = {};
 
   function loadPreviousReports() {
-    if (!state.apiKey) return;
-    fetch(API + '/reports?limit=20', { headers: { 'X-API-Key': state.apiKey } })
+    fetch(API + '/reports?limit=20')
     .then(function(res) { return res.ok ? res.json() : []; })
     .then(function(reports) { renderReportsTable(reports); })
     .catch(function() {});
@@ -1410,7 +1391,7 @@
   }
 
   function loadDetail(id) {
-    fetch(API + '/reports/' + id, { headers: { 'X-API-Key': state.apiKey } })
+    fetch(API + '/reports/' + id)
     .then(function(res) { return res.ok ? res.json() : null; })
     .then(function(data) {
       if (!data) return;
@@ -1541,7 +1522,7 @@
   function patchReport(id, data, callback) {
     fetch(API + '/reports/' + id, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', 'X-API-Key': state.apiKey },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     })
     .then(function(res) { if (callback) callback(res.ok); })
@@ -1549,7 +1530,7 @@
   }
 
   function refreshStats() {
-    fetch(API + '/reports?limit=20', { headers: { 'X-API-Key': state.apiKey } })
+    fetch(API + '/reports?limit=20')
     .then(function(res) { return res.ok ? res.json() : []; })
     .then(function(reports) {
       var stats = calcStats(reports);
@@ -1586,7 +1567,13 @@
 
   function escHtml(str) {
     if (!str) return '';
-    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+  function safeHttpUrl(value) {
+    try {
+      var parsed = new URL(value);
+      return parsed.protocol === 'http:' || parsed.protocol === 'https:' ? parsed.href : '';
+    } catch (_) { return ''; }
   }
 
   /* ── ADMIN ACTIONS ── */
@@ -1598,7 +1585,7 @@
     res.textContent = runningMsg;
     fetch(API + endpoint, {
       method: 'POST',
-      headers: { 'X-API-Key': state.apiKey }
+      headers: {}
     })
     .then(function (r) {
       if (!r.ok) throw new Error('Error ' + r.status);
@@ -1658,7 +1645,7 @@
   function loadRuns() {
     var el = document.getElementById('runs-list');
     el.innerHTML = '<p class="admin-muted">Loading…</p>';
-    fetch(API + '/admin/runs?limit=8', { headers: { 'X-API-Key': state.apiKey } })
+    fetch(API + '/admin/runs?limit=8')
     .then(function (r) { return r.ok ? r.json() : []; })
     .then(function (runs) {
       if (!runs.length) { el.innerHTML = '<p class="admin-muted">No runs recorded yet.</p>'; return; }
@@ -1697,7 +1684,7 @@
   function loadChanges() {
     var el = document.getElementById('changes-list');
     el.innerHTML = '<p class="admin-muted">Loading…</p>';
-    fetch(API + '/updates?limit=20', { headers: { 'X-API-Key': state.apiKey } })
+    fetch(API + '/updates?limit=20')
     .then(function (r) { return r.ok ? r.json() : []; })
     .then(function (rows) {
       if (!rows.length) { el.innerHTML = '<p class="admin-muted">No changes logged yet.</p>'; return; }
@@ -1719,7 +1706,7 @@
   function loadCandidates() {
     var el = document.getElementById('candidates-list');
     el.innerHTML = '<p class="admin-muted">Loading…</p>';
-    fetch(API + '/admin/candidates', { headers: { 'X-API-Key': state.apiKey } })
+    fetch(API + '/admin/candidates')
     .then(function (r) { return r.ok ? r.json() : []; })
     .then(function (cands) {
       if (!cands.length) { el.innerHTML = '<p class="flag-empty">✓ No candidates waiting — the discovery agent will drop new schemes here for approval.</p>'; return; }
@@ -1737,7 +1724,7 @@
     btn.disabled = true; statusEl.textContent = 'Fetching + reading the page… (10–30s)';
     fetch(API + '/admin/enrich-url', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-API-Key': state.apiKey },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ url: url, provider: prov || null })
     })
     .then(function (r) { if (!r.ok) return r.json().then(function (e) { throw new Error(e.detail || 'failed'); }); return r.json(); })
@@ -1787,7 +1774,7 @@
         '<span class="cand-prov">' + escHtml(c.provider || '') + '</span></div>' +
       '<div class="cand-badges">' + badges + '</div>' +
       grid +
-      '<div class="cand-url"><a href="' + escHtml(c.source_url || '') + '" target="_blank" rel="noopener">' + escHtml(c.source_url || '—') + '</a></div>' +
+      '<div class="cand-url">' + (safeHttpUrl(c.source_url) ? '<a href="' + escHtml(safeHttpUrl(c.source_url)) + '" target="_blank" rel="noopener">' + escHtml(c.source_url) + '</a>' : '—') + '</div>' +
       evidence +
       '<div class="cand-actions">' +
         '<button type="button" class="cand-btn approve" onclick="candidateAction(\'' + escHtml(c.id) + '\',\'approve\')">✓ Approve</button>' +
@@ -1800,7 +1787,7 @@
     var payload = body || { candidate_id: id, action: action };
     fetch(API + '/admin/candidates/action', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-API-Key': state.apiKey },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     })
     .then(function (r) { if (!r.ok) return r.json().then(function (e) { throw new Error(e.detail || ''); }); return r.json(); })
@@ -1818,7 +1805,7 @@
   function loadProposals() {
     var el = document.getElementById('proposals-list');
     el.innerHTML = '<p class="admin-muted">Loading…</p>';
-    fetch(API + '/admin/proposals', { headers: { 'X-API-Key': state.apiKey } })
+    fetch(API + '/admin/proposals')
     .then(function (r) { return r.ok ? r.json() : []; })
     .then(function (props) {
       if (!props.length) { el.innerHTML = '<p class="flag-empty">✓ No proposed updates — run “Re-verify Existing Funds” to re-check the database against live funder pages.</p>'; return; }
@@ -1838,7 +1825,7 @@
     var flags = p.flags || {};
     var name = escHtml(p.fund_name || p.fund_id || '(unknown fund)');
     var prov = escHtml(p.fund_provider || '');
-    var url = escHtml(p.source_url || '');
+    var url = escHtml(safeHttpUrl(p.source_url) || '');
 
     // Lightweight "verify URL" card — the scheme name no longer appears on the page.
     if (flags.name_missing || p.url_status === 'name_missing') {
@@ -1911,7 +1898,7 @@
     if (!fields.length && !payload.set_status) { alert('Tick at least one change to apply, or use Dismiss.'); return; }
     fetch(API + '/admin/proposals/action', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-API-Key': state.apiKey },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     })
     .then(function (r) { if (!r.ok) return r.json().then(function (e) { throw new Error(e.detail || ''); }); return r.json(); })
@@ -1927,7 +1914,7 @@
     if (note === null) return;
     fetch(API + '/admin/proposals/action', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-API-Key': state.apiKey },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ proposal_id: id, action: 'dismiss', review_note: note || null })
     })
     .then(function (r) { if (!r.ok) return r.json().then(function (e) { throw new Error(e.detail || ''); }); return r.json(); })
@@ -1939,7 +1926,7 @@
   function loadFlags() {
     var el = document.getElementById('flags-list');
     el.innerHTML = '<p class="admin-muted">Loading…</p>';
-    fetch(API + '/admin/flags', { headers: { 'X-API-Key': state.apiKey } })
+    fetch(API + '/admin/flags')
     .then(function (r) { return r.ok ? r.json() : []; })
     .then(function (flags) {
       if (!flags.length) { el.innerHTML = '<p class="flag-empty">✓ Nothing flagged — all funds look healthy.</p>'; return; }
@@ -1947,7 +1934,7 @@
         var dead = f.change_type === 'link_dead';
         var typeLabel = dead ? 'dead link' : 'deadline passed';
         var meta = dead
-          ? 'URL: <a href="' + escHtml(f.source_url||'') + '" target="_blank" rel="noopener">' + escHtml(f.source_url||'—') + '</a>'
+          ? 'URL: ' + (safeHttpUrl(f.source_url) ? '<a href="' + escHtml(safeHttpUrl(f.source_url)) + '" target="_blank" rel="noopener">' + escHtml(f.source_url) + '</a>' : '—')
           : 'Deadline: ' + escHtml(f.deadline_date||'—') + (f.provider ? ' · ' + escHtml(f.provider) : '');
         var fixBtn = dead
           ? '<button type="button" class="flag-btn fix" onclick="flagFixUrl(\'' + escHtml(f.fund_id) + '\')">Fix URL</button>'
@@ -1971,7 +1958,7 @@
     if (newUrl) body.new_url = newUrl;
     fetch(API + '/admin/flags/action', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-API-Key': state.apiKey },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
     })
     .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })

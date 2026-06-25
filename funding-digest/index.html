@@ -266,7 +266,13 @@
 
   function escHtml(str) {
     if (!str) return '';
-    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+  function safeHttpUrl(value) {
+    try {
+      var parsed = new URL(value);
+      return parsed.protocol === 'http:' || parsed.protocol === 'https:' ? parsed.href : '';
+    } catch (_) { return ''; }
   }
 
   function daysUntil(dateStr) {
@@ -310,7 +316,8 @@
         radarHtml += '<p style="font-size:13px;color:var(--brass);font-weight:600">Expected: ' + escHtml(fund.expected_window) + '</p>';
       }
     }
-    var link = fund.source_url ? '<a href="' + escHtml(fund.source_url) + '" target="_blank" rel="noopener" class="fund-card-link">View fund →</a>' : '';
+    var url = safeHttpUrl(fund.source_url);
+    var link = url ? '<a href="' + escHtml(url) + '" target="_blank" rel="noopener" class="fund-card-link">View fund →</a>' : '';
 
     return '<div class="fund-card">' +
       '<p class="fund-card-name">' + escHtml(fund.fund_name) + '</p>' +

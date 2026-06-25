@@ -1,0 +1,32 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run check:js
+      - run: npm run build
+        env:
+          TURNSTILE_SITE_KEY: '0x0000000000000000000000000000000000000000'
+          SUPABASE_URL: https://example.supabase.co
+          SUPABASE_PUBLISHABLE_KEY: ci_publishable_key_000000000000000000000000
+          API_ORIGIN: https://api.example.test
+      - run: npx playwright install --with-deps chromium
+      - run: npm test
+      - uses: actions/setup-go@v6
+        with:
+          go-version: '1.24.11'
+          cache: false
+      - name: Install pinned Gitleaks CLI
+        run: go install github.com/zricethezav/gitleaks/v8@v8.30.1
+      - name: Scan repository for secrets
+        run: '"$(go env GOPATH)/bin/gitleaks" git --redact --verbose --no-banner --config .gitleaks.toml'
