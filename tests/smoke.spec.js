@@ -147,6 +147,59 @@ test('Advisor admin module initializes review queues after authentication', asyn
   await expect(page.locator('#runs-list')).toContainText('No runs recorded');
 });
 
+test('Advisor CRM module loads report history and persists notes', async ({ page }) => {
+  const patches = [];
+  await page.route('**/assets/js/auth-bootstrap.js', route => route.fulfill({
+    status: 200,
+    contentType: 'text/javascript',
+    body: 'window.mastorasAuth={requireSession:()=>Promise.resolve({access_token:"test"}),signOut:()=>{}};',
+  }));
+  await page.route(/\/(?:admin\/.*|updates(?:\?.*)?)$/, route => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: '[]',
+  }));
+  await page.route(/\/reports(?:\/report-1|\?limit=20)$/, async route => {
+    const request = route.request();
+    if (request.method() === 'PATCH') {
+      patches.push(request.postDataJSON());
+      await route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
+      return;
+    }
+    if (new URL(request.url()).pathname.endsWith('/report-1')) {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          client_notes: '',
+          application_tracking: {},
+          report: { matches: [{ fund_id: 'fund-1', fund_name: 'Test Fund' }] },
+        }),
+      });
+      return;
+    }
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify([{
+        id: 'report-1', created_at: '2026-07-01T09:00:00Z',
+        client_ref: 'TEST-1', client_name: 'Test Founder',
+        top_fund: 'Test Fund', total_matches: 1, application_tracking: {},
+      }]),
+    });
+  });
+
+  await page.goto('/advisor/');
+  await expect(page.locator('#previous-reports')).toBeVisible();
+  await expect(page.locator('#reports-tbody')).toContainText('Test Founder');
+  await page.locator('[data-action="toggle-detail"][data-report-id="report-1"]').first().click();
+  await expect(page.locator('#notes-report-1')).toBeVisible();
+  await page.locator('#notes-report-1').fill('Awaiting funder response');
+  await page.locator('#notes-report-1').blur();
+  await expect.poll(() => patches.some(body => body.client_notes === 'Awaiting funder response')).toBe(true);
+  await expect(page.locator('#notes-ind-report-1')).toContainText('Saved');
+});
+
 async function injectTurnstile(page, selector) {
   await page.locator(selector).evaluate(form => {
     const input = document.createElement('input');
