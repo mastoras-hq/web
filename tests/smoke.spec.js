@@ -127,6 +127,26 @@ test('Advisor delegated controls remain interactive', async ({ page }) => {
   await expect.poll(() => page.evaluate(() => window.__signedOut)).toBe(true);
 });
 
+test('Advisor admin module initializes review queues after authentication', async ({ page }) => {
+  await page.route('**/assets/js/auth-bootstrap.js', route => route.fulfill({
+    status: 200,
+    contentType: 'text/javascript',
+    body: 'window.mastorasAuth={requireSession:()=>Promise.resolve({access_token:"test"}),signOut:()=>{}};',
+  }));
+  await page.route('https://api.mastoras.uk/**', route => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: '[]',
+  }));
+
+  await page.goto('/advisor/');
+  await expect(page.locator('#admin-section')).toBeVisible();
+  await expect(page.locator('#candidates-list')).toContainText('No candidates waiting');
+  await expect(page.locator('#proposals-list')).toContainText('No proposed updates');
+  await expect(page.locator('#flags-list')).toContainText('Nothing flagged');
+  await expect(page.locator('#runs-list')).toContainText('No runs recorded');
+});
+
 async function injectTurnstile(page, selector) {
   await page.locator(selector).evaluate(form => {
     const input = document.createElement('input');
