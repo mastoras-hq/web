@@ -13,3 +13,10 @@ for (const path of ['advisor/index.html', 'hq/index.html']) {
     throw new Error(`${path} still contains an inline event handler`);
   }
 }
+
+for (const path of ['login/index.html', 'auth/callback/index.html']) {
+  const source = await readFile(path, 'utf8');
+  if (/<script(?![^>]*\bsrc=)[^>]*>/i.test(source)) {
+    throw new Error(`${path} still contains an inline executable script`);
+  }
+}
