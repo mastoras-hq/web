@@ -21,11 +21,34 @@ test('protected surfaces are marked noindex', async ({ page }) => {
   }
 });
 
-test('HQ does not use inline event handlers', async ({ request }) => {
-  const response = await request.get('/hq/');
-  expect(response.ok()).toBeTruthy();
-  const source = await response.text();
-  expect(source).not.toMatch(/\son(?:click|change|input|blur|submit)\s*=/i);
+test('protected surfaces do not use inline event handlers', async ({ request }) => {
+  for (const path of ['/advisor/', '/hq/']) {
+    const response = await request.get(path);
+    expect(response.ok()).toBeTruthy();
+    const source = await response.text();
+    expect(source).not.toMatch(/\son[a-z]+\s*=/i);
+  }
+});
+
+test('Advisor delegated controls remain interactive', async ({ page }) => {
+  await page.route('**/assets/js/auth-bootstrap.js', route => route.fulfill({
+    status: 200,
+    contentType: 'text/javascript',
+    body: 'window.mastorasAuth={requireSession:()=>new Promise(()=>{}),signOut:()=>{window.__signedOut=true;}};',
+  }));
+  await page.setViewportSize({ width: 600, height: 900 });
+  await page.goto('/advisor/');
+
+  await page.locator('#vat_yes').click();
+  await expect(page.locator('#vat_yes')).toHaveClass(/active/);
+  await page.locator('.effort-btn[data-value="low"]').click();
+  await expect(page.locator('.effort-btn[data-value="low"]')).toHaveClass(/active/);
+
+  await page.locator('.hamburger').click();
+  await expect(page.locator('.hamburger')).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.locator('#mobile-nav')).toHaveClass(/open/);
+  await page.locator('#mobile-nav [data-action="sign-out"]').click();
+  await expect.poll(() => page.evaluate(() => window.__signedOut)).toBe(true);
 });
 
 async function injectTurnstile(page, selector) {
