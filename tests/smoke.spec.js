@@ -30,8 +30,8 @@ test('protected surfaces do not use inline event handlers', async ({ request }) 
   }
 });
 
-test('authentication and HQ pages use external scripts', async ({ request }) => {
-  for (const path of ['/login/', '/auth/callback/', '/hq/']) {
+test('protected application pages use external scripts', async ({ request }) => {
+  for (const path of ['/login/', '/auth/callback/', '/advisor/', '/hq/']) {
     const response = await request.get(path);
     expect(response.ok()).toBeTruthy();
     const source = await response.text();

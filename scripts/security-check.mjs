@@ -14,7 +14,7 @@ for (const path of ['advisor/index.html', 'hq/index.html']) {
   }
 }
 
-for (const path of ['login/index.html', 'auth/callback/index.html', 'hq/index.html']) {
+for (const path of ['login/index.html', 'auth/callback/index.html', 'advisor/index.html', 'hq/index.html']) {
   const source = await readFile(path, 'utf8');
   if (/<script(?![^>]*\bsrc=)[^>]*>/i.test(source)) {
     throw new Error(`${path} still contains an inline executable script`);
