@@ -6,3 +6,8 @@ for (const path of ['advisor/index.html', 'hq/index.html']) {
     if (source.includes(forbidden)) throw new Error(`${path} still contains ${forbidden}`);
   }
 }
+
+const hqSource = await readFile('hq/index.html', 'utf8');
+if (/\son(?:click|change|input|blur|submit)\s*=/i.test(hqSource)) {
+  throw new Error('hq/index.html still contains an inline event handler');
+}
