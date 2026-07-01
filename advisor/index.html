@@ -606,7 +606,7 @@
 <!-- ── REPORT VIEW MODAL ── -->
 <div class="report-modal" id="report-modal">
   <div class="report-modal-box">
-    <button type="button" class="report-modal-close" onclick="closeReportModal()">✕</button>
+    <button type="button" class="report-modal-close" data-action="close-report-modal">✕</button>
     <h2 style="font-size:1.1rem">Saved Report</h2>
     <pre id="report-modal-content"></pre>
   </div>
@@ -623,10 +623,10 @@
         <a href="https://mastoras.uk/#services">Services</a>
         <a href="https://mastoras.uk/#about">About</a>
         <a href="/blog">Blog</a>
-        <a href="#" onclick="mastorasAuth.signOut(); return false;" class="api-key-link">Sign out</a>
+        <a href="#" data-action="sign-out" class="api-key-link">Sign out</a>
         <a href="https://calendly.com/garynicholl1515/20min" target="_blank" rel="noopener" class="nav-cta">Book a Call</a>
       </nav>
-      <button type="button" class="hamburger" onclick="toggleMobileNav()" aria-label="Open navigation" aria-expanded="false">
+      <button type="button" class="hamburger" data-action="toggle-mobile-nav" aria-label="Open navigation" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
     </div>
@@ -635,7 +635,7 @@
     <a href="https://mastoras.uk/#services">Services</a>
     <a href="https://mastoras.uk/#about">About</a>
     <a href="/blog">Blog</a>
-    <a href="#" onclick="mastorasAuth.signOut(); return false;">Sign out</a>
+    <a href="#" data-action="sign-out">Sign out</a>
   </div>
 </header>
 
@@ -752,8 +752,8 @@
             <div class="form-group">
               <label>VAT registered</label>
               <div class="toggle-group">
-                <button type="button" class="toggle-btn" id="vat_no" onclick="setVat(false)">No</button>
-                <button type="button" class="toggle-btn" id="vat_yes" onclick="setVat(true)">Yes</button>
+                <button type="button" class="toggle-btn" id="vat_no" data-action="set-vat" data-vat="false">No</button>
+                <button type="button" class="toggle-btn" id="vat_yes" data-action="set-vat" data-vat="true">Yes</button>
               </div>
             </div>
           </div>
@@ -818,15 +818,15 @@
           <div class="form-group">
             <label>Effort capacity <span class="hint">(how much time can the client commit to the application?)</span></label>
             <div class="toggle-group" style="max-width:280px">
-              <button type="button" class="toggle-btn effort-btn" data-value="low" onclick="setEffort(this)">Low</button>
-              <button type="button" class="toggle-btn effort-btn active" data-value="medium" onclick="setEffort(this)">Medium</button>
-              <button type="button" class="toggle-btn effort-btn" data-value="high" onclick="setEffort(this)">High</button>
+              <button type="button" class="toggle-btn effort-btn" data-value="low" data-action="set-effort">Low</button>
+              <button type="button" class="toggle-btn effort-btn active" data-value="medium" data-action="set-effort">Medium</button>
+              <button type="button" class="toggle-btn effort-btn" data-value="high" data-action="set-effort">High</button>
             </div>
           </div>
 
           <p class="validation-msg" id="validation-msg"></p>
           <div class="submit-error" id="submit-error"></div>
-          <button type="button" class="btn-submit" id="submit-btn" onclick="submitForm()">Generate Funding Report →</button>
+          <button type="button" class="btn-submit" id="submit-btn" data-action="submit-form">Generate Funding Report →</button>
 
         </div>
       </div>
@@ -835,7 +835,7 @@
       <div class="results-column">
         <div class="results-header">
           <div id="results-heading"></div>
-          <button type="button" class="btn-pdf" id="pdf-btn" onclick="downloadPdf()">Download PDF Report</button>
+          <button type="button" class="btn-pdf" id="pdf-btn" data-action="download-pdf">Download PDF Report</button>
         </div>
         <div id="results-panel">
           <div class="results-placeholder">
@@ -901,28 +901,28 @@
       <div class="admin-card">
         <h3>Follow-up Reminders</h3>
         <p>Check for reports at 30/60/90-day milestones with no tracking, and email reminders. Runs daily at 07:00 UTC.</p>
-        <button type="button" class="btn-admin" id="btn-followup" onclick="runFollowup()">Run now</button>
+        <button type="button" class="btn-admin" id="btn-followup" data-action="run-followup">Run now</button>
         <div class="admin-result" id="result-followup"></div>
       </div>
 
       <div class="admin-card">
         <h3>Weekly Monitor</h3>
         <p>Scrape InvestNI, DAERA, DfC and CFNI for fund changes. Runs Mondays at 08:00 UTC.</p>
-        <button type="button" class="btn-admin" id="btn-monitor" onclick="runMonitor()">Run now</button>
+        <button type="button" class="btn-admin" id="btn-monitor" data-action="run-monitor">Run now</button>
         <div class="admin-result" id="result-monitor"></div>
       </div>
 
       <div class="admin-card">
         <h3>Funding Radar</h3>
         <p>Annotate funds with seasonal opening patterns. Runs on the 1st of each month at 09:00 UTC.</p>
-        <button type="button" class="btn-admin" id="btn-radar" onclick="runRadar()">Run now</button>
+        <button type="button" class="btn-admin" id="btn-radar" data-action="run-radar">Run now</button>
         <div class="admin-result" id="result-radar"></div>
       </div>
 
       <div class="admin-card">
         <h3>AI Discovery</h3>
         <p>Search the wider NI funding landscape for new schemes, validate + enrich each, and drop candidates into the review queue above. Costs a few £ per run.</p>
-        <button type="button" class="btn-admin" id="btn-discovery" onclick="runDiscovery()">Run now</button>
+        <button type="button" class="btn-admin" id="btn-discovery" data-action="run-discovery">Run now</button>
         <div class="admin-result" id="result-discovery"></div>
       </div>
 
@@ -930,7 +930,7 @@
         <h3>Re-verify Existing Funds</h3>
         <p>Re-read the source page of every active fund and propose grounded corrections (wrong grant sizes, passed deadlines, fillable blanks) into the “Proposed updates” queue above. Costs a few £; leave the box blank to do all, or set a limit.</p>
         <input type="number" id="refresh-limit" placeholder="limit (optional)" min="1" style="width:110px" />
-        <button type="button" class="btn-admin" id="btn-refresh-funds" onclick="runRefresh()">Run now</button>
+        <button type="button" class="btn-admin" id="btn-refresh-funds" data-action="run-refresh">Run now</button>
         <div class="admin-result" id="result-refresh"></div>
       </div>
 
@@ -939,13 +939,13 @@
     <div class="admin-reports">
       <div class="admin-report-head">
         <h3>Discovered funds — pending review</h3>
-        <button type="button" class="btn-refresh" onclick="loadCandidates()">↻ Refresh</button>
+        <button type="button" class="btn-refresh" data-action="load-candidates">↻ Refresh</button>
       </div>
       <p class="admin-muted" style="margin:0 0 12px">New schemes found by the discovery agent. Each source link was checked live before it reached this queue. Nothing is added to the fund database until you approve it. <strong>Source confidence</strong> = how sure the engine is it read the funder's page correctly — it is <em>not</em> a client match score.</p>
       <div class="enrich-form">
         <input type="url" id="enrich-url" placeholder="Paste a funder scheme URL to enrich…" />
         <input type="text" id="enrich-provider" placeholder="Funder name (optional)" />
-        <button type="button" class="btn-admin" id="btn-enrich" onclick="enrichUrl()">Enrich URL</button>
+        <button type="button" class="btn-admin" id="btn-enrich" data-action="enrich-url">Enrich URL</button>
         <span id="enrich-status" class="admin-muted"></span>
       </div>
       <div id="candidates-list"><p class="admin-muted">Loading…</p></div>
@@ -954,7 +954,7 @@
     <div class="admin-reports">
       <div class="admin-report-head">
         <h3>Proposed updates — existing funds</h3>
-        <button type="button" class="btn-refresh" onclick="loadProposals()">↻ Refresh</button>
+        <button type="button" class="btn-refresh" data-action="load-proposals">↻ Refresh</button>
       </div>
       <p class="admin-muted" style="margin:0 0 12px">Re-verification of funds already in the database. Each fund's source page was re-read and grounded; only genuine differences in the <strong>factual</strong> fields (grant size, deadline, region, stage) — or blanks now fillable — appear here. Tick the changes you accept and apply them. Nothing changes in the fund database until you apply it; dismissing still records that the source was re-checked today.</p>
       <div id="proposals-list"><p class="admin-muted">Loading…</p></div>
@@ -963,7 +963,7 @@
     <div class="admin-reports">
       <div class="admin-report-head">
         <h3>Flagged for review</h3>
-        <button type="button" class="btn-refresh" onclick="loadFlags()">↻ Refresh</button>
+        <button type="button" class="btn-refresh" data-action="load-flags">↻ Refresh</button>
       </div>
       <div id="flags-list"><p class="admin-muted">Loading…</p></div>
     </div>
@@ -971,7 +971,7 @@
     <div class="admin-reports">
       <div class="admin-report-head">
         <h3>Recent runs</h3>
-        <button type="button" class="btn-refresh" onclick="loadRuns()">↻ Refresh</button>
+        <button type="button" class="btn-refresh" data-action="load-runs">↻ Refresh</button>
       </div>
       <div id="runs-list"><p class="admin-muted">Loading…</p></div>
     </div>
@@ -979,7 +979,7 @@
     <div class="admin-reports">
       <div class="admin-report-head">
         <h3>Recent changes</h3>
-        <button type="button" class="btn-refresh" onclick="loadChanges()">↻ Refresh</button>
+        <button type="button" class="btn-refresh" data-action="load-changes">↻ Refresh</button>
       </div>
       <div id="changes-list"><p class="admin-muted">Loading…</p></div>
     </div>
@@ -1014,12 +1014,79 @@
 
   /* ── INIT ── */
   window.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('click', handleActionClick);
+    document.addEventListener('change', handleControlChange);
+    document.addEventListener('input', handleControlInput);
+    document.addEventListener('focusout', handleControlFocusOut);
+    document.addEventListener('keydown', handleActionKeydown);
+
     setVat(null);
     mastorasAuth.requireSession().then(function () {
       loadPreviousReports();
       showAdminSection();
     }).catch(function () {});
   });
+
+  function handleActionClick(event) {
+    var control = event.target.closest('[data-action]');
+    if (!control) return;
+    var action = control.dataset.action;
+    if (action === 'close-report-modal') closeReportModal();
+    else if (action === 'sign-out') { event.preventDefault(); mastorasAuth.signOut(); }
+    else if (action === 'toggle-mobile-nav') toggleMobileNav();
+    else if (action === 'set-vat') setVat(control.dataset.vat === 'true');
+    else if (action === 'set-effort') setEffort(control);
+    else if (action === 'submit-form') submitForm();
+    else if (action === 'download-pdf') downloadPdf();
+    else if (action === 'run-followup') runFollowup();
+    else if (action === 'run-monitor') runMonitor();
+    else if (action === 'run-radar') runRadar();
+    else if (action === 'run-discovery') runDiscovery();
+    else if (action === 'run-refresh') runRefresh();
+    else if (action === 'load-candidates') loadCandidates();
+    else if (action === 'enrich-url') enrichUrl();
+    else if (action === 'load-proposals') loadProposals();
+    else if (action === 'load-flags') loadFlags();
+    else if (action === 'load-runs') loadRuns();
+    else if (action === 'load-changes') loadChanges();
+    else if (action === 'toggle-detail') toggleDetail(control.dataset.reportId);
+    else if (action === 'show-raw-json') showRawJson(control.dataset.reportId);
+    else if (action === 'approve-candidate') candidateAction(control.dataset.candidateId, 'approve');
+    else if (action === 'reject-candidate') candidateReject(control.dataset.candidateId);
+    else if (action === 'apply-proposal') applyProposal(control.dataset.proposalId);
+    else if (action === 'dismiss-proposal') dismissProposal(control.dataset.proposalId);
+    else if (action === 'fix-flag-url') flagFixUrl(control.dataset.fundId);
+    else if (action === 'resolve-flag') flagAction(control.dataset.fundId, control.dataset.changeType, control.dataset.resolution);
+  }
+
+  function handleControlChange(event) {
+    if (event.target.classList.contains('consultant-note-input')) {
+      saveNote(event.target);
+    } else if (event.target.classList.contains('crm-applied-check')) {
+      setApplied(event.target.dataset.reportId, event.target.dataset.fundId, event.target.checked);
+    } else if (event.target.classList.contains('crm-outcome-select')) {
+      setOutcome(event.target.dataset.reportId, event.target.dataset.fundId, event.target.value);
+    }
+  }
+
+  function handleControlInput(event) {
+    if (event.target.classList.contains('crm-notes-area')) {
+      scheduleNotesSave(event.target.dataset.reportId);
+    } else if (event.target.classList.contains('crm-amount-input')) {
+      scheduleAmountSave(event.target.dataset.reportId, event.target.dataset.fundId, event.target.value);
+    }
+  }
+
+  function handleControlFocusOut(event) {
+    if (event.target.classList.contains('crm-notes-area')) saveNotes(event.target.dataset.reportId);
+  }
+
+  function handleActionKeydown(event) {
+    var control = event.target.closest('[data-action="toggle-detail"]');
+    if (!control || control.tagName !== 'TR' || (event.key !== 'Enter' && event.key !== ' ')) return;
+    event.preventDefault();
+    toggleDetail(control.dataset.reportId);
+  }
 
   function showAdminSection() {
     var el = document.getElementById('admin-section');
@@ -1257,7 +1324,7 @@
         whyHtml + riskHtml + missingHtml + intelHtml + fundLink +
         '<div class="consultant-note-wrap">' +
           '<p class="form-section-title" style="margin:12px 0 6px">Consultant\'s View <span style="font-weight:400;color:#bbb;text-transform:none;letter-spacing:0">(optional — appears in PDF)</span></p>' +
-          '<textarea class="form-textarea consultant-note-input" rows="3" placeholder="Add your professional view on this fund for the client…" data-fund-id="' + escHtml(m.fund_id) + '" onchange="saveNote(this)">' + escHtml(state.fundNotes[m.fund_id] || '') + '</textarea>' +
+          '<textarea class="form-textarea consultant-note-input" rows="3" placeholder="Add your professional view on this fund for the client…" data-fund-id="' + escHtml(m.fund_id) + '">' + escHtml(state.fundNotes[m.fund_id] || '') + '</textarea>' +
         '</div>' +
         '</div>';
     });
@@ -1356,14 +1423,13 @@
         ? ' <span style="font-size:11px;color:var(--teal);font-weight:600">' + nApplied + ' tracked</span>'
         : '';
       var rid = escHtml(r.id);
-      return '<tr class="report-summary-row" style="cursor:pointer" onclick="toggleDetail(\'' + rid + '\')">' +
+      return '<tr class="report-summary-row" style="cursor:pointer" data-action="toggle-detail" data-report-id="' + rid + '" tabindex="0" role="button">' +
           '<td>' + date + '</td>' +
           '<td>' + escHtml(r.client_ref  || '—') + '</td>' +
           '<td>' + escHtml(r.client_name || '—') + '</td>' +
           '<td>' + escHtml(r.top_fund    || '—') + badge + '</td>' +
           '<td style="text-align:center">' + (r.total_matches || 0) + '</td>' +
-          '<td><button type="button" class="btn-track" id="track-btn-' + rid + '" ' +
-              'onclick="event.stopPropagation();toggleDetail(\'' + rid + '\')">Track ▾</button></td>' +
+          '<td><button type="button" class="btn-track" id="track-btn-' + rid + '" data-action="toggle-detail" data-report-id="' + rid + '">Track ▾</button></td>' +
         '</tr>' +
         '<tr class="report-detail-row" id="detail-row-' + rid + '">' +
           '<td colspan="6">' +
@@ -1411,9 +1477,9 @@
     var tracking = data.application_tracking || {};
     var matches  = (data.report && data.report.matches) ? data.report.matches : [];
 
+    var reportId = escHtml(id);
     var html = '<span class="crm-label">Client Notes</span>' +
-      '<textarea class="crm-notes-area" id="notes-' + id + '" ' +
-        'onblur="saveNotes(\'' + id + '\')" oninput="scheduleNotesSave(\'' + id + '\')" ' +
+      '<textarea class="crm-notes-area" id="notes-' + reportId + '" data-report-id="' + reportId + '" ' +
         'placeholder="Notes about this client, their project, or the application process…">' +
         escHtml(notes) +
       '</textarea>' +
@@ -1435,27 +1501,24 @@
         html += '<tr>' +
           '<td class="crm-fund-name">' + escHtml(m.fund_name) + '</td>' +
           '<td style="text-align:center">' +
-            '<input type="checkbox" class="crm-applied-check"' + (applied ? ' checked' : '') +
-            ' onchange="setApplied(\'' + id + '\',\'' + fid + '\',this.checked)">' +
+            '<input type="checkbox" class="crm-applied-check" data-report-id="' + reportId + '" data-fund-id="' + fid + '"' + (applied ? ' checked' : '') + '>' +
           '</td>' +
-          '<td><select class="crm-outcome-select"' + (applied ? '' : ' disabled') +
-            ' onchange="setOutcome(\'' + id + '\',\'' + fid + '\',this.value)">' +
+          '<td><select class="crm-outcome-select" data-report-id="' + reportId + '" data-fund-id="' + fid + '"' + (applied ? '' : ' disabled') + '>' +
             '<option value=""'          + (!outcome                  ? ' selected' : '') + '>—</option>' +
             '<option value="pending"'   + (outcome === 'pending'     ? ' selected' : '') + '>Pending</option>' +
             '<option value="approved"'  + (outcome === 'approved'    ? ' selected' : '') + '>Approved</option>' +
             '<option value="declined"'  + (outcome === 'declined'    ? ' selected' : '') + '>Declined</option>' +
             '<option value="withdrawn"' + (outcome === 'withdrawn'   ? ' selected' : '') + '>Withdrawn</option>' +
           '</select></td>' +
-          '<td><input type="number" class="crm-amount-input" min="0" ' +
+          '<td><input type="number" class="crm-amount-input" min="0" data-report-id="' + reportId + '" data-fund-id="' + fid + '" ' +
             (applied && outcome === 'approved' ? '' : 'disabled ') +
-            'value="' + escHtml(String(amount)) + '" ' +
-            'oninput="scheduleAmountSave(\'' + id + '\',\'' + fid + '\',this.value)"></td>' +
+            'value="' + escHtml(String(amount)) + '"></td>' +
         '</tr>';
       });
       html += '</tbody></table>';
     }
 
-    html += '<button type="button" class="crm-json-link" onclick="showRawJson(\'' + id + '\')">View full report JSON →</button>';
+    html += '<button type="button" class="crm-json-link" data-action="show-raw-json" data-report-id="' + reportId + '">View full report JSON →</button>';
     el.innerHTML = html;
   }
 
@@ -1777,8 +1840,8 @@
       '<div class="cand-url">' + (safeHttpUrl(c.source_url) ? '<a href="' + escHtml(safeHttpUrl(c.source_url)) + '" target="_blank" rel="noopener">' + escHtml(c.source_url) + '</a>' : '—') + '</div>' +
       evidence +
       '<div class="cand-actions">' +
-        '<button type="button" class="cand-btn approve" onclick="candidateAction(\'' + escHtml(c.id) + '\',\'approve\')">✓ Approve</button>' +
-        '<button type="button" class="cand-btn reject" onclick="candidateReject(\'' + escHtml(c.id) + '\')">✕ Reject</button>' +
+        '<button type="button" class="cand-btn approve" data-action="approve-candidate" data-candidate-id="' + escHtml(c.id) + '">✓ Approve</button>' +
+        '<button type="button" class="cand-btn reject" data-action="reject-candidate" data-candidate-id="' + escHtml(c.id) + '">✕ Reject</button>' +
       '</div>' +
     '</div>';
   }
@@ -1835,7 +1898,7 @@
         '<p class="admin-muted" style="margin:4px 0 6px">The page still loads, but the scheme name is no longer on it — the fund may have moved or been replaced. Check the link and fix or close the fund.</p>' +
         '<div class="prop-url"><a href="' + url + '" target="_blank" rel="noopener">' + (url || '—') + '</a></div>' +
         '<div class="prop-actions">' +
-          '<button type="button" class="prop-btn dismiss" onclick="dismissProposal(\'' + escHtml(p.id) + '\')">Dismiss (mark checked)</button>' +
+          '<button type="button" class="prop-btn dismiss" data-action="dismiss-proposal" data-proposal-id="' + escHtml(p.id) + '">Dismiss (mark checked)</button>' +
         '</div></div>';
     }
 
@@ -1882,8 +1945,8 @@
       '<div class="prop-url"><a href="' + url + '" target="_blank" rel="noopener">' + (url || '—') + '</a></div>' +
       table + evidence +
       '<div class="prop-actions">' +
-        '<button type="button" class="prop-btn apply" onclick="applyProposal(\'' + pid + '\')">✓ Apply selected</button>' +
-        '<button type="button" class="prop-btn dismiss" onclick="dismissProposal(\'' + pid + '\')">Dismiss</button>' +
+        '<button type="button" class="prop-btn apply" data-action="apply-proposal" data-proposal-id="' + pid + '">✓ Apply selected</button>' +
+        '<button type="button" class="prop-btn dismiss" data-action="dismiss-proposal" data-proposal-id="' + pid + '">Dismiss</button>' +
       '</div></div>';
   }
 
@@ -1937,15 +2000,15 @@
           ? 'URL: ' + (safeHttpUrl(f.source_url) ? '<a href="' + escHtml(safeHttpUrl(f.source_url)) + '" target="_blank" rel="noopener">' + escHtml(f.source_url) + '</a>' : '—')
           : 'Deadline: ' + escHtml(f.deadline_date||'—') + (f.provider ? ' · ' + escHtml(f.provider) : '');
         var fixBtn = dead
-          ? '<button type="button" class="flag-btn fix" onclick="flagFixUrl(\'' + escHtml(f.fund_id) + '\')">Fix URL</button>'
+          ? '<button type="button" class="flag-btn fix" data-action="fix-flag-url" data-fund-id="' + escHtml(f.fund_id) + '">Fix URL</button>'
           : '';
         return '<div class="flag-card' + (dead?' dead':'') + '">' +
           '<div class="flag-top"><span class="flag-name">' + escHtml(f.fund_name||f.fund_id) + '</span>' +
             '<span class="flag-type ft-' + escHtml(f.change_type) + '">' + typeLabel + '</span></div>' +
           '<div class="flag-meta">' + meta + '</div>' +
           '<div class="flag-actions">' + fixBtn +
-            '<button type="button" class="flag-btn closebtn" onclick="flagAction(\'' + escHtml(f.fund_id) + '\',\'' + escHtml(f.change_type) + '\',\'close\')">Mark closed</button>' +
-            '<button type="button" class="flag-btn dismiss" onclick="flagAction(\'' + escHtml(f.fund_id) + '\',\'' + escHtml(f.change_type) + '\',\'dismiss\')">Dismiss</button>' +
+            '<button type="button" class="flag-btn closebtn" data-action="resolve-flag" data-fund-id="' + escHtml(f.fund_id) + '" data-change-type="' + escHtml(f.change_type) + '" data-resolution="close">Mark closed</button>' +
+            '<button type="button" class="flag-btn dismiss" data-action="resolve-flag" data-fund-id="' + escHtml(f.fund_id) + '" data-change-type="' + escHtml(f.change_type) + '" data-resolution="dismiss">Dismiss</button>' +
           '</div>' +
         '</div>';
       }).join('');
