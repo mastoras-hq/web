@@ -30,14 +30,61 @@ test('protected surfaces do not use inline event handlers', async ({ request }) 
   }
 });
 
-test('authentication pages use external scripts', async ({ request }) => {
-  for (const path of ['/login/', '/auth/callback/']) {
+test('authentication and HQ pages use external scripts', async ({ request }) => {
+  for (const path of ['/login/', '/auth/callback/', '/hq/']) {
     const response = await request.get(path);
     expect(response.ok()).toBeTruthy();
     const source = await response.text();
     expect(source).not.toMatch(/<script(?![^>]*\bsrc=)[^>]*>/i);
     expect(source).toContain('/assets/js/');
   }
+});
+
+test('HQ external script loads and updates a client through authenticated routes', async ({ page }) => {
+  const patches = [];
+  await page.route('**/assets/js/auth-bootstrap.js', route => route.fulfill({
+    status: 200,
+    contentType: 'text/javascript',
+    body: 'window.mastorasAuth={requireSession:()=>Promise.resolve({access_token:"test"})};',
+  }));
+  await page.route(/\/clients$/, route => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify([{
+      id: 'client-1', name: 'Test Founder', org_name: 'Test Organisation',
+      email: 'founder@example.com', source: 'test', status: 'Lead',
+      report_count: 0, brick_score: null, last_activity: '2026-07-01T09:00:00Z',
+    }]),
+  }));
+  await page.route(/\/clients\/client-1$/, async route => {
+    if (route.request().method() === 'PATCH') {
+      patches.push(route.request().postDataJSON());
+      await route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
+      return;
+    }
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        client: {
+          id: 'client-1', name: 'Test Founder', org_name: 'Test Organisation',
+          email: 'founder@example.com', source: 'test', status: 'Lead',
+          notes: '', created_at: '2026-07-01T09:00:00Z',
+        },
+        reports: [], brick: [], calls: [], documents: [],
+        stats: { report_count: 0, applied: 0, approved: 0, value_awarded: 0 },
+      }),
+    });
+  });
+
+  await page.goto('/hq/');
+  await expect(page.locator('#clients-tbody')).toContainText('Test Founder');
+  await page.locator('[data-action="open-client"][data-client-id="client-1"]').click();
+  await expect(page.locator('#profile-content h2')).toHaveText('Test Founder');
+  await page.locator('#client-notes').fill('Follow up next week');
+  await page.locator('#client-notes').blur();
+  await expect.poll(() => patches.some(body => body.notes === 'Follow up next week')).toBe(true);
+  await expect(page.locator('#notes-ind')).toContainText('Saved');
 });
 
 test('login submits a safe magic-link redirect', async ({ page }) => {
