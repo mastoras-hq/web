@@ -10,18 +10,6 @@
   <p id="status">Completing secure sign in…</p>
   <script src="/assets/vendor/supabase-2.108.2.js"></script>
   <script src="/assets/js/auth-bootstrap.js"></script>
-  <script>
-    (async function () {
-      var returnTo = new URLSearchParams(location.search).get('returnTo') || '/advisor/';
-      if (!returnTo.startsWith('/') || returnTo.startsWith('//')) returnTo = '/advisor/';
-      try {
-        await window.mastorasAuth.requireSession();
-        location.replace(returnTo);
-      } catch (error) {
-        document.getElementById('status').textContent = 'Sign in failed. Returning to login…';
-        setTimeout(function () { location.replace('/login/'); }, 1200);
-      }
-    }());
-  </script>
+  <script src="/assets/js/auth-callback.js"></script>
 </body>
 </html>

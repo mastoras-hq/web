@@ -30,6 +30,35 @@ test('protected surfaces do not use inline event handlers', async ({ request }) 
   }
 });
 
+test('authentication pages use external scripts', async ({ request }) => {
+  for (const path of ['/login/', '/auth/callback/']) {
+    const response = await request.get(path);
+    expect(response.ok()).toBeTruthy();
+    const source = await response.text();
+    expect(source).not.toMatch(/<script(?![^>]*\bsrc=)[^>]*>/i);
+    expect(source).toContain('/assets/js/');
+  }
+});
+
+test('login submits a safe magic-link redirect', async ({ page }) => {
+  await page.route('**/assets/js/auth-bootstrap.js', route => route.fulfill({
+    status: 200,
+    contentType: 'text/javascript',
+    body: `window.mastorasAuth={
+      getSession:()=>Promise.resolve(null),
+      client:{auth:{signInWithOtp:async payload=>{window.__otpPayload=payload;return {error:null};}}}
+    };`,
+  }));
+  await page.goto('/login/?returnTo=https://evil.example/');
+  await page.locator('#email').fill('founder@example.com');
+  await page.locator('#submit').click();
+  await expect(page.locator('#message')).toContainText('Check your inbox');
+  const payload = await page.evaluate(() => window.__otpPayload);
+  expect(payload.email).toBe('founder@example.com');
+  expect(payload.options.shouldCreateUser).toBe(false);
+  expect(payload.options.emailRedirectTo).toContain('returnTo=%2Fadvisor%2F');
+});
+
 test('Advisor delegated controls remain interactive', async ({ page }) => {
   await page.route('**/assets/js/auth-bootstrap.js', route => route.fulfill({
     status: 200,
