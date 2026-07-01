@@ -200,6 +200,47 @@ test('Advisor CRM module loads report history and persists notes', async ({ page
   await expect(page.locator('#notes-ind-report-1')).toContainText('Saved');
 });
 
+test('Advisor funding module validates and submits a report profile', async ({ page }) => {
+  let submitted;
+  await page.route('**/assets/js/auth-bootstrap.js', route => route.fulfill({
+    status: 200,
+    contentType: 'text/javascript',
+    body: 'window.mastorasAuth={requireSession:()=>Promise.resolve({access_token:"test"}),signOut:()=>{}};',
+  }));
+  await page.route(/\/(?:admin\/.*|updates(?:\?.*)?|reports(?:\?.*)?)$/, route => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: '[]',
+  }));
+  await page.route(/\/report$/, async route => {
+    submitted = route.request().postDataJSON();
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        report_id: 'report-new',
+        applicant_summary: { organisation: 'Test Organisation' },
+        matches: [],
+      }),
+    });
+  });
+
+  await page.goto('/advisor/');
+  await page.locator('#org_name').fill('Test Organisation');
+  await page.locator('#org_type').selectOption('SME');
+  await page.locator('#sector').selectOption('Creative & Digital');
+  await page.locator('#stage').selectOption('Early stage');
+  await page.locator('#council_area').selectOption('Belfast City');
+  await page.locator('#description').fill('Purchase production equipment and train staff.');
+  await page.locator('#funding_ask').fill('15000');
+  await page.locator('#submit-btn').click();
+
+  await expect(page.locator('#results-heading')).toContainText('Found 0 matching schemes');
+  expect(submitted.org_profile.org_name).toBe('Test Organisation');
+  expect(submitted.project_profile.funding_ask).toBe(15000);
+  expect(submitted.constraints.effort_capacity).toBe('medium');
+});
+
 async function injectTurnstile(page, selector) {
   await page.locator(selector).evaluate(form => {
     const input = document.createElement('input');
