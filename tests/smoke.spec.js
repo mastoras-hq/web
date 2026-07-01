@@ -21,6 +21,13 @@ test('protected surfaces are marked noindex', async ({ page }) => {
   }
 });
 
+test('HQ does not use inline event handlers', async ({ request }) => {
+  const response = await request.get('/hq/');
+  expect(response.ok()).toBeTruthy();
+  const source = await response.text();
+  expect(source).not.toMatch(/\son(?:click|change|input|blur|submit)\s*=/i);
+});
+
 async function injectTurnstile(page, selector) {
   await page.locator(selector).evaluate(form => {
     const input = document.createElement('input');

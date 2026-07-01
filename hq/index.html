@@ -220,8 +220,8 @@
     <div class="modal-row"><label>Notes (optional)</label><textarea class="modal-input" id="cm-notes" style="min-height:60px;resize:vertical"></textarea></div>
     <div class="modal-err" id="cm-error"></div>
     <div style="display:flex;gap:10px;">
-      <button type="button" class="btn-log" style="flex:1;padding:12px" onclick="submitNewCall()">Log call</button>
-      <button type="button" class="btn-log-toggle" onclick="closeCallModal()">Cancel</button>
+      <button type="button" class="btn-log" style="flex:1;padding:12px" data-action="submit-new-call">Log call</button>
+      <button type="button" class="btn-log-toggle" data-action="close-call-modal">Cancel</button>
     </div>
   </div>
 </div>
@@ -261,8 +261,8 @@
   </div>
 
   <div class="controls">
-    <input type="text" class="search-input" id="search" placeholder="Search by name, organisation or email…" oninput="renderList()">
-    <select class="filter-select" id="status-filter" onchange="renderList()">
+    <input type="text" class="search-input" id="search" placeholder="Search by name, organisation or email…">
+    <select class="filter-select" id="status-filter">
       <option value="">All statuses</option>
       <option value="Lead">Lead</option>
       <option value="Clarity Call Booked">Clarity Call Booked</option>
@@ -273,7 +273,7 @@
       <option value="Closed — Lost">Closed — Lost</option>
       <option value="Not a Fit">Not a Fit</option>
     </select>
-    <button type="button" class="btn-add" onclick="openCallModal()">+ Log a call</button>
+    <button type="button" class="btn-add" data-action="open-call-modal">+ Log a call</button>
   </div>
 
   <div class="table-wrap">
@@ -297,7 +297,7 @@
 
 <!-- PROFILE VIEW -->
 <main class="wrap" id="profile-view">
-  <button type="button" class="back-btn" onclick="showList()">← Back to all clients</button>
+  <button type="button" class="back-btn" data-action="show-list">← Back to all clients</button>
   <div id="profile-content"></div>
 </main>
 
@@ -316,10 +316,56 @@
 
   /* ── INIT ── */
   window.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('search').addEventListener('input', renderList);
+    document.getElementById('status-filter').addEventListener('change', renderList);
+    document.addEventListener('click', handleActionClick);
+    document.addEventListener('change', handleControlChange);
+    document.addEventListener('input', handleControlInput);
+    document.addEventListener('focusout', handleControlFocusOut);
+    document.addEventListener('keydown', handleActionKeydown);
+
     mastorasAuth.requireSession().then(function () {
       loadClients();
     }).catch(function () {});
   });
+
+  function handleActionClick(event) {
+    var control = event.target.closest('[data-action]');
+    if (!control) return;
+    var action = control.dataset.action;
+    if (action === 'submit-new-call') submitNewCall();
+    else if (action === 'close-call-modal') closeCallModal();
+    else if (action === 'open-call-modal') openCallModal();
+    else if (action === 'show-list') showList();
+    else if (action === 'open-client') openClient(control.dataset.clientId);
+    else if (action === 'toggle-call-form') toggleCallForm();
+    else if (action === 'log-call') logCall(control.dataset.clientId);
+    else if (action === 'download-document') downloadDoc(control.dataset.documentId);
+    else if (action === 'delete-document') deleteDoc(control.dataset.documentId, control.dataset.clientId);
+  }
+
+  function handleControlChange(event) {
+    if (event.target.id === 'status-select') {
+      saveStatus(event.target.dataset.clientId, event.target.value);
+    } else if (event.target.id === 'doc-file') {
+      uploadDoc(event.target.dataset.clientId);
+    }
+  }
+
+  function handleControlInput(event) {
+    if (event.target.id === 'client-notes') scheduleNotes(event.target.dataset.clientId);
+  }
+
+  function handleControlFocusOut(event) {
+    if (event.target.id === 'client-notes') saveNotes(event.target.dataset.clientId);
+  }
+
+  function handleActionKeydown(event) {
+    var control = event.target.closest('[data-action="open-client"]');
+    if (!control || control.tagName !== 'TR' || (event.key !== 'Enter' && event.key !== ' ')) return;
+    event.preventDefault();
+    openClient(control.dataset.clientId);
+  }
 
   function headers() { return { 'Content-Type': 'application/json' }; }
 
@@ -357,7 +403,7 @@
     .then(function (data) { state.clients = data || []; renderStats(); renderList(); })
     .catch(function () {
       document.getElementById('clients-tbody').innerHTML =
-        '<tr><td colspan="6" class="empty">Couldn\'t load clients. Check your API key and connection.</td></tr>';
+        '<tr><td colspan="6" class="empty">Couldn\'t load clients. Check your connection and try again.</td></tr>';
     });
   }
 
@@ -394,7 +440,7 @@
       var nameLine = c.name ? escHtml(c.name) : (c.org_name ? escHtml(c.org_name) : '<em style="color:#bbb">No name</em>');
       var orgLine = (c.name && c.org_name) ? '<div class="client-org">' + escHtml(c.org_name) + '</div>' : '';
       var brick = (c.brick_score !== null && c.brick_score !== undefined) ? (c.brick_score + '/24') : '—';
-      return '<tr onclick="openClient(\'' + c.id + '\')">' +
+      return '<tr data-action="open-client" data-client-id="' + escHtml(c.id) + '" tabindex="0" role="button">' +
         '<td><span class="client-name">' + nameLine + '</span>' + orgLine +
           (c.email ? '<div class="client-org">' + escHtml(c.email) + '</div>' : '') + '</td>' +
         '<td><span class="badge badge-source">' + escHtml(c.source || '—') + '</span></td>' +
@@ -477,7 +523,7 @@
     }).join('') : '<p style="color:#aaa;font-size:13px">No calls logged.</p>';
 
     var callFormHtml =
-      '<button type="button" class="btn-log-toggle" style="margin-top:14px" onclick="toggleCallForm()">+ Log a call</button>' +
+      '<button type="button" class="btn-log-toggle" style="margin-top:14px" data-action="toggle-call-form">+ Log a call</button>' +
       '<div class="call-form" id="call-form">' +
         '<div class="row">' +
           '<input type="datetime-local" class="call-input" id="cf-when">' +
@@ -487,7 +533,7 @@
           '</select>' +
         '</div>' +
         '<textarea class="call-textarea" id="cf-notes" placeholder="Notes (optional)"></textarea>' +
-        '<button type="button" class="btn-log" onclick="logCall(\'' + c.id + '\')">Save call</button>' +
+        '<button type="button" class="btn-log" data-action="log-call" data-client-id="' + escHtml(c.id) + '">Save call</button>' +
       '</div>';
 
     var docsHtml = documents.length ? documents.map(function (d) {
@@ -501,8 +547,8 @@
           (isReport ? ' <span class="doc-badge">report</span>' : '') + '</div>' +
           '<div class="doc-meta">' + fmtDate(d.created_at) + (sizeStr ? ' · ' + sizeStr : '') + '</div></div>' +
         '<div class="doc-actions">' +
-          '<button type="button" class="doc-btn" onclick="downloadDoc(\'' + d.id + '\')">Open</button>' +
-          '<button type="button" class="doc-btn del" onclick="deleteDoc(\'' + d.id + '\',\'' + c.id + '\')">Delete</button>' +
+          '<button type="button" class="doc-btn" data-action="download-document" data-document-id="' + escHtml(d.id) + '">Open</button>' +
+          '<button type="button" class="doc-btn del" data-action="delete-document" data-document-id="' + escHtml(d.id) + '" data-client-id="' + escHtml(c.id) + '">Delete</button>' +
         '</div>' +
       '</div>';
     }).join('') : '<p style="color:#aaa;font-size:13px">No documents yet.</p>';
@@ -510,7 +556,7 @@
     var uploadHtml =
       '<div class="upload-row">' +
         '<label class="upload-label">+ Upload document' +
-          '<input type="file" id="doc-file" style="display:none" onchange="uploadDoc(\'' + c.id + '\')">' +
+          '<input type="file" id="doc-file" style="display:none" data-client-id="' + escHtml(c.id) + '">' +
         '</label>' +
         '<div class="upload-status" id="upload-status"></div>' +
       '</div>';
@@ -537,15 +583,15 @@
         '<div class="profile-meta">' + metaBits.join('') + '</div>' +
         '<div class="profile-controls">' +
           '<label>Status</label>' +
-          '<select class="status-select" id="status-select" onchange="saveStatus(\'' + c.id + '\', this.value)">' + statusOpts + '</select>' +
+          '<select class="status-select" id="status-select" data-client-id="' + escHtml(c.id) + '">' + statusOpts + '</select>' +
           '<a class="run-report-link" href="/advisor/">Run new report →</a>' +
         '</div>' +
       '</div>' +
       '<div class="profile-grid">' +
         '<div>' +
           '<div class="panel"><h3>Client Notes</h3>' +
-            '<textarea class="notes-area" id="client-notes" placeholder="Running notes on this client — calls, decisions, follow-ups…" ' +
-              'oninput="scheduleNotes(\'' + c.id + '\')" onblur="saveNotes(\'' + c.id + '\')">' + escHtml(c.notes || '') + '</textarea>' +
+            '<textarea class="notes-area" id="client-notes" data-client-id="' + escHtml(c.id) + '" placeholder="Running notes on this client — calls, decisions, follow-ups…">' +
+              escHtml(c.notes || '') + '</textarea>' +
             '<div class="save-ind" id="notes-ind"></div>' +
           '</div>' +
           '<div class="panel"><h3>Funding Reports (' + reports.length + ')</h3>' + reportsHtml + '</div>' +
@@ -652,7 +698,7 @@
     status.className = 'upload-status'; status.textContent = 'Uploading ' + f.name + '…';
     var fd = new FormData();
     fd.append('file', f);
-    // Note: don't set Content-Type — the browser sets the multipart boundary. Only send the API key.
+    // Don't set Content-Type — the browser supplies the multipart boundary.
     fetch(API + '/clients/' + clientId + '/documents', {
       method: 'POST',
       body: fd
