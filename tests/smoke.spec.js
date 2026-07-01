@@ -133,7 +133,7 @@ test('Advisor admin module initializes review queues after authentication', asyn
     contentType: 'text/javascript',
     body: 'window.mastorasAuth={requireSession:()=>Promise.resolve({access_token:"test"}),signOut:()=>{}};',
   }));
-  await page.route('https://api.mastoras.uk/**', route => route.fulfill({
+  await page.route(/\/(?:admin\/.*|updates(?:\?.*)?|reports(?:\?.*)?)$/, route => route.fulfill({
     status: 200,
     contentType: 'application/json',
     body: '[]',
