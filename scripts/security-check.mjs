@@ -70,6 +70,25 @@ for (const path of publicNavigationPages) {
   }
 }
 
+for (const path of [
+  'tools/index.html',
+  'readiness-check/index.html',
+  'blog/grant-writing-northern-ireland.html',
+  'blog/pre-build-assessment-case-study.html',
+]) {
+  const source = await readFile(path, 'utf8');
+  const withoutJsonLd = source.replace(
+    /<script\s+type=["']application\/ld\+json["'][^>]*>[\s\S]*?<\/script>/gi,
+    '',
+  );
+  if (/<script(?![^>]*\bsrc=)[^>]*>/i.test(withoutJsonLd)) {
+    throw new Error(`${path} still contains an inline executable script`);
+  }
+  if (!source.includes('/assets/js/analytics.js')) {
+    throw new Error(`${path} does not load the shared analytics module`);
+  }
+}
+
 {
   const path = 'index.html';
   const source = await readFile(path, 'utf8');

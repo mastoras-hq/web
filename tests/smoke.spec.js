@@ -77,6 +77,25 @@ test('protected application pages use external scripts', async ({ request }) => 
   }
 });
 
+test('legacy public pages use the shared external analytics bootstrap', async ({ request }) => {
+  for (const path of [
+    '/tools/',
+    '/readiness-check/',
+    '/blog/grant-writing-northern-ireland.html',
+    '/blog/pre-build-assessment-case-study.html',
+  ]) {
+    const response = await request.get(path);
+    expect(response.ok()).toBeTruthy();
+    const source = await response.text();
+    const withoutJsonLd = source.replace(
+      /<script\s+type=["']application\/ld\+json["'][^>]*>[\s\S]*?<\/script>/gi,
+      '',
+    );
+    expect(withoutJsonLd).not.toMatch(/<script(?![^>]*\bsrc=)[^>]*>/i);
+    expect(source).toContain('/assets/js/analytics.js');
+  }
+});
+
 test('HQ external script loads and updates a client through authenticated routes', async ({ page }) => {
   const patches = [];
   await page.route('**/assets/js/auth-bootstrap.js', route => route.fulfill({
