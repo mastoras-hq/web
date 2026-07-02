@@ -309,7 +309,7 @@
       <div class="error-msg" id="error-msg">Please complete all four fields before checking.</div>
       <input type="text" id="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
       <div class="cf-turnstile" data-sitekey="REPLACE_WITH_CLOUDFLARE_TURNSTILE_SITE_KEY" data-action="funding-taster"></div>
-      <button type="button" class="btn-submit" id="submit-btn" onclick="runCheck()">Check my funding →</button>
+      <button type="button" class="btn-submit" id="submit-btn">Check my funding →</button>
       <p class="form-note">Mástoras NI Funding Match — tracking 160+ NI funding schemes from public sources, reviewed regularly.</p>
     </div>
   </div>
@@ -327,7 +327,7 @@
       </div>
       <p class="result-message" id="result-message"></p>
       <div id="result-next"></div>
-      <button type="button" class="btn-retry" onclick="resetForm()">← Check a different profile</button>
+      <button type="button" class="btn-retry" id="retry-btn">← Check a different profile</button>
       <p style="font-size:12px;color:#bbb;margin-top:20px;line-height:1.5;border-top:1px solid var(--rule);padding-top:14px;">
         This check is early-stage guidance, not confirmation of eligibility. Funding criteria and deadlines
         change often — always confirm the details with the funder before applying.
@@ -370,192 +370,7 @@
   </div>
 </footer>
 
-<script>
-  var API = 'https://api.mastoras.uk';
-  var lastProfile = {};
-
-  function escHtml(str) {
-    if (!str) return '';
-    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-  }
-
-  // Build the locked Funding Fit Report preview (only shown when matches > 0).
-  // Rows are the visitor's REAL top matches; the Fit + Verdict columns are
-  // locked (we never fabricate scores), with the real report contents named below.
-  function buildFitReport(count, topFunds, profile) {
-    var shown = (topFunds || []).slice(0, 5);
-    var rows = shown.map(function(f, i) {
-      return '<div class="fr-row">' +
-        '<span class="fr-rank">' + (i + 1) + '</span>' +
-        '<span class="fr-scheme">' + escHtml(f) + '</span>' +
-        '<span class="fr-locked fr-fit" aria-hidden="true"></span>' +
-        '<span class="fr-verdict">🔒 locked</span>' +
-      '</div>';
-    }).join('');
-
-    var moreCount = count - shown.length;
-    var more = moreCount > 0
-      ? '<div class="fr-more">🔒 + ' + moreCount + ' more, scored &amp; ranked</div>'
-      : '';
-
-    var p = profile || {};
-    var subject = encodeURIComponent('Funding Fit Report request');
-    var body = encodeURIComponent(
-      'Hi Garry,\n\n' +
-      'I\'d like the full Funding Fit Report (£195).\n\n' +
-      'My free-check profile to start:\n' +
-      '- Organisation type: ' + (p.orgType || '') + '\n' +
-      '- Sector: ' + (p.sector || '') + '\n' +
-      '- Council area: ' + (p.council || '') + '\n' +
-      '- Funding ask: £' + (p.fundingAsk || '') + '\n' +
-      '- Free check matched: ' + count + ' schemes\n\n' +
-      'I understand the full report goes deeper and you\'ll need more detail from me.\n\n' +
-      'Thanks,'
-    );
-    var mailto = 'mailto:hello@mastoras.uk?subject=' + subject + '&body=' + body;
-
-    return '' +
-      '<div class="fit-report">' +
-        '<div class="fit-report-head">' +
-          '<div class="fr-title">The full Funding Fit Report</div>' +
-          '<div class="fr-sub">Beyond the match — a reasoned fit, built for your profile</div>' +
-        '</div>' +
-        '<div class="fit-report-table">' +
-          '<div class="fr-row fr-head"><span>#</span><span>Scheme</span><span class="fr-fit">Fit</span><span>Verdict</span></div>' +
-          rows +
-          more +
-        '</div>' +
-        '<div class="fit-report-foot">' +
-          '<p class="fr-includes">Each scheme given a <strong>funding fit score out of 100 and ranked</strong>, with a clear ' +
-          '<strong>verdict</strong> (Apply / Worth checking / Not worth it) — why it fits, ' +
-          '<strong>the one thing to fix</strong> before you apply, the deadline and application intelligence ' +
-          '(criteria, tips, pitfalls), Garry\'s view, and a <strong>first-draft application</strong> to build on.</p>' +
-          '<a href="' + mailto + '" class="btn-report">Get the full Funding Fit Report — £195 →</a>' +
-          '<p class="fr-meta">Scored by the engine, reasoned and written by Garry. Built from a fuller profile ' +
-          'than the four questions above. PDF in ~3 working days.</p>' +
-        '</div>' +
-      '</div>';
-  }
-
-  function runCheck() {
-    var orgType    = document.getElementById('org_type').value;
-    var sector     = document.getElementById('sector').value;
-    var council    = document.getElementById('council_area').value;
-    var fundingAsk = parseFloat(document.getElementById('funding_ask').value);
-
-    var errMsg = document.getElementById('error-msg');
-    var turnstileInput = document.querySelector('[name="cf-turnstile-response"]');
-    var allFilled = orgType && sector && council && fundingAsk > 0 && turnstileInput && turnstileInput.value;
-
-    if (!allFilled) {
-      errMsg.style.display = 'block';
-      ['org_type','sector','council_area','funding_ask'].forEach(function(id) {
-        var el = document.getElementById(id);
-        if (!el.value || (id === 'funding_ask' && parseFloat(el.value) <= 0)) {
-          el.classList.add('error');
-        } else {
-          el.classList.remove('error');
-        }
-      });
-      return;
-    }
-
-    errMsg.style.display = 'none';
-
-    var btn = document.getElementById('submit-btn');
-    btn.textContent = 'Checking…';
-    btn.disabled = true;
-
-    var payload = {
-      org_profile: {
-        org_type: orgType,
-        sector: sector,
-        council_area: council,
-      },
-      project_profile: {
-        funding_ask: fundingAsk,
-      },
-      website: document.getElementById('website').value,
-    };
-
-    lastProfile = { orgType: orgType, sector: sector, council: council, fundingAsk: fundingAsk };
-
-    fetch(API + '/taster', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Turnstile-Token': turnstileInput.value },
-      body: JSON.stringify(payload),
-    })
-    .then(function(res) { return res.ok ? res.json() : Promise.reject(res.status); })
-    .then(function(data) {
-      showResult(data);
-    })
-    .catch(function(err) {
-      btn.textContent = 'Check my funding →';
-      btn.disabled = false;
-      errMsg.textContent = 'Something went wrong — please try again.';
-      errMsg.style.display = 'block';
-      if (window.turnstile) window.turnstile.reset();
-    });
-  }
-
-  function showResult(data) {
-    var count = data.match_count || 0;
-    var topFunds = data.top_funds || [];
-
-    document.getElementById('result-number').textContent = count;
-    document.getElementById('result-label').textContent =
-      'potential funding scheme' + (count !== 1 ? 's' : '') + ' matched your profile';
-
-    var CAL = 'https://calendly.com/garynicholl1515/20min';
-    var msg, next;
-
-    if (count > 0) {
-      msg = 'Your profile matched ' + count + ' possible funding route' + (count !== 1 ? 's' : '') + '. ' +
-        'But a match isn\'t the same as a fit — the real questions are which of these are genuinely worth pursuing, and whether the project is ready to apply.';
-      next =
-        buildFitReport(count, topFunds, lastProfile) +
-        '<p style="font-size:13.5px;color:#666;margin-top:4px;padding-top:18px;border-top:1px solid var(--rule);line-height:1.6;">' +
-          '<strong>Not sure the project\'s ready to apply?</strong> That\'s often the bigger issue. A ' +
-          '<a href="/#services" style="color:var(--teal);font-weight:600;">Pre-Build Assessment or First Fix</a> ' +
-          'gets the idea clear and costed first — so the application actually lands.' +
-        '</p>';
-    } else {
-      msg = 'No clean matches for this profile — and that\'s useful to know. When nothing fits, the issue is usually the project, not the funding pool.';
-      next =
-        '<p style="font-size:14.5px;color:#555;margin-bottom:20px;line-height:1.7;">' +
-          'The fix isn\'t another application — it\'s getting the idea clear, costed and evidence-ready first. ' +
-          'That\'s exactly what Mástoras does before a penny of effort goes into a form.' +
-        '</p>' +
-        '<a href="' + CAL + '" target="_blank" rel="noopener" class="btn-cta">Talk it through — book a free call →</a>' +
-        '<p style="font-size:13.5px;color:#666;margin-top:18px;padding-top:16px;border-top:1px solid var(--rule);line-height:1.6;">' +
-          'A <a href="/#services" style="color:var(--teal);font-weight:600;">Pre-Build Assessment</a> stress-tests the idea before you commit; ' +
-          '<a href="/#services" style="color:var(--teal);font-weight:600;">The First Fix</a> clears your single biggest blocker.' +
-        '</p>';
-    }
-
-    document.getElementById('result-message').textContent = msg;
-    document.getElementById('result-next').innerHTML = next;
-
-    document.getElementById('form-section').style.display = 'none';
-    document.getElementById('result-section').style.display = 'block';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  function resetForm() {
-    document.getElementById('form-section').style.display = 'block';
-    document.getElementById('result-section').style.display = 'none';
-    document.getElementById('submit-btn').textContent = 'Check my funding →';
-    document.getElementById('submit-btn').disabled = false;
-    document.getElementById('top-funds-list').style.display = 'none';
-    document.getElementById('error-msg').style.display = 'none';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  // Allow Enter key to submit
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') runCheck();
-  });
-</script>
+<script type="module" src="/assets/js/funding-check.js"></script>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
 </body>

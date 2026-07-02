@@ -294,7 +294,10 @@ test('contact submission uses the Mástoras API once', async ({ page }) => {
 test('funding taster renders API matches', async ({ page }) => {
   await page.route(/\/taster$/, route => route.fulfill({
     status: 200, contentType: 'application/json',
-    body: JSON.stringify({ match_count: 2, top_funds: ['Fund A', 'Fund B'] }),
+    body: JSON.stringify({
+      match_count: 2,
+      top_funds: ['Fund A', '<img src=x onerror="window.__unsafe=true">'],
+    }),
   }));
   await page.goto('/funding-check/');
   await page.locator('#org_type').selectOption('SME');
@@ -304,6 +307,12 @@ test('funding taster renders API matches', async ({ page }) => {
   await injectTurnstile(page, '.form-card');
   await page.locator('#submit-btn').click();
   await expect(page.locator('#result-number')).toHaveText('2');
+  await expect(page.locator('.fr-scheme')).toHaveCount(2);
+  await expect(page.locator('.fr-scheme').nth(1)).toContainText('<img src=x');
+  await expect(page.locator('#result-next img')).toHaveCount(0);
+  expect(await page.evaluate(() => window.__unsafe)).toBeUndefined();
+  await page.locator('#retry-btn').click();
+  await expect(page.locator('#form-section')).toBeVisible();
 });
 
 test('BRICK displays the server-calculated score', async ({ page }) => {
