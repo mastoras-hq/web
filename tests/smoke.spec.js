@@ -13,6 +13,29 @@ test('public pages render their primary controls', async ({ page }) => {
   await expect(page.locator('#brick-form')).toBeVisible();
 });
 
+test('public navigation and homepage accordions use delegated controls', async ({ page }) => {
+  await page.setViewportSize({ width: 600, height: 900 });
+  await page.goto('/');
+
+  await page.locator('.hamburger').click();
+  await expect(page.locator('.hamburger')).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.locator('#mobile-nav')).toHaveClass(/open/);
+  await page.locator('#mobile-nav a[href="#services"]').click();
+  await expect(page.locator('.hamburger')).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.locator('#mobile-nav')).not.toHaveClass(/open/);
+
+  await page.locator('#svc-toggle-btn').click();
+  await expect(page.locator('#svc-toggle-btn')).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.locator('#svc-secondary-content')).toBeVisible();
+
+  const questions = page.locator('.faq-q');
+  await questions.nth(0).click();
+  await expect(questions.nth(0)).toHaveAttribute('aria-expanded', 'true');
+  await questions.nth(1).click();
+  await expect(questions.nth(0)).toHaveAttribute('aria-expanded', 'false');
+  await expect(questions.nth(1)).toHaveAttribute('aria-expanded', 'true');
+});
+
 test('protected surfaces are marked noindex', async ({ page }) => {
   for (const path of ['/advisor/', '/hq/', '/login/']) {
     await page.goto(path);

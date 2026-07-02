@@ -20,3 +20,27 @@ for (const path of ['login/index.html', 'auth/callback/index.html', 'advisor/ind
     throw new Error(`${path} still contains an inline executable script`);
   }
 }
+
+const publicNavigationPages = [
+  'index.html',
+  'privacy-policy.html',
+  'tools/index.html',
+  'readiness-check/index.html',
+  'blog/index.html',
+  'blog/five-questions-every-new-client.html',
+  'blog/grant-writing-northern-ireland.html',
+  'blog/pre-build-assessment-case-study.html',
+  'blog/structure-story-soul.html',
+  'blog/why-tradespeople-undercharge.html',
+  'blog/wrong-grant-northern-ireland.html',
+];
+
+for (const path of publicNavigationPages) {
+  const source = await readFile(path, 'utf8');
+  if (/\son[a-z]+\s*=/i.test(source)) {
+    throw new Error(`${path} still contains an inline event handler`);
+  }
+  if (!source.includes('/assets/js/public-ui.js')) {
+    throw new Error(`${path} does not load the shared public UI module`);
+  }
+}
