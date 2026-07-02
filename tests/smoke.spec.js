@@ -274,6 +274,18 @@ async function injectTurnstile(page, selector) {
   });
 }
 
+async function completeBrick(page) {
+  await page.locator('#name').fill('Test Founder');
+  await page.locator('#email').fill('founder@example.com');
+  await page.locator('#idea').fill('A useful project idea');
+  for (let question = 1; question <= 12; question += 1) {
+    await page.locator(`label[for="q${question}-1"]`).click();
+    await expect(page.locator(`#q${question}-1`)).toBeChecked();
+  }
+  await page.locator('#consent').check();
+  await injectTurnstile(page, '#brick-form');
+}
+
 test('contact submission uses the Mástoras API once', async ({ page }) => {
   let calls = 0;
   await page.route(/\/contact$/, async route => {
@@ -316,20 +328,41 @@ test('funding taster renders API matches', async ({ page }) => {
 });
 
 test('BRICK displays the server-calculated score', async ({ page }) => {
-  await page.route(/\/brick$/, route => route.fulfill({
+  let submitted;
+  await page.route(/\/brick$/, async route => {
+    submitted = route.request().postDataJSON();
+    await route.fulfill({
     status: 200, contentType: 'application/json',
-    body: JSON.stringify({ status: 'ok', id: 'test', score: 12, band: 'Needs more evidence' }),
-  }));
+      body: JSON.stringify({
+        status: 'ok',
+        id: 'test',
+        score: 12,
+        band: '<img src=x onerror="window.__unsafe=true">',
+      }),
+    });
+  });
   await page.goto('/readiness-check/form/');
-  await page.locator('#name').fill('Test Founder');
-  await page.locator('#email').fill('founder@example.com');
-  await page.locator('#idea').fill('A useful project idea');
-  for (let question = 1; question <= 12; question += 1) {
-    await page.locator(`label[for="q${question}-1"]`).click();
-    await expect(page.locator(`#q${question}-1`)).toBeChecked();
-  }
-  await page.locator('#consent').check();
-  await injectTurnstile(page, '#brick-form');
+  await completeBrick(page);
   await page.locator('#submit-btn').click();
   await expect(page.locator('#result-score-num')).toHaveText('12/24');
+  await expect(page.locator('#result-band-title')).toContainText('<img src=x');
+  await expect(page.locator('#result-band-title img')).toHaveCount(0);
+  expect(await page.evaluate(() => window.__unsafe)).toBeUndefined();
+  expect(submitted.q1_score).toBe(1);
+  expect(submitted.q12_score).toBe(1);
+  expect(submitted.consent).toBe(true);
+});
+
+test('BRICK fails closed on an invalid API response', async ({ page }) => {
+  await page.route(/\/brick$/, route => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({ status: 'ok', id: 'test', score: 99, band: 'Ready' }),
+  }));
+  await page.goto('/readiness-check/form/');
+  await completeBrick(page);
+  await page.locator('#submit-btn').click();
+  await expect(page.locator('#form-error')).toContainText('Something went wrong');
+  await expect(page.locator('#submit-btn')).toBeEnabled();
+  await expect(page.locator('#result-section')).toBeHidden();
 });
