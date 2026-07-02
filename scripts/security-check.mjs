@@ -20,6 +20,7 @@ for (const path of [
   'advisor/index.html',
   'hq/index.html',
   'funding-check/index.html',
+  'funding-digest/index.html',
   'readiness-check/form/index.html',
 ]) {
   const source = await readFile(path, 'utf8');
@@ -31,6 +32,7 @@ for (const path of [
 {
   const firstPartyPublicScripts = new Map([
     ['funding-check/index.html', '/assets/js/funding-check.js'],
+    ['funding-digest/index.html', '/assets/js/funding-digest.js'],
     ['readiness-check/form/index.html', '/assets/js/brick-form.js'],
   ]);
   for (const [path, script] of firstPartyPublicScripts) {
