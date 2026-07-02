@@ -345,7 +345,7 @@
         <a href="/blog">Blog</a>
         <a href="https://calendly.com/garynicholl1515/20min" target="_blank" rel="noopener" class="nav-cta">Book a Call</a>
       </nav>
-      <button type="button" class="hamburger" onclick="toggleMobileNav()" aria-label="Open navigation menu" aria-expanded="false">
+      <button type="button" class="hamburger" aria-label="Open navigation menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
     </div>
@@ -885,14 +885,7 @@
   </div>
 </footer>
 
-<script>
-function toggleMobileNav() {
-  var nav = document.getElementById('mobile-nav');
-  var btn = document.querySelector('.hamburger');
-  var open = nav.classList.toggle('open');
-  btn.setAttribute('aria-expanded', open);
-}
-</script>
+<script src="/assets/js/public-ui.js" defer></script>
 
 </body>
 </html>

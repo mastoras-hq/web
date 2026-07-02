@@ -163,16 +163,16 @@
           <a href="https://mastoras.uk/#about">About</a>
           <a href="https://calendly.com/garynicholl1515/20min" target="_blank" rel="noopener" class="nav-cta">Book a Call</a>
         </nav>
-        <button class="hamburger" onclick="toggleMobileNav()" aria-label="Open navigation" aria-expanded="false">
+        <button class="hamburger" aria-label="Open navigation" aria-expanded="false">
           <span></span><span></span><span></span>
         </button>
       </div>
     </div>
     <div class="mobile-nav" id="mobile-nav">
-      <a href="https://mastoras.uk/#services" onclick="closeMobileNav()">Services</a>
-      <a href="/tools/" onclick="closeMobileNav()">Free Tools</a>
-      <a href="https://mastoras.uk/blog" onclick="closeMobileNav()">Blog</a>
-      <a href="https://mastoras.uk/#about" onclick="closeMobileNav()">About</a>
+      <a href="https://mastoras.uk/#services">Services</a>
+      <a href="/tools/">Free Tools</a>
+      <a href="https://mastoras.uk/blog">Blog</a>
+      <a href="https://mastoras.uk/#about">About</a>
       <a href="https://calendly.com/garynicholl1515/20min" target="_blank" rel="noopener" style="color:var(--teal);font-weight:600;">Book a Call →</a>
     </div>
   </header>
@@ -246,18 +246,7 @@
     </div>
   </footer>
 
-  <script>
-    function toggleMobileNav() {
-      var nav = document.getElementById('mobile-nav');
-      var btn = document.querySelector('.hamburger');
-      var open = nav.classList.toggle('open');
-      btn.setAttribute('aria-expanded', open);
-    }
-    function closeMobileNav() {
-      document.getElementById('mobile-nav').classList.remove('open');
-      document.querySelector('.hamburger').setAttribute('aria-expanded', 'false');
-    }
-  </script>
+  <script src="/assets/js/public-ui.js" defer></script>
 
 </body>
 </html>

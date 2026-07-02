@@ -952,19 +952,19 @@
         <a href="#funding-intelligence">NI Funding</a>
         <a href="https://calendly.com/garynicholl1515/20min" target="_blank" rel="noopener" class="nav-cta">Book a Call</a>
       </nav>
-      <button type="button" class="hamburger" onclick="toggleMobileNav()" aria-label="Open navigation menu" aria-expanded="false">
+      <button type="button" class="hamburger" aria-label="Open navigation menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
     </div>
   </div>
   <div class="mobile-nav" id="mobile-nav" role="navigation" aria-label="Mobile navigation">
-    <a href="#services" onclick="closeMobileNav()">Services</a>
-    <a href="#how-it-works" onclick="closeMobileNav()">How it works</a>
-    <a href="#about" onclick="closeMobileNav()">About</a>
-    <a href="/blog" onclick="closeMobileNav()">Blog</a>
-    <a href="/tools/" onclick="closeMobileNav()">Free Tools</a>
-    <a href="#funding-intelligence" onclick="closeMobileNav()">NI Funding</a>
-    <a href="#contact" onclick="closeMobileNav()">Contact</a>
+    <a href="#services">Services</a>
+    <a href="#how-it-works">How it works</a>
+    <a href="#about">About</a>
+    <a href="/blog">Blog</a>
+    <a href="/tools/">Free Tools</a>
+    <a href="#funding-intelligence">NI Funding</a>
+    <a href="#contact">Contact</a>
     <a href="https://calendly.com/garynicholl1515/20min" target="_blank" rel="noopener" style="color:var(--teal);font-weight:600;">Book a Call →</a>
   </div>
 </header>
@@ -1027,7 +1027,7 @@
     <p class="services-foot">Need something different? <a href="mailto:hello@mastoras.uk">Get in touch</a> — most things can be scoped.</p>
 
     <div class="svc-secondary">
-      <button type="button" class="svc-secondary-toggle" onclick="toggleSecondary()" id="svc-toggle-btn">+ Also available — 4 more services</button>
+      <button type="button" class="svc-secondary-toggle" id="svc-toggle-btn" aria-expanded="false">+ Also available — 4 more services</button>
       <div id="svc-secondary-content" style="display:none;">
       <ul class="svc-secondary-list">
         <li><strong>Trades Business Tune-Up</strong> <span class="svc-secondary-price">£250</span> — Specialist support for owner-operators in the trades. Pricing review, day rate documented, job scheduling workflow, and customer communications — sorted. Built by someone who has spent 25 years on sites, not in an office.</li>
@@ -1192,27 +1192,27 @@
     <h2 class="section-h2">Common questions</h2>
     <div class="faq-list">
       <div class="faq-item">
-        <button type="button" class="faq-q" onclick="toggleFaq(this)">Do I need to be a registered business?</button>
+        <button type="button" class="faq-q" aria-expanded="false">Do I need to be a registered business?</button>
         <div class="faq-a"><p>No. Most of the people I work with are either pre-launch or operating as sole traders. You don't need a formal structure — you need a clear one.</p></div>
       </div>
       <div class="faq-item">
-        <button type="button" class="faq-q" onclick="toggleFaq(this)">Where are you based?</button>
+        <button type="button" class="faq-q" aria-expanded="false">Where are you based?</button>
         <div class="faq-a"><p>Causeway Coast, Northern Ireland. I work with clients across NI and beyond. Most work is done remotely, with in-person available for local clients who prefer it.</p></div>
       </div>
       <div class="faq-item">
-        <button type="button" class="faq-q" onclick="toggleFaq(this)">How long does a project take?</button>
+        <button type="button" class="faq-q" aria-expanded="false">How long does a project take?</button>
         <div class="faq-a"><p>The First Fix is a single session — usually 90 minutes. A Pre-Build Assessment takes 1–2 weeks depending on complexity. A Grant Reframe typically takes 5–7 working days once we've had the initial conversation.</p></div>
       </div>
       <div class="faq-item">
-        <button type="button" class="faq-q" onclick="toggleFaq(this)">What if I don't know which service I need?</button>
+        <button type="button" class="faq-q" aria-expanded="false">What if I don't know which service I need?</button>
         <div class="faq-a"><p>That's what the 20-minute call is for. Tell me what you're working on and I'll tell you what I think you actually need — which is sometimes not what you came in expecting.</p></div>
       </div>
       <div class="faq-item">
-        <button type="button" class="faq-q" onclick="toggleFaq(this)">Is the 20-minute call really free?</button>
+        <button type="button" class="faq-q" aria-expanded="false">Is the 20-minute call really free?</button>
         <div class="faq-a"><p>Yes. No obligation, no follow-up pitch if it's not a fit. I'll give you something useful in the conversation regardless.</p></div>
       </div>
       <div class="faq-item">
-        <button type="button" class="faq-q" onclick="toggleFaq(this)">Do you work with community organisations?</button>
+        <button type="button" class="faq-q" aria-expanded="false">Do you work with community organisations?</button>
         <div class="faq-a"><p>Yes. A significant part of the work is with CICs, charities, and community projects — particularly around funding narratives and governance clarity. The Grant Reframe service was built specifically for this.</p></div>
       </div>
     </div>
@@ -1299,40 +1299,8 @@
 <!-- Mástoras · Structure → Story → Soul · Built by Garry Nicholl, co-crafted with Claude ("Whetstone"). 🔨 -->
 <!-- Open the console for a hello from the workshop. -->
 
+<script src="/assets/js/public-ui.js" defer></script>
 <script>
-/* Mobile nav */
-function toggleMobileNav() {
-  var nav = document.getElementById('mobile-nav');
-  var btn = document.querySelector('.hamburger');
-  var open = nav.classList.toggle('open');
-  btn.setAttribute('aria-expanded', open);
-}
-function closeMobileNav() {
-  document.getElementById('mobile-nav').classList.remove('open');
-  document.querySelector('.hamburger').setAttribute('aria-expanded', 'false');
-}
-
-/* Secondary services toggle */
-function toggleSecondary() {
-  var content = document.getElementById('svc-secondary-content');
-  var btn = document.getElementById('svc-toggle-btn');
-  var isOpen = content.style.display !== 'none';
-  content.style.display = isOpen ? 'none' : 'block';
-  btn.textContent = isOpen ? '+ Also available — 4 more services' : '− Also available — 4 more services';
-}
-
-/* FAQ accordion */
-function toggleFaq(btn) {
-  var answer = btn.nextElementSibling;
-  var isOpen = answer.classList.contains('open');
-  document.querySelectorAll('.faq-a').forEach(function(a) { a.classList.remove('open'); });
-  document.querySelectorAll('.faq-q').forEach(function(q) { q.classList.remove('active'); });
-  if (!isOpen) {
-    answer.classList.add('open');
-    btn.classList.add('active');
-  }
-}
-
 /* ── FUNDING: live "open right now" count + reviewed date (no animation) ── */
 fetch('https://api.mastoras.uk/digest')
   .then(function(r) { return r.ok ? r.json() : null; })
