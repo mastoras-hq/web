@@ -14,7 +14,14 @@ for (const path of ['advisor/index.html', 'hq/index.html']) {
   }
 }
 
-for (const path of ['login/index.html', 'auth/callback/index.html', 'advisor/index.html', 'hq/index.html', 'funding-check/index.html']) {
+for (const path of [
+  'login/index.html',
+  'auth/callback/index.html',
+  'advisor/index.html',
+  'hq/index.html',
+  'funding-check/index.html',
+  'readiness-check/form/index.html',
+]) {
   const source = await readFile(path, 'utf8');
   if (/<script(?![^>]*\bsrc=)[^>]*>/i.test(source)) {
     throw new Error(`${path} still contains an inline executable script`);
@@ -22,13 +29,18 @@ for (const path of ['login/index.html', 'auth/callback/index.html', 'advisor/ind
 }
 
 {
-  const path = 'funding-check/index.html';
-  const source = await readFile(path, 'utf8');
-  if (/\son[a-z]+\s*=/i.test(source)) {
-    throw new Error(`${path} still contains an inline event handler`);
-  }
-  if (!source.includes('/assets/js/funding-check.js')) {
-    throw new Error(`${path} does not load its first-party script`);
+  const firstPartyPublicScripts = new Map([
+    ['funding-check/index.html', '/assets/js/funding-check.js'],
+    ['readiness-check/form/index.html', '/assets/js/brick-form.js'],
+  ]);
+  for (const [path, script] of firstPartyPublicScripts) {
+    const source = await readFile(path, 'utf8');
+    if (/\son[a-z]+\s*=/i.test(source)) {
+      throw new Error(`${path} still contains an inline event handler`);
+    }
+    if (!source.includes(script)) {
+      throw new Error(`${path} does not load ${script}`);
+    }
   }
 }
 
