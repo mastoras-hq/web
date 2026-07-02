@@ -346,6 +346,35 @@ test('funding taster renders API matches', async ({ page }) => {
   await expect(page.locator('#form-section')).toBeVisible();
 });
 
+test('funding digest renders hostile API fields as text and rejects unsafe links', async ({ page }) => {
+  await page.route(/\/digest$/, route => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({
+      stats: {
+        total_active: 3,
+        total_open: 2,
+        deadlines_next_90_days: 1,
+      },
+      generated_at: '2026-07-02T09:00:00Z',
+      recently_opened: [{
+        fund_name: '<img src=x onerror="window.__unsafe=true">',
+        provider: 'Test Provider',
+        status: 'Open',
+        source_url: 'javascript:window.__unsafe=true',
+      }],
+      closing_soon: [],
+      watchlist: [],
+    }),
+  }));
+  await page.goto('/funding-digest/');
+  await expect(page.locator('#stats-row')).toContainText('3');
+  await expect(page.locator('#recent-grid .fund-card-name')).toContainText('<img src=x');
+  await expect(page.locator('#recent-grid img')).toHaveCount(0);
+  await expect(page.locator('#recent-grid a')).toHaveCount(0);
+  expect(await page.evaluate(() => window.__unsafe)).toBeUndefined();
+});
+
 test('BRICK displays the server-calculated score', async ({ page }) => {
   let submitted;
   await page.route(/\/brick$/, async route => {
