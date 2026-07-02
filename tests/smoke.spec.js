@@ -36,6 +36,20 @@ test('public navigation and homepage accordions use delegated controls', async (
   await expect(questions.nth(1)).toHaveAttribute('aria-expanded', 'true');
 });
 
+test('homepage renders validated funding-register metadata', async ({ page }) => {
+  await page.route(/\/digest$/, route => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({
+      stats: { total_open: 17 },
+      generated_at: '2026-07-02T09:00:00Z',
+    }),
+  }));
+  await page.goto('/');
+  await expect(page.locator('#fi-open')).toHaveText('17');
+  await expect(page.locator('#fi-register-rev')).toContainText('Reviewed Jul 2026');
+});
+
 test('protected surfaces are marked noindex', async ({ page }) => {
   for (const path of ['/advisor/', '/hq/', '/login/']) {
     await page.goto(path);
@@ -288,19 +302,24 @@ async function completeBrick(page) {
 
 test('contact submission uses the Mástoras API once', async ({ page }) => {
   let calls = 0;
+  let submitted;
   await page.route(/\/contact$/, async route => {
     calls += 1;
+    submitted = route.request().postDataJSON();
     await route.fulfill({ status: 200, contentType: 'application/json', body: '{"status":"ok"}' });
   });
   await page.goto('/');
   await page.locator('#contact-form #name').fill('Test Founder');
   await page.locator('#contact-form #email').fill('founder@example.com');
+  await page.locator('#contact-form #service').selectOption({ index: 1 });
   await page.locator('#contact-form #message').fill('Testing an idea.');
   await page.locator('#contact-consent').check();
   await injectTurnstile(page, '#contact-form');
   await page.locator('#contact-form button[type="submit"]').click();
   await expect(page.locator('#contact-status')).toContainText('Enquiry sent');
   expect(calls).toBe(1);
+  expect(submitted.message).toContain('Service:');
+  expect(submitted.message).toContain('Testing an idea.');
 });
 
 test('funding taster renders API matches', async ({ page }) => {

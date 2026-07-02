@@ -67,3 +67,24 @@ for (const path of publicNavigationPages) {
     throw new Error(`${path} does not load the shared public UI module`);
   }
 }
+
+{
+  const path = 'index.html';
+  const source = await readFile(path, 'utf8');
+  const withoutJsonLd = source.replace(
+    /<script\s+type=["']application\/ld\+json["'][^>]*>[\s\S]*?<\/script>/gi,
+    '',
+  );
+  if (/<script(?![^>]*\bsrc=)[^>]*>/i.test(withoutJsonLd)) {
+    throw new Error(`${path} still contains an inline executable script`);
+  }
+  for (const script of [
+    '/assets/js/analytics.js',
+    '/assets/js/homepage.js',
+    '/assets/js/smooth-scroll.js',
+  ]) {
+    if (!source.includes(script)) {
+      throw new Error(`${path} does not load ${script}`);
+    }
+  }
+}

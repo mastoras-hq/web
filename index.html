@@ -2,13 +2,8 @@
 <html lang="en">
 <head>
   <!-- Google Analytics 4 -->
+  <script src="/assets/js/analytics.js"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZZ15XT7EEJ"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-ZZ15XT7EEJ');
-  </script>
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1300,92 +1295,11 @@
 <!-- Open the console for a hello from the workshop. -->
 
 <script src="/assets/js/public-ui.js" defer></script>
-<script>
-/* ── FUNDING: live "open right now" count + reviewed date (no animation) ── */
-fetch('https://api.mastoras.uk/digest')
-  .then(function(r) { return r.ok ? r.json() : null; })
-  .then(function(d) {
-    if (!d) return;
-    if (d.stats && typeof d.stats.total_open === 'number') {
-      var openEl = document.getElementById('fi-open');
-      if (openEl) openEl.textContent = d.stats.total_open;
-    }
-    if (d.generated_at) {
-      var rev = document.getElementById('fi-register-rev');
-      if (rev) {
-        var dt = new Date(d.generated_at);
-        if (!isNaN(dt.getTime())) {
-          rev.textContent = 'Reviewed ' + dt.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
-        }
-      }
-    }
-  })
-  .catch(function() {});
-
-/* Contact form: the API stores the enquiry and notification in one transaction. */
-(function () {
-  var form = document.getElementById('contact-form');
-  if (!form) return;
-  form.addEventListener('submit', async function (event) {
-    event.preventDefault();
-    var button = form.querySelector('button[type="submit"]');
-    var status = document.getElementById('contact-status');
-    var token = form.querySelector('[name="cf-turnstile-response"]');
-    if (!form.reportValidity() || !token || !token.value) {
-      status.textContent = 'Please complete every required field and the verification check.';
-      return;
-    }
-    button.disabled = true;
-    status.textContent = 'Sending…';
-    try {
-      var service = document.getElementById('service').value;
-      var message = document.getElementById('message').value.trim();
-      var response = await fetch('https://api.mastoras.uk/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Turnstile-Token': token.value },
-        body: JSON.stringify({
-          name: document.getElementById('name').value.trim(),
-          email: document.getElementById('email').value.trim(),
-          message: service ? 'Service: ' + service + '\n\n' + message : message,
-          website: form.elements.website.value,
-          consent: document.getElementById('contact-consent').checked,
-          privacy_policy_version: '2026-06-23'
-        })
-      });
-      if (!response.ok) throw new Error('submission failed');
-      form.reset();
-      status.textContent = 'Enquiry sent. I’ll reply within one working day.';
-      button.textContent = 'Sent ✓';
-    } catch (error) {
-      status.textContent = 'I could not send that just now. Please try again or email hello@mastoras.uk.';
-      button.disabled = false;
-      if (window.turnstile) window.turnstile.reset();
-    }
-  });
-}());
-
-/* ── Workshop signature (easter egg) ── */
-(function () {
-  try {
-    console.log('%cMástoras', 'font:700 22px Merriweather,Georgia,serif;color:#B08D57;');
-    console.log('%cStructure → Story → Soul', 'font-style:italic;color:#0F595E;');
-    console.log(
-      '%cCrafted by Garry Nicholl on the Causeway Coast.\nCo-built in the workshop with Claude — a.k.a. “Whetstone”, who keeps the chisels sharp. 🔨',
-      'color:#8a8a8a;font-size:12px;line-height:1.6;'
-    );
-  } catch (e) {}
-}());
-</script>
+<script src="/assets/js/homepage.js" defer></script>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
-<script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js"></script>
-<script>
-  const lenis = new Lenis({
-    autoRaf: true,
-    duration: 1.2,
-    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
-  });
-</script>
+<script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js" defer></script>
+<script src="/assets/js/smooth-scroll.js" defer></script>
 
 </body>
 </html>
