@@ -1,5 +1,19 @@
 import { readFile } from 'node:fs/promises';
 
+{
+  const headers = await readFile('_headers', 'utf8');
+  for (const directive of [
+    "script-src-attr 'none'",
+    'https://*.googletagmanager.com',
+    'https://*.google-analytics.com',
+    'https://*.analytics.google.com',
+  ]) {
+    if (!headers.includes(directive)) {
+      throw new Error(`_headers CSP is missing ${directive}`);
+    }
+  }
+}
+
 for (const path of ['advisor/index.html', 'hq/index.html']) {
   const source = await readFile(path, 'utf8');
   for (const forbidden of ['localStorage.setItem', 'api-key-modal', 'X-API-Key', 'web3forms.com']) {
