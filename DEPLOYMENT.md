@@ -8,6 +8,10 @@
    production must use the hostname-restricted live widget.
 4. Verify `_headers` on actual responses, including CSP and no-store/noindex for
    Advisor, HQ, login and callback.
+   The CSP deliberately retains `script-src 'unsafe-inline'` only for
+   Cloudflare JavaScript Detections, while `script-src-attr 'none'` blocks inline
+   event attributes. Do not remove the former until Cloudflare injection has a
+   tested nonce-compatible replacement.
 5. Add `Strict-Transport-Security` only after HTTPS, redirects and all subdomains
    have been validated; then use `max-age=31536000; includeSubDomains`.
 6. Confirm Turnstile hostname restrictions and perform contact, BRICK and taster

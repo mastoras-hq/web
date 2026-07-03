@@ -96,6 +96,16 @@ test('legacy public pages use the shared external analytics bootstrap', async ({
   }
 });
 
+test('security headers block script attributes and permit required GA4 origins', async ({ request }) => {
+  const response = await request.get('/');
+  expect(response.ok()).toBeTruthy();
+  const csp = response.headers()['content-security-policy'];
+  expect(csp).toContain("script-src-attr 'none'");
+  expect(csp).toContain('https://*.googletagmanager.com');
+  expect(csp).toContain('https://*.google-analytics.com');
+  expect(csp).toContain('https://*.analytics.google.com');
+});
+
 test('HQ external script loads and updates a client through authenticated routes', async ({ page }) => {
   const patches = [];
   await page.route('**/assets/js/auth-bootstrap.js', route => route.fulfill({
