@@ -4,7 +4,7 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "test": "playwright test",
-    "check:js": "node --check assets/js/advisor.js && node --check assets/js/advisor-funding.js && node --check assets/js/advisor-crm.js && node --check assets/js/advisor-admin.js && node --check assets/js/analytics.js && node --check assets/js/auth-bootstrap.js && node --check assets/js/auth-callback.js && node --check assets/js/brick-form.js && node --check assets/js/funding-check.js && node --check assets/js/funding-digest.js && node --check assets/js/homepage.js && node --check assets/js/hq.js && node --check assets/js/login.js && node --check assets/js/public-ui.js && node --check assets/js/safe-dom.js && node --check assets/js/smooth-scroll.js && node scripts/security-check.mjs"
+    "check:js": "node --check assets/js/advisor.js && node --check assets/js/advisor-funding.js && node --check assets/js/advisor-crm.js && node --check assets/js/advisor-admin.js && node --check assets/js/analytics.js && node --check assets/js/auth-bootstrap.js && node --check assets/js/auth-callback.js && node --check assets/js/brick-form.js && node --check assets/js/funding-check.js && node --check assets/js/funding-digest.js && node --check assets/js/homepage.js && node --check assets/js/hq.js && node --check assets/js/login.js && node --check assets/js/public-ui.js && node --check assets/js/safe-dom.js && node --check assets/js/smooth-scroll.js && node --check scripts/serve.mjs && node scripts/security-check.mjs"
   },
   "devDependencies": {
     "@playwright/test": "1.61.1",
