@@ -99,6 +99,22 @@ test('protected application pages use external scripts', async ({ request }) => 
   }
 });
 
+test('protected surfaces use internal Workspace navigation, not marketing navigation', async ({ request }) => {
+  const advisor = await (await request.get('/advisor/')).text();
+  expect(advisor).toContain('Mástoras Workspace');
+  expect(advisor).toContain('Funding Desk');
+  expect(advisor).toContain('href="/hq/"');
+  expect(advisor).toContain('href="#admin-section"');
+  expect(advisor).not.toContain('mastoras.uk/#services');
+  expect(advisor).not.toContain('mastoras.uk/#about');
+  expect(advisor).not.toContain('calendly.com');
+
+  const hq = await (await request.get('/hq/')).text();
+  expect(hq).toContain('Mástoras Workspace');
+  expect(hq).toContain('href="/advisor/"');
+  expect(hq).toContain('data-action="sign-out"');
+});
+
 test('legacy public pages use the shared external analytics bootstrap', async ({ request }) => {
   for (const path of [
     '/tools/',
