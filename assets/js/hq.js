@@ -20,7 +20,8 @@ function handleActionClick(event) {
   var control = event.target.closest('[data-action]');
   if (!control) return;
   var action = control.dataset.action;
-  if (action === 'submit-new-call') submitNewCall();
+  if (action === 'sign-out') { event.preventDefault(); mastorasAuth.signOut(); }
+  else if (action === 'submit-new-call') submitNewCall();
   else if (action === 'close-call-modal') closeCallModal();
   else if (action === 'open-call-modal') openCallModal();
   else if (action === 'show-list') showList();

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Client Funding Assessment — Mástoras Advisor</title>
+  <title>Funding Desk — Mástoras Workspace</title>
   <meta name="robots" content="noindex, nofollow">
 
   <link rel="icon" type="image/x-icon" href="../favicon.ico">
@@ -109,8 +109,13 @@
     .header-inner {
       display: flex; justify-content: space-between; align-items: center; height: 72px;
     }
-    .wordmark { text-decoration: none; display: flex; align-items: center; }
+    .wordmark { text-decoration: none; display: flex; align-items: center; gap: 10px; }
     .wordmark img { height: 52px; width: auto; }
+    .workspace-tag {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--brass); background: rgba(176,141,87,0.13);
+      padding: 4px 9px; border-radius: 3px;
+    }
     .nav-links { display: flex; align-items: center; gap: 28px; }
     .nav-links a {
       color: var(--graphite); text-decoration: none;
@@ -616,15 +621,17 @@
 <header>
   <div class="wrap">
     <div class="header-inner">
-      <a href="https://mastoras.uk" class="wordmark" aria-label="Mástoras home">
+      <a href="/advisor/" class="wordmark" aria-label="Mástoras Workspace — Funding Desk">
         <img src="../mastoras-logo.png" alt="Mástoras" height="52">
+        <span class="workspace-tag">Workspace</span>
       </a>
-      <nav class="nav-links" aria-label="Main navigation">
-        <a href="https://mastoras.uk/#services">Services</a>
-        <a href="https://mastoras.uk/#about">About</a>
-        <a href="/blog">Blog</a>
+      <nav class="nav-links" aria-label="Workspace navigation">
+        <a href="#new-report">New report</a>
+        <a href="#previous-reports">Reports</a>
+        <a href="/hq/">Clients</a>
+        <a href="#admin-section">Operations</a>
+        <a href="https://mastoras.uk" class="api-key-link">Main site</a>
         <a href="#" data-action="sign-out" class="api-key-link">Sign out</a>
-        <a href="https://calendly.com/garynicholl1515/20min" target="_blank" rel="noopener" class="nav-cta">Book a Call</a>
       </nav>
       <button type="button" class="hamburger" data-action="toggle-mobile-nav" aria-label="Open navigation" aria-expanded="false">
         <span></span><span></span><span></span>
@@ -632,9 +639,11 @@
     </div>
   </div>
   <div class="mobile-nav" id="mobile-nav">
-    <a href="https://mastoras.uk/#services">Services</a>
-    <a href="https://mastoras.uk/#about">About</a>
-    <a href="/blog">Blog</a>
+    <a href="#new-report">New report</a>
+    <a href="#previous-reports">Reports</a>
+    <a href="/hq/">Clients</a>
+    <a href="#admin-section">Operations</a>
+    <a href="https://mastoras.uk">Main site</a>
     <a href="#" data-action="sign-out">Sign out</a>
   </div>
 </header>
@@ -642,14 +651,14 @@
 <!-- ── PAGE HERO ── -->
 <div class="page-hero">
   <div class="wrap">
-    <span class="hero-eyebrow">Internal Tool</span>
-    <h1>Client Funding Assessment</h1>
-    <p>Enter the client profile below to generate a ranked Funding Fit Report.</p>
+    <span class="hero-eyebrow">Mástoras Workspace</span>
+    <h1>Funding Desk</h1>
+    <p>Create a client assessment and generate an explainable Funding Fit Report.</p>
   </div>
 </div>
 
 <!-- ── MAIN CONTENT ── -->
-<section class="main-section">
+<section class="main-section" id="new-report">
   <div class="wrap">
     <div class="main-grid">
 
@@ -851,7 +860,7 @@
 <!-- ── PREVIOUS REPORTS ── -->
 <section class="reports-section" id="previous-reports">
   <div class="wrap">
-    <h2>Previous Reports</h2>
+    <h2>Reports &amp; Outcomes</h2>
     <p class="sub">Track which funds clients applied to and record outcomes over time.</p>
 
     <div class="crm-stats">
@@ -894,8 +903,8 @@
 <!-- ── ADMIN ── -->
 <section class="admin-section" id="admin-section">
   <div class="wrap">
-    <h2>Admin</h2>
-    <p class="sub">Manually trigger the background jobs that normally run on a schedule.</p>
+    <h2>Operations &amp; Review</h2>
+    <p class="sub">Run funding intelligence jobs and review every proposed database change.</p>
     <div class="admin-grid">
 
       <div class="admin-card">
