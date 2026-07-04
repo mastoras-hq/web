@@ -61,6 +61,7 @@ const excluded = new Set([
   '.git', '.github', 'dist', 'node_modules', 'scripts', 'tests', 'work',
   'mastoras', 'package.json', 'package-lock.json', 'playwright.config.js',
   'wrangler.jsonc', 'DEPLOYMENT.md',
+  'marina-sunset.jpg', 'garry-nicholl.jpg.png', 'Carrick-a-rede.jpeg.jpg',
 ]);
 await rm(out, { recursive: true, force: true });
 async function copyPublicFiles(source, destination, isRoot = false) {
