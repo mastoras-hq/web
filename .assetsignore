@@ -1,0 +1,26 @@
+# Safety net for MANUAL `wrangler deploy` runs from a working folder.
+# wrangler.jsonc uploads the whole directory (assets: ".") — without this
+# file, untracked drafts and client material would go public at mastoras.uk/<name>.
+# Git-push (auto) deploys are already safe; this protects the local path.
+# Syntax: gitignore-style.
+
+# repo / tooling internals
+.git
+.github
+.gitignore
+.gitattributes
+.gitleaks.toml
+node_modules
+dist
+wrangler.jsonc
+*.code-workspace
+
+# internal notes, plans, strategy, client drafts — never public
+*.md
+mastoras/
+bc-preview/
+plumb-line/
+
+# working files that aren't site assets
+*Business Card*.pdf
+* old.png
