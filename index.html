@@ -279,7 +279,15 @@
     /* ── HERO ── */
     #hero {
       padding: 140px 0 120px;
-      background: url('dark-hedges.jpg.jpg') center/cover no-repeat;
+      background-image: url('dark-hedges.jpg.jpg');
+      background-image: image-set(
+        url('dark-hedges-750.avif') type('image/avif'),
+        url('dark-hedges-750.webp') type('image/webp'),
+        url('dark-hedges.jpg.jpg') type('image/jpeg')
+      );
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
       position: relative;
     }
     #hero::before {
@@ -626,7 +634,15 @@
 
     /* ── HOW IT WORKS ── */
     #how-it-works {
-      background: url('carrick-a-rede-turquoise.jpg') center/cover no-repeat;
+      background-image: url('carrick-a-rede-turquoise.jpg');
+      background-image: image-set(
+        url('carrick-a-rede-turquoise-750.avif') type('image/avif'),
+        url('carrick-a-rede-turquoise-750.webp') type('image/webp'),
+        url('carrick-a-rede-turquoise.jpg') type('image/jpeg')
+      );
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
       position: relative;
     }
     #how-it-works::before {

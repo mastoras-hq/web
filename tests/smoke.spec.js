@@ -50,6 +50,28 @@ test('homepage renders validated funding-register metadata', async ({ page }) =>
   await expect(page.locator('#fi-register-rev')).toContainText('Reviewed Jul 2026');
 });
 
+test('homepage serves modern backgrounds and omits unused originals', async ({ request }) => {
+  for (const path of [
+    '/dark-hedges-750.avif',
+    '/dark-hedges-750.webp',
+    '/carrick-a-rede-turquoise-750.avif',
+    '/carrick-a-rede-turquoise-750.webp',
+  ]) {
+    expect((await request.get(path)).ok()).toBeTruthy();
+  }
+  for (const path of [
+    '/marina-sunset.jpg',
+    '/garry-nicholl.jpg.png',
+    '/Carrick-a-rede.jpeg.jpg',
+  ]) {
+    expect((await request.get(path)).status()).toBe(404);
+  }
+  const homepage = await (await request.get('/')).text();
+  expect(homepage).toContain('image-set(');
+  expect(homepage).toContain("type('image/avif')");
+  expect(homepage).toContain("type('image/webp')");
+});
+
 test('protected surfaces are marked noindex', async ({ page }) => {
   for (const path of ['/advisor/', '/hq/', '/login/']) {
     await page.goto(path);
