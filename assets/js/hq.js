@@ -1,5 +1,5 @@
 var API = 'https://api.mastoras.uk';
-var state = { clients: [], notesTimer: null };
+var state = { clients: [], notesTimer: null, staff: null };
 
 /* ── INIT ── */
 window.addEventListener('DOMContentLoaded', function () {
@@ -12,6 +12,14 @@ window.addEventListener('DOMContentLoaded', function () {
   document.addEventListener('keydown', handleActionKeydown);
 
   mastorasAuth.requireSession().then(function () {
+    return fetch(API + '/staff/me', { headers: headers() })
+      .then(function (response) {
+        if (!response.ok) throw new Error('Could not load staff context.');
+        return response.json();
+      })
+      .then(function (staff) { state.staff = staff; })
+      .catch(function () { state.staff = null; });
+  }).then(function () {
     loadClients();
   }).catch(function () {});
 });
@@ -30,6 +38,9 @@ function handleActionClick(event) {
   else if (action === 'log-call') logCall(control.dataset.clientId);
   else if (action === 'download-document') downloadDoc(control.dataset.documentId);
   else if (action === 'delete-document') deleteDoc(control.dataset.documentId, control.dataset.clientId);
+  else if (action === 'privacy-preview') previewPrivacy(control.dataset.clientId);
+  else if (action === 'privacy-export') exportPrivacy(control.dataset.clientId);
+  else if (action === 'privacy-erase') erasePrivacy(control.dataset.clientId);
 }
 
 function handleControlChange(event) {
@@ -262,6 +273,17 @@ function renderProfile(data) {
   }).join('');
 
   var displayName = c.name || c.org_name || 'Unnamed client';
+  var privacyHtml = state.staff && state.staff.role === 'owner_admin'
+    ? '<div class="panel privacy-panel"><h3>Privacy &amp; Retention</h3>' +
+        '<p>Owner-only tools for reviewing, exporting, or permanently erasing this client’s data.</p>' +
+        '<div class="privacy-actions">' +
+          '<button type="button" class="privacy-btn" data-action="privacy-preview" data-client-id="' + escHtml(c.id) + '">Preview data</button>' +
+          '<button type="button" class="privacy-btn" data-action="privacy-export" data-client-id="' + escHtml(c.id) + '">Export JSON</button>' +
+          '<button type="button" class="privacy-btn danger" data-action="privacy-erase" data-client-id="' + escHtml(c.id) + '">Erase client</button>' +
+        '</div>' +
+        '<div class="privacy-status" id="privacy-status" aria-live="polite"></div>' +
+      '</div>'
+    : '';
 
   document.getElementById('profile-content').innerHTML =
     '<div class="profile-head">' +
@@ -294,6 +316,7 @@ function renderProfile(data) {
         '</div>' +
         '<div class="panel"><h3>BRICK</h3>' + bricksHtml + '</div>' +
         '<div class="panel"><h3>Timeline</h3>' + timelineHtml + '</div>' +
+        privacyHtml +
       '</div>' +
     '</div>';
 }
@@ -410,4 +433,116 @@ function deleteDoc(docId, clientId) {
   .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
   .then(function () { openClient(clientId); })
   .catch(function () { alert('Could not delete the document — try again.'); });
+}
+function privacyStatus(message, isError) {
+  var status = document.getElementById('privacy-status');
+  if (!status) return;
+  status.textContent = message || '';
+  status.className = 'privacy-status' + (isError ? ' err' : '');
+}
+
+function privacyCountSummary(preview) {
+  var counts = preview.counts || {};
+  var labels = {
+    reports: 'reports',
+    applications: 'applications',
+    enquiries: 'enquiries',
+    brick_submissions: 'BRICK assessments',
+    calls: 'calls',
+    documents: 'documents'
+  };
+  return Object.keys(labels).map(function (key) {
+    return (Number(counts[key]) || 0) + ' ' + labels[key];
+  }).join(', ');
+}
+
+function fetchPrivacyPreview(clientId) {
+  privacyStatus('Checking retained dataâ€¦');
+  return fetch(API + '/clients/' + clientId + '/privacy-preview', { headers: headers() })
+    .then(function (response) {
+      if (!response.ok) throw new Error('Could not load the privacy preview.');
+      return response.json();
+    });
+}
+
+function previewPrivacy(clientId) {
+  fetchPrivacyPreview(clientId)
+    .then(function (preview) {
+      var hold = preview.legal_hold ? ' Legal hold is active; erasure is blocked.' : '';
+      privacyStatus('Retained data: ' + privacyCountSummary(preview) + '.' + hold);
+    })
+    .catch(function (error) { privacyStatus(error.message, true); });
+}
+
+function exportPrivacy(clientId) {
+  fetchPrivacyPreview(clientId)
+    .then(function (preview) {
+      privacyStatus('Export preview: ' + privacyCountSummary(preview) + '.');
+      if (!window.confirm('Create a client data export containing ' + privacyCountSummary(preview) + '?')) {
+        throw new Error('Export cancelled.');
+      }
+      return fetch(API + '/clients/' + clientId + '/export', {
+        method: 'POST',
+        headers: headers()
+      });
+    })
+    .then(function (response) {
+      if (!response.ok) throw new Error('Could not create the client export.');
+      return response.json();
+    })
+    .then(function (data) {
+      var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      var url = URL.createObjectURL(blob);
+      var link = document.createElement('a');
+      link.href = url;
+      link.download = 'mastoras-client-export-' + clientId.replace(/[^A-Za-z0-9-]/g, '') + '.json';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      privacyStatus('Export created. Private document links expire after five minutes.');
+    })
+    .catch(function (error) {
+      privacyStatus(error.message, error.message !== 'Export cancelled.');
+    });
+}
+
+function erasePrivacy(clientId) {
+  fetchPrivacyPreview(clientId)
+    .then(function (preview) {
+      privacyStatus('Erasure preview: ' + privacyCountSummary(preview) + '.');
+      if (preview.legal_hold) {
+        throw new Error('Erasure is blocked because legal hold is active.');
+      }
+      if (!window.confirm(
+        'Permanently erase this client and ' + privacyCountSummary(preview) +
+        '? This cannot be undone.'
+      )) {
+        throw new Error('Erasure cancelled.');
+      }
+      var confirmation = window.prompt('Type ERASE CLIENT exactly to continue.');
+      if (confirmation !== 'ERASE CLIENT') {
+        throw new Error('Erasure confirmation did not match. Nothing was deleted.');
+      }
+      return fetch(API + '/clients/' + clientId + '/erase', {
+        method: 'POST',
+        headers: headers(),
+        body: JSON.stringify({ confirmation: confirmation })
+      });
+    })
+    .then(function (response) {
+      if (!response.ok) throw new Error('Client erasure did not complete.');
+      return response.json();
+    })
+    .then(function () {
+      window.alert('Client data was erased.');
+      showList();
+    })
+    .catch(function (error) {
+      privacyStatus(
+        error.message,
+        error.message !== 'Erasure cancelled.' &&
+        error.message.indexOf('Nothing was deleted.') === -1
+      );
+    });
 }

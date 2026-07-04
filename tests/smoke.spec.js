@@ -191,6 +191,99 @@ test('HQ external script loads and updates a client through authenticated routes
   await expect(page.locator('#notes-ind')).toContainText('Saved');
 });
 
+test('HQ exposes privacy controls only to the owner and keeps erasure fail-safe', async ({ page }) => {
+  let staffRequests = 0;
+  let exportRequests = 0;
+  let eraseRequests = 0;
+  await page.addInitScript(() => {
+    window.confirm = () => true;
+    window.prompt = () => 'WRONG PHRASE';
+    URL.createObjectURL = () => 'blob:test-export';
+    URL.revokeObjectURL = () => {};
+    HTMLAnchorElement.prototype.click = function () {
+      window.__privacyDownload = this.download;
+    };
+  });
+  await page.route('**/assets/js/auth-bootstrap.js', route => route.fulfill({
+    status: 200,
+    contentType: 'text/javascript',
+    body: 'window.mastorasAuth={requireSession:()=>Promise.resolve({access_token:"test"}),signOut:()=>{}};',
+  }));
+  await page.route(/\/staff\/me$/, route => {
+    staffRequests += 1;
+    return route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ user_id: 'owner-1', role: 'owner_admin' }),
+    });
+  });
+  await page.route(/\/clients$/, route => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify([{
+      id: 'client-1', name: 'Privacy Test', source: 'test', status: 'Lead',
+      report_count: 0, brick_score: null, last_activity: '2026-07-01T09:00:00Z',
+    }]),
+  }));
+  await page.route(/\/clients\/client-1$/, route => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({
+      client: {
+        id: 'client-1', name: 'Privacy Test', source: 'test', status: 'Lead',
+        notes: '', created_at: '2026-07-01T09:00:00Z',
+      },
+      reports: [], brick: [], calls: [], documents: [],
+      stats: { report_count: 0, applied: 0, approved: 0, value_awarded: 0 },
+    }),
+  }));
+  await page.route(/\/clients\/client-1\/privacy-preview$/, route => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({
+      legal_hold: false,
+      counts: {
+        reports: 1, applications: 2, enquiries: 0,
+        brick_submissions: 0, calls: 1, documents: 1,
+      },
+    }),
+  }));
+  await page.route(/\/clients\/client-1\/export$/, route => {
+    exportRequests += 1;
+    return route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ request_id: 'request-1', documents: [] }),
+    });
+  });
+  await page.route(/\/clients\/client-1\/erase$/, route => {
+    eraseRequests += 1;
+    return route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
+  });
+
+  await page.goto('/hq/');
+  await expect.poll(() => staffRequests).toBe(1);
+  await expect.poll(() => page.evaluate(() => window.state && window.state.staff)).toEqual({
+    user_id: 'owner-1',
+    role: 'owner_admin',
+  });
+  await page.locator('[data-action="open-client"][data-client-id="client-1"]').click();
+  await expect(page.locator('.privacy-panel')).toBeVisible();
+  await page.locator('[data-action="privacy-preview"]').click();
+  await expect(page.locator('#privacy-status')).toContainText('1 reports, 2 applications');
+
+  await page.locator('[data-action="privacy-export"]').click();
+  await expect.poll(() => exportRequests).toBe(1);
+  await expect(page.locator('#privacy-status')).toContainText('Export created');
+  await expect.poll(() => page.evaluate(() => window.__privacyDownload)).toContain(
+    'mastoras-client-export-client-1.json',
+  );
+
+  await page.locator('[data-action="privacy-erase"]').click();
+  await expect(page.locator('#privacy-status')).toContainText('Nothing was deleted');
+  expect(eraseRequests).toBe(0);
+});
+
 test('login submits a safe magic-link redirect', async ({ page }) => {
   await page.route('**/assets/js/auth-bootstrap.js', route => route.fulfill({
     status: 200,
