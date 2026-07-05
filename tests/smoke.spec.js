@@ -344,8 +344,9 @@ test('Advisor admin module initializes review queues after authentication', asyn
   await expect(page.locator('#runs-list')).toContainText('No runs recorded');
 });
 
-test('Advisor CRM module loads report history and persists notes', async ({ page }) => {
+test('Advisor CRM records outcomes and founder validation evidence', async ({ page }) => {
   const patches = [];
+  const pilotSaves = [];
   await page.route('**/assets/js/auth-bootstrap.js', route => route.fulfill({
     status: 200,
     contentType: 'text/javascript',
@@ -356,6 +357,31 @@ test('Advisor CRM module loads report history and persists notes', async ({ page
     contentType: 'application/json',
     body: '[]',
   }));
+  await page.route(/\/pilot\/summary$/, route => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({
+      participants_completed: 5,
+      participants_useful: 4,
+      repeat_use_requests: 3,
+      willingness_to_pay_count: 2,
+      standalone_pilot_ready: true,
+      criteria: {
+        five_participants_completed: true,
+        most_rate_useful: true,
+        three_repeat_requests: true,
+        two_willing_to_pay: true,
+      },
+    }),
+  }));
+  await page.route(/\/reports\/report-1\/pilot-feedback$/, async route => {
+    pilotSaves.push(route.request().postDataJSON());
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(route.request().postDataJSON()),
+    });
+  });
   await page.route(/\/reports(?:\/report-1|\?limit=20)$/, async route => {
     const request = route.request();
     if (request.method() === 'PATCH') {
@@ -370,6 +396,7 @@ test('Advisor CRM module loads report history and persists notes', async ({ page
         body: JSON.stringify({
           client_notes: '',
           application_tracking: {},
+          pilot_feedback: null,
           report: { matches: [{ fund_id: 'fund-1', fund_name: 'Test Fund' }] },
         }),
       });
@@ -389,12 +416,38 @@ test('Advisor CRM module loads report history and persists notes', async ({ page
   await page.goto('/advisor/');
   await expect(page.locator('#previous-reports')).toBeVisible();
   await expect(page.locator('#reports-tbody')).toContainText('Test Founder');
+  await expect(page.locator('#pilot-summary')).toBeVisible();
+  await expect(page.locator('#pilot-useful')).toHaveText('4/5');
+  await expect(page.locator('#pilot-summary-status')).toContainText('standalone software pilot');
   await page.locator('[data-action="toggle-detail"][data-report-id="report-1"]').first().click();
   await expect(page.locator('#notes-report-1')).toBeVisible();
   await page.locator('#notes-report-1').fill('Awaiting funder response');
   await page.locator('#notes-report-1').blur();
   await expect.poll(() => patches.some(body => body.client_notes === 'Awaiting funder response')).toBe(true);
   await expect(page.locator('#notes-ind-report-1')).toContainText('Saved');
+  await page.locator('#pilot-usefulness-report-1').selectOption('5');
+  await page.locator('#pilot-repeat-report-1').selectOption('true');
+  await page.locator('#pilot-pay-report-1').selectOption('false');
+  await page.locator('#pilot-value-report-1').selectOption('both');
+  await page.locator('#pilot-minutes-report-1').fill('45');
+  await page.locator('#pilot-retained-report-1').fill('4');
+  await page.locator('#pilot-removed-report-1').fill('1');
+  await page.locator('#pilot-annotated-report-1').fill('2');
+  await page.locator('#pilot-notes-report-1').fill('Founder interpretation clarified the shortlist.');
+  await page.locator('[data-action="save-pilot-feedback"]').click();
+  await expect.poll(() => pilotSaves.length).toBe(1);
+  expect(pilotSaves[0]).toEqual({
+    usefulness_rating: 5,
+    repeat_use_requested: true,
+    willingness_to_pay: false,
+    value_source: 'both',
+    report_preparation_minutes: 45,
+    matches_retained: 4,
+    matches_removed: 1,
+    matches_annotated: 2,
+    notes: 'Founder interpretation clarified the shortlist.',
+  });
+  await expect(page.locator('#pilot-status-report-1')).toContainText('Saved');
 });
 
 test('Advisor funding module validates and submits a report profile', async ({ page }) => {

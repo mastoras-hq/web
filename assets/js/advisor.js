@@ -45,6 +45,7 @@
     else if (action === 'load-runs') loadRuns();
     else if (action === 'load-changes') loadChanges();
     else if (action === 'toggle-detail') toggleDetail(control.dataset.reportId);
+    else if (action === 'save-pilot-feedback') savePilotFeedback(control.dataset.reportId);
     else if (action === 'show-raw-json') showRawJson(control.dataset.reportId);
     else if (action === 'approve-candidate') candidateAction(control.dataset.candidateId, 'approve');
     else if (action === 'reject-candidate') candidateReject(control.dataset.candidateId);

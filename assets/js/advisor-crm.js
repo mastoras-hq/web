@@ -37,6 +37,7 @@
     document.getElementById('stat-applied').textContent  = stats.applied;
     document.getElementById('stat-approved').textContent = stats.approved;
     document.getElementById('stat-value').textContent    = stats.value > 0 ? '\xA3' + stats.value.toLocaleString('en-GB') : '\xA3' + '0';
+    loadPilotSummary();
 
     var tbody = document.getElementById('reports-tbody');
     tbody.innerHTML = reports.map(function(r) {
@@ -63,6 +64,87 @@
           '</td>' +
         '</tr>';
     }).join('');
+  }
+
+  function loadPilotSummary() {
+    fetch(API + '/pilot/summary')
+    .then(function(res) { return res.ok ? res.json() : null; })
+    .then(function(summary) {
+      if (!summary) return;
+      var panel = document.getElementById('pilot-summary');
+      var completed = parseInt(summary.participants_completed, 10) || 0;
+      var useful = parseInt(summary.participants_useful, 10) || 0;
+      var criteria = summary.criteria || {};
+      var passed = Object.keys(criteria).filter(function(key) { return criteria[key]; }).length;
+      document.getElementById('pilot-completed').textContent = completed;
+      document.getElementById('pilot-useful').textContent = useful + '/' + completed;
+      document.getElementById('pilot-repeat').textContent = parseInt(summary.repeat_use_requests, 10) || 0;
+      document.getElementById('pilot-pay').textContent = parseInt(summary.willingness_to_pay_count, 10) || 0;
+      document.getElementById('pilot-summary-status').textContent = summary.standalone_pilot_ready
+        ? 'All four evidence thresholds are met. A standalone software pilot can now be considered.'
+        : passed + ' of 4 evidence thresholds met. Keep recording real participant feedback.';
+      panel.classList.add('visible');
+    })
+    .catch(function() {});
+  }
+
+  function pilotSelected(current, value) {
+    return String(current == null ? '' : current) === String(value) ? ' selected' : '';
+  }
+
+  function pilotForm(reportId, feedback) {
+    var f = feedback || {};
+    var repeat = f.repeat_use_requested == null ? '' : String(f.repeat_use_requested);
+    var willing = f.willingness_to_pay == null ? '' : String(f.willingness_to_pay);
+    return '<div class="pilot-form">' +
+      '<span class="crm-label">Founder validation</span>' +
+      '<p class="pilot-form-intro">Record the evidence needed to decide whether this should become standalone software.</p>' +
+      '<div class="pilot-form-grid">' +
+        '<div class="pilot-field"><label for="pilot-usefulness-' + reportId + '">Usefulness</label>' +
+          '<select id="pilot-usefulness-' + reportId + '">' +
+            '<option value="">Not recorded</option>' +
+            '<option value="1"' + pilotSelected(f.usefulness_rating, 1) + '>1 — Not useful</option>' +
+            '<option value="2"' + pilotSelected(f.usefulness_rating, 2) + '>2</option>' +
+            '<option value="3"' + pilotSelected(f.usefulness_rating, 3) + '>3</option>' +
+            '<option value="4"' + pilotSelected(f.usefulness_rating, 4) + '>4 — Useful</option>' +
+            '<option value="5"' + pilotSelected(f.usefulness_rating, 5) + '>5 — Very useful</option>' +
+          '</select></div>' +
+        '<div class="pilot-field"><label for="pilot-repeat-' + reportId + '">Want repeat use?</label>' +
+          '<select id="pilot-repeat-' + reportId + '">' +
+            '<option value="">Not recorded</option>' +
+            '<option value="true"' + pilotSelected(repeat, 'true') + '>Yes</option>' +
+            '<option value="false"' + pilotSelected(repeat, 'false') + '>No</option>' +
+          '</select></div>' +
+        '<div class="pilot-field"><label for="pilot-pay-' + reportId + '">Willing to pay?</label>' +
+          '<select id="pilot-pay-' + reportId + '">' +
+            '<option value="">Not recorded</option>' +
+            '<option value="true"' + pilotSelected(willing, 'true') + '>Yes</option>' +
+            '<option value="false"' + pilotSelected(willing, 'false') + '>No</option>' +
+          '</select></div>' +
+        '<div class="pilot-field"><label for="pilot-value-' + reportId + '">Where value came from</label>' +
+          '<select id="pilot-value-' + reportId + '">' +
+            '<option value="">Not recorded</option>' +
+            '<option value="software"' + pilotSelected(f.value_source, 'software') + '>Software</option>' +
+            '<option value="founder"' + pilotSelected(f.value_source, 'founder') + '>Founder interpretation</option>' +
+            '<option value="both"' + pilotSelected(f.value_source, 'both') + '>Both</option>' +
+            '<option value="unclear"' + pilotSelected(f.value_source, 'unclear') + '>Unclear</option>' +
+          '</select></div>' +
+        '<div class="pilot-field"><label for="pilot-minutes-' + reportId + '">Preparation minutes</label>' +
+          '<input id="pilot-minutes-' + reportId + '" type="number" min="0" max="1440" value="' + escHtml(f.report_preparation_minutes == null ? '' : String(f.report_preparation_minutes)) + '"></div>' +
+        '<div class="pilot-field"><label for="pilot-retained-' + reportId + '">Matches retained</label>' +
+          '<input id="pilot-retained-' + reportId + '" type="number" min="0" max="10000" value="' + escHtml(f.matches_retained == null ? '' : String(f.matches_retained)) + '"></div>' +
+        '<div class="pilot-field"><label for="pilot-removed-' + reportId + '">Matches removed</label>' +
+          '<input id="pilot-removed-' + reportId + '" type="number" min="0" max="10000" value="' + escHtml(f.matches_removed == null ? '' : String(f.matches_removed)) + '"></div>' +
+        '<div class="pilot-field"><label for="pilot-annotated-' + reportId + '">Matches annotated</label>' +
+          '<input id="pilot-annotated-' + reportId + '" type="number" min="0" max="10000" value="' + escHtml(f.matches_annotated == null ? '' : String(f.matches_annotated)) + '"></div>' +
+        '<div class="pilot-field pilot-field-wide"><label for="pilot-notes-' + reportId + '">Pilot notes</label>' +
+          '<textarea id="pilot-notes-' + reportId + '" maxlength="10000" placeholder="What was useful, what needed your interpretation, and what should change?">' + escHtml(f.notes || '') + '</textarea></div>' +
+      '</div>' +
+      '<div class="pilot-actions">' +
+        '<button type="button" class="pilot-save" data-action="save-pilot-feedback" data-report-id="' + reportId + '">Save pilot feedback</button>' +
+        '<span class="pilot-save-status" id="pilot-status-' + reportId + '"></span>' +
+      '</div>' +
+    '</div>';
   }
 
   function toggleDetail(id) {
@@ -107,7 +189,8 @@
         'placeholder="Notes about this client, their project, or the application process…">' +
         escHtml(notes) +
       '</textarea>' +
-      '<div class="crm-save-indicator" id="notes-ind-' + id + '"></div>';
+      '<div class="crm-save-indicator" id="notes-ind-' + id + '"></div>' +
+      pilotForm(reportId, data.pilot_feedback);
 
     if (matches.length > 0) {
       html += '<span class="crm-label" style="margin-top:20px;display:block">Application Tracking</span>' +
@@ -144,6 +227,59 @@
 
     html += '<button type="button" class="crm-json-link" data-action="show-raw-json" data-report-id="' + reportId + '">View full report JSON →</button>';
     el.innerHTML = html;
+  }
+
+  function pilotNumber(id) {
+    var element = document.getElementById(id);
+    if (!element || element.value === '') return null;
+    return Number(element.value);
+  }
+
+  function pilotBoolean(id) {
+    var element = document.getElementById(id);
+    if (!element || element.value === '') return null;
+    return element.value === 'true';
+  }
+
+  function savePilotFeedback(id) {
+    var status = document.getElementById('pilot-status-' + id);
+    var usefulness = pilotNumber('pilot-usefulness-' + id);
+    var repeat = pilotBoolean('pilot-repeat-' + id);
+    var willing = pilotBoolean('pilot-pay-' + id);
+    var valueSource = document.getElementById('pilot-value-' + id).value;
+    var notes = document.getElementById('pilot-notes-' + id).value.trim();
+    var payload = {};
+    if (usefulness !== null) payload.usefulness_rating = usefulness;
+    if (repeat !== null) payload.repeat_use_requested = repeat;
+    if (willing !== null) payload.willingness_to_pay = willing;
+    if (valueSource) payload.value_source = valueSource;
+    [
+      ['report_preparation_minutes', 'pilot-minutes-'],
+      ['matches_retained', 'pilot-retained-'],
+      ['matches_removed', 'pilot-removed-'],
+      ['matches_annotated', 'pilot-annotated-']
+    ].forEach(function(pair) {
+      var value = pilotNumber(pair[1] + id);
+      if (value !== null) payload[pair[0]] = value;
+    });
+    if (notes) payload.notes = notes;
+    if (Object.keys(payload).length === 0) {
+      status.textContent = 'Record at least one measurement.';
+      return;
+    }
+    status.textContent = 'Saving…';
+    fetch(API + '/reports/' + id + '/pilot-feedback', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    .then(function(res) { return res.ok ? res.json() : Promise.reject(new Error('save failed')); })
+    .then(function(saved) {
+      if (_detailCache[id]) _detailCache[id].pilot_feedback = saved;
+      status.textContent = 'Saved ✓';
+      loadPilotSummary();
+    })
+    .catch(function() { status.textContent = 'Save failed'; });
   }
 
   function scheduleNotesSave(id) {

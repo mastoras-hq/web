@@ -431,10 +431,57 @@
       margin-top: 18px; display: inline-block;
     }
     .crm-json-link:hover { color: var(--teal); }
+    .pilot-summary {
+      display: none; margin: 0 0 20px; padding: 18px 20px;
+      background: #F0F7F7; border-left: 3px solid var(--teal);
+    }
+    .pilot-summary.visible { display: block; }
+    .pilot-summary h3 { font-size: 0.95rem; margin: 0 0 12px; }
+    .pilot-summary-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    }
+    .pilot-summary-value {
+      display: block; font-family: 'Merriweather', serif;
+      font-size: 1.15rem; font-weight: 700; color: var(--teal);
+    }
+    .pilot-summary-label {
+      display: block; margin-top: 2px; color: #777; font-size: 11px;
+      font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .pilot-summary-status { margin-top: 12px; color: #666; font-size: 13px; }
+    .pilot-form {
+      margin-top: 20px; padding: 16px; background: var(--white);
+      border: 1px solid var(--rule); border-left: 3px solid var(--brass);
+    }
+    .pilot-form-intro { color: #777; font-size: 12.5px; margin-bottom: 12px; }
+    .pilot-form-grid {
+      display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .pilot-field label {
+      display: block; margin-bottom: 4px; color: #777; font-size: 11px;
+      font-weight: 600;
+    }
+    .pilot-field select, .pilot-field input, .pilot-field textarea {
+      width: 100%; padding: 7px 8px; border: 1px solid #ddd;
+      border-radius: 4px; background: var(--white);
+      color: var(--graphite); font: 13px 'DM Sans', sans-serif;
+    }
+    .pilot-field textarea { min-height: 62px; resize: vertical; }
+    .pilot-field-wide { grid-column: 1 / -1; }
+    .pilot-actions { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+    .pilot-save {
+      padding: 7px 14px; border: 0; border-radius: 4px;
+      background: var(--teal); color: var(--white); cursor: pointer;
+      font: 600 12px 'DM Sans', sans-serif;
+    }
+    .pilot-save:hover { background: #0c4c50; }
+    .pilot-save-status { min-height: 18px; color: #777; font-size: 12px; }
 
     @media (max-width: 640px) {
       .crm-stats { grid-template-columns: repeat(2, 1fr); }
       .crm-track-table .crm-amount-input { width: 70px; }
+      .pilot-summary-grid, .pilot-form-grid { grid-template-columns: repeat(2, 1fr); }
     }
 
     /* ── ADMIN ── */
@@ -880,6 +927,29 @@
         <span class="crm-stat-num" id="stat-value">£0</span>
         <span class="crm-stat-label">Value awarded</span>
       </div>
+    </div>
+
+    <div class="pilot-summary" id="pilot-summary">
+      <h3>Founder validation</h3>
+      <div class="pilot-summary-grid">
+        <div>
+          <span class="pilot-summary-value" id="pilot-completed">0</span>
+          <span class="pilot-summary-label">Completed</span>
+        </div>
+        <div>
+          <span class="pilot-summary-value" id="pilot-useful">0</span>
+          <span class="pilot-summary-label">Rated useful</span>
+        </div>
+        <div>
+          <span class="pilot-summary-value" id="pilot-repeat">0</span>
+          <span class="pilot-summary-label">Want repeat use</span>
+        </div>
+        <div>
+          <span class="pilot-summary-value" id="pilot-pay">0</span>
+          <span class="pilot-summary-label">Willing to pay</span>
+        </div>
+      </div>
+      <p class="pilot-summary-status" id="pilot-summary-status"></p>
     </div>
 
     <div class="reports-table-wrap">
