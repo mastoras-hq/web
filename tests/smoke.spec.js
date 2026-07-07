@@ -203,6 +203,7 @@ test('HQ external script loads and updates a client through authenticated routes
 
 test('HQ exposes privacy controls only to the owner and keeps erasure fail-safe', async ({ page }) => {
   let staffRequests = 0;
+  let previewRequests = 0;
   let exportRequests = 0;
   let eraseRequests = 0;
   await page.addInitScript(() => {
@@ -247,17 +248,21 @@ test('HQ exposes privacy controls only to the owner and keeps erasure fail-safe'
       stats: { report_count: 0, applied: 0, approved: 0, value_awarded: 0 },
     }),
   }));
-  await page.route(/\/clients\/client-1\/privacy-preview$/, route => route.fulfill({
-    status: 200,
-    contentType: 'application/json',
-    body: JSON.stringify({
-      legal_hold: false,
-      counts: {
-        reports: 1, applications: 2, enquiries: 0,
-        brick_submissions: 0, calls: 1, documents: 1,
-      },
-    }),
-  }));
+  await page.route(/\/clients\/client-1\/privacy-preview$/, async route => {
+    previewRequests += 1;
+    await new Promise(resolve => setTimeout(resolve, 250));
+    return route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        legal_hold: false,
+        counts: {
+          reports: 1, applications: 2, enquiries: 0,
+          brick_submissions: 0, calls: 1, documents: 1,
+        },
+      }),
+    });
+  });
   await page.route(/\/clients\/client-1\/export$/, route => {
     exportRequests += 1;
     return route.fulfill({
@@ -283,7 +288,10 @@ test('HQ exposes privacy controls only to the owner and keeps erasure fail-safe'
   await expect(page.locator('#privacy-status')).toContainText('1 reports, 2 applications');
 
   await page.locator('[data-action="privacy-export"]').click();
+  await page.locator('[data-action="privacy-export"]').evaluate(button => button.click());
+  await expect(page.locator('[data-action="privacy-export"]')).toBeDisabled();
   await expect.poll(() => exportRequests).toBe(1);
+  expect(previewRequests).toBe(2);
   await expect(page.locator('#privacy-status')).toContainText('Export created');
   await expect.poll(() => page.evaluate(() => window.__privacyDownload)).toContain(
     'mastoras-client-export-client-1.json',
