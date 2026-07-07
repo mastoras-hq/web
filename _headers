@@ -7,16 +7,20 @@
 
 /advisor/*
   Cache-Control: no-store
+  Pragma: no-cache
   X-Robots-Tag: noindex, nofollow
 
 /hq/*
   Cache-Control: no-store
+  Pragma: no-cache
   X-Robots-Tag: noindex, nofollow
 
 /login/*
   Cache-Control: no-store
+  Pragma: no-cache
   X-Robots-Tag: noindex, nofollow
 
 /auth/*
   Cache-Control: no-store
+  Pragma: no-cache
   X-Robots-Tag: noindex, nofollow
