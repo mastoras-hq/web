@@ -80,6 +80,16 @@ test('protected surfaces are marked noindex', async ({ page }) => {
   }
 });
 
+test('protected surfaces are not browser cacheable', async ({ request }) => {
+  for (const path of ['/advisor/', '/hq/', '/login/', '/auth/callback/']) {
+    const response = await request.get(path);
+    expect(response.ok()).toBeTruthy();
+    expect(response.headers()['cache-control']).toBe('no-store');
+    expect(response.headers()['pragma']).toBe('no-cache');
+    expect(response.headers()['x-robots-tag']).toBe('noindex, nofollow');
+  }
+});
+
 test('protected surfaces do not use inline event handlers', async ({ request }) => {
   for (const path of ['/advisor/', '/hq/']) {
     const response = await request.get(path);
