@@ -1,5 +1,5 @@
 var API = 'https://api.mastoras.uk';
-var state = { clients: [], notesTimer: null, staff: null };
+var state = { clients: [], notesTimer: null, staff: null, privacyBusy: false };
 
 /* ── INIT ── */
 window.addEventListener('DOMContentLoaded', function () {
@@ -441,6 +441,24 @@ function privacyStatus(message, isError) {
   status.className = 'privacy-status' + (isError ? ' err' : '');
 }
 
+function setPrivacyBusy(busy) {
+  state.privacyBusy = busy;
+  document.querySelectorAll('.privacy-actions [data-action]').forEach(function (button) {
+    button.disabled = busy;
+    button.setAttribute('aria-busy', busy ? 'true' : 'false');
+  });
+}
+
+function startPrivacyAction() {
+  if (state.privacyBusy) return false;
+  setPrivacyBusy(true);
+  return true;
+}
+
+function finishPrivacyAction() {
+  setPrivacyBusy(false);
+}
+
 function privacyCountSummary(preview) {
   var counts = preview.counts || {};
   var labels = {
@@ -466,15 +484,18 @@ function fetchPrivacyPreview(clientId) {
 }
 
 function previewPrivacy(clientId) {
+  if (!startPrivacyAction()) return;
   fetchPrivacyPreview(clientId)
     .then(function (preview) {
       var hold = preview.legal_hold ? ' Legal hold is active; erasure is blocked.' : '';
       privacyStatus('Retained data: ' + privacyCountSummary(preview) + '.' + hold);
     })
-    .catch(function (error) { privacyStatus(error.message, true); });
+    .catch(function (error) { privacyStatus(error.message, true); })
+    .finally(finishPrivacyAction);
 }
 
 function exportPrivacy(clientId) {
+  if (!startPrivacyAction()) return;
   fetchPrivacyPreview(clientId)
     .then(function (preview) {
       privacyStatus('Export preview: ' + privacyCountSummary(preview) + '.');
@@ -504,10 +525,12 @@ function exportPrivacy(clientId) {
     })
     .catch(function (error) {
       privacyStatus(error.message, error.message !== 'Export cancelled.');
-    });
+    })
+    .finally(finishPrivacyAction);
 }
 
 function erasePrivacy(clientId) {
+  if (!startPrivacyAction()) return;
   fetchPrivacyPreview(clientId)
     .then(function (preview) {
       privacyStatus('Erasure preview: ' + privacyCountSummary(preview) + '.');
@@ -544,5 +567,6 @@ function erasePrivacy(clientId) {
         error.message !== 'Erasure cancelled.' &&
         error.message.indexOf('Nothing was deleted.') === -1
       );
-    });
+    })
+    .finally(finishPrivacyAction);
 }
