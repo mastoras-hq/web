@@ -156,6 +156,12 @@ test('security headers block script attributes and permit required GA4 origins',
 
 test('HQ external script loads and updates a client through authenticated routes', async ({ page }) => {
   const patches = [];
+  let downloadRequests = 0;
+  let deleteRequests = 0;
+  await page.addInitScript(() => {
+    window.confirm = () => true;
+    window.open = url => { window.__openedDocumentUrl = url; };
+  });
   await page.route('**/assets/js/auth-bootstrap.js', route => route.fulfill({
     status: 200,
     contentType: 'text/javascript',
@@ -185,16 +191,56 @@ test('HQ external script loads and updates a client through authenticated routes
           email: 'founder@example.com', source: 'test', status: 'Lead',
           notes: '', created_at: '2026-07-01T09:00:00Z',
         },
-        reports: [], brick: [], calls: [], documents: [],
+        reports: [], brick: [], calls: [], documents: [{
+          id: 'doc-1',
+          filename: 'Evidence.pdf',
+          kind: 'uploaded',
+          size_bytes: 2048,
+          content_type: 'application/pdf',
+          created_at: '2026-07-01T09:05:00Z',
+        }],
         stats: { report_count: 0, applied: 0, approved: 0, value_awarded: 0 },
       }),
     });
+  });
+  await page.route(/\/documents\/doc-1\/download$/, async route => {
+    downloadRequests += 1;
+    await new Promise(resolve => setTimeout(resolve, 250));
+    return route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ url: 'https://documents.example/doc-1' }),
+    });
+  });
+  await page.route(/\/documents\/doc-1$/, async route => {
+    if (route.request().method() !== 'DELETE') {
+      return route.fulfill({ status: 405, contentType: 'application/json', body: '{}' });
+    }
+    deleteRequests += 1;
+    await new Promise(resolve => setTimeout(resolve, 250));
+    return route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
   });
 
   await page.goto('/hq/');
   await expect(page.locator('#clients-tbody')).toContainText('Test Founder');
   await page.locator('[data-action="open-client"][data-client-id="client-1"]').click();
   await expect(page.locator('#profile-content h2')).toHaveText('Test Founder');
+
+  const downloadButton = page.locator('[data-action="download-document"][data-document-id="doc-1"]');
+  await downloadButton.click();
+  await downloadButton.evaluate(button => button.click());
+  await expect(downloadButton).toBeDisabled();
+  await expect.poll(() => downloadRequests).toBe(1);
+  await expect.poll(() => page.evaluate(() => window.__openedDocumentUrl)).toBe('https://documents.example/doc-1');
+  await expect(downloadButton).toBeEnabled();
+
+  const deleteButton = page.locator('[data-action="delete-document"][data-document-id="doc-1"]');
+  await deleteButton.click();
+  await deleteButton.evaluate(button => button.click());
+  await expect(deleteButton).toBeDisabled();
+  await expect.poll(() => deleteRequests).toBe(1);
+  await expect(deleteButton).toBeEnabled();
+
   await page.locator('#client-notes').fill('Follow up next week');
   await page.locator('#client-notes').blur();
   await expect.poll(() => patches.some(body => body.notes === 'Follow up next week')).toBe(true);

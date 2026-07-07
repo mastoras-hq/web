@@ -1,5 +1,5 @@
 var API = 'https://api.mastoras.uk';
-var state = { clients: [], notesTimer: null, staff: null, privacyBusy: false };
+var state = { clients: [], notesTimer: null, staff: null, privacyBusy: false, documentBusy: {} };
 
 /* ── INIT ── */
 window.addEventListener('DOMContentLoaded', function () {
@@ -420,19 +420,44 @@ function uploadDoc(clientId) {
   .catch(function (e) { status.className = 'upload-status err'; status.textContent = e.message || 'Upload failed — try again.'; });
 }
 
+function setDocumentBusy(docId, busy) {
+  if (!docId) return;
+  if (busy) state.documentBusy[docId] = true;
+  else delete state.documentBusy[docId];
+  document.querySelectorAll('[data-document-id]').forEach(function (button) {
+    if (button.dataset.documentId !== docId) return;
+    button.disabled = busy;
+    button.setAttribute('aria-busy', busy ? 'true' : 'false');
+  });
+}
+
+function startDocumentAction(docId) {
+  if (!docId || state.documentBusy[docId]) return false;
+  setDocumentBusy(docId, true);
+  return true;
+}
+
+function finishDocumentAction(docId) {
+  setDocumentBusy(docId, false);
+}
+
 function downloadDoc(docId) {
-  fetch(API + '/documents/' + docId + '/download', { headers: headers() })
+  if (!startDocumentAction(docId)) return;
+  var request = fetch(API + '/documents/' + docId + '/download', { headers: headers() })
   .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
   .then(function (data) { var url = safeHttpUrl(data.url); if (url) window.open(url, '_blank', 'noopener'); })
   .catch(function () { alert('Could not open the document — try again.'); });
+  request.finally(function () { finishDocumentAction(docId); });
 }
 
 function deleteDoc(docId, clientId) {
   if (!confirm('Delete this document? This cannot be undone.')) return;
-  fetch(API + '/documents/' + docId, { method:'DELETE', headers: headers() })
+  if (!startDocumentAction(docId)) return;
+  var request = fetch(API + '/documents/' + docId, { method:'DELETE', headers: headers() })
   .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
   .then(function () { openClient(clientId); })
   .catch(function () { alert('Could not delete the document — try again.'); });
+  request.finally(function () { finishDocumentAction(docId); });
 }
 function privacyStatus(message, isError) {
   var status = document.getElementById('privacy-status');
