@@ -142,6 +142,18 @@
   }
 
   /* ── RENDER RESULTS ── */
+  function boundedPercent(value) {
+    var n = Number(value);
+    if (!Number.isFinite(n)) return 0;
+    return Math.max(0, Math.min(100, Math.round(n)));
+  }
+
+  function boundedConfidencePercent(value) {
+    var n = Number(value);
+    if (!Number.isFinite(n)) return 0;
+    return boundedPercent(n * 100);
+  }
+
   function renderResults(report) {
     var matches = report.matches || [];
     var panel = document.getElementById('results-panel');
@@ -159,7 +171,9 @@
 
     var html = '';
     matches.forEach(function (m) {
-      var score = Math.round(m.match_score || 0);
+      var score = boundedPercent(m.match_score);
+      var coverage = boundedPercent(m.score_coverage);
+      var confidence = boundedConfidencePercent(m.match_confidence);
       var scoreColour = score >= 70 ? 'var(--green)' : score >= 40 ? 'var(--amber)' : 'var(--red)';
       var status = (m.status || '').toLowerCase();
       var statusClass = status === 'open' ? 'badge-status-open' : status === 'rolling' ? 'badge-status-rolling' : status.indexOf('clos') === 0 && status !== 'closed' ? 'badge-status-closing' : status === 'closed' ? 'badge-status-closed' : 'badge-neutral';
@@ -219,7 +233,7 @@
           '<div style="text-align:right"><span class="match-score" style="color:' + scoreColour + '">' + score + '<span style="font-size:11px;font-weight:400;color:#aaa">/100</span></span></div>' +
         '</div>' +
         '<div class="score-bar-track"><div class="score-bar-fill" style="background:' + scoreColour + ';width:' + score + '%"></div></div>' +
-        '<p style="font-size:11px;color:#888;margin:5px 0 0">Funding fit score · ' + escHtml(m.score_coverage || 0) + '/100 profile coverage · confidence ' + Math.round((m.match_confidence || 0) * 100) + '%</p>' +
+        '<p style="font-size:11px;color:#888;margin:5px 0 0">Funding fit score · ' + coverage + '/100 profile coverage · confidence ' + confidence + '%</p>' +
         '<div class="badge-row">' +
           '<span class="badge ' + statusClass + '">' + escHtml(m.status || 'Unknown') + '</span>' +
           '<span class="badge ' + eligibilityClass + '">' + eligibilityLabel + '</span>' +

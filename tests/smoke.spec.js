@@ -534,7 +534,19 @@ test('Advisor funding module validates and submits a report profile', async ({ p
       body: JSON.stringify({
         report_id: 'report-new',
         applicant_summary: { organisation: 'Test Organisation' },
-        matches: [],
+        matches: [{
+          fund_id: 'fund-new',
+          fund_name: 'Bounded Score Fund',
+          provider: 'Test Provider',
+          status: 'open',
+          eligibility_status: 'eligible',
+          match_score: 150,
+          score_coverage: 125,
+          match_confidence: 3,
+          why_it_fits: ['Relevant sector'],
+          risks: [],
+          missing_information: [],
+        }],
       }),
     });
   });
@@ -549,7 +561,11 @@ test('Advisor funding module validates and submits a report profile', async ({ p
   await page.locator('#funding_ask').fill('15000');
   await page.locator('#submit-btn').click();
 
-  await expect(page.locator('#results-heading')).toContainText('Found 0 matching schemes');
+  await expect(page.locator('#results-heading')).toContainText('Found 1 matching scheme');
+  await expect(page.locator('.match-card')).toContainText('Bounded Score Fund');
+  await expect(page.locator('.match-score')).toContainText('100/100');
+  await expect(page.locator('.match-card')).toContainText('100/100 profile coverage · confidence 100%');
+  await expect(page.locator('.score-bar-fill')).toHaveAttribute('style', /width:\s*100%/);
   expect(submitted.org_profile.org_name).toBe('Test Organisation');
   expect(submitted.project_profile.funding_ask).toBe(15000);
   expect(submitted.constraints.effort_capacity).toBe('medium');
