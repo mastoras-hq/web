@@ -2,7 +2,8 @@
   var state = {
     lastPayload: null,
     lastReportId: null,
-    fundNotes: {}
+    fundNotes: {},
+    adminReviewBusy: {}
   };
 
   var API = 'https://api.mastoras.uk';
