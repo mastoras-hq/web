@@ -389,23 +389,114 @@ test('Advisor delegated controls remain interactive', async ({ page }) => {
 });
 
 test('Advisor admin module initializes review queues after authentication', async ({ page }) => {
+  let candidateActions = 0;
+  let proposalActions = 0;
+  let flagActions = 0;
+  await page.addInitScript(() => {
+    window.prompt = () => 'Reviewed';
+  });
   await page.route('**/assets/js/auth-bootstrap.js', route => route.fulfill({
     status: 200,
     contentType: 'text/javascript',
     body: 'window.mastorasAuth={requireSession:()=>Promise.resolve({access_token:"test"}),signOut:()=>{}};',
   }));
-  await page.route(/\/(?:admin\/.*|updates(?:\?.*)?|reports(?:\?.*)?)$/, route => route.fulfill({
-    status: 200,
-    contentType: 'application/json',
-    body: '[]',
-  }));
+  await page.route(/\/(?:admin\/.*|updates(?:\?.*)?|reports(?:\?.*)?)$/, async route => {
+    const request = route.request();
+    const url = new URL(request.url());
+    if (url.pathname === '/admin/candidates/action') {
+      candidateActions += 1;
+      await new Promise(resolve => setTimeout(resolve, 250));
+      return route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
+    }
+    if (url.pathname === '/admin/proposals/action') {
+      proposalActions += 1;
+      await new Promise(resolve => setTimeout(resolve, 250));
+      return route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
+    }
+    if (url.pathname === '/admin/flags/action') {
+      flagActions += 1;
+      await new Promise(resolve => setTimeout(resolve, 250));
+      return route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
+    }
+    if (url.pathname === '/admin/candidates') {
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{
+          id: 'cand-1',
+          fund_name: 'Candidate Fund',
+          provider: 'Provider',
+          source_url: 'https://example.com/candidate',
+          confidence: 0.9,
+          evidence: {},
+        }]),
+      });
+    }
+    if (url.pathname === '/admin/proposals') {
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{
+          id: 'prop-1',
+          fund_id: 'fund-1',
+          fund_name: 'Proposal Fund',
+          fund_provider: 'Provider',
+          source_url: 'https://example.com/proposal',
+          diff: { grant_size: { old: '£1,000', new: '£2,000' } },
+          flags: {},
+          evidence: {},
+        }]),
+      });
+    }
+    if (url.pathname === '/admin/flags') {
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{
+          fund_id: 'fund-flag',
+          fund_name: 'Flagged Fund',
+          change_type: 'link_dead',
+          source_url: 'https://example.com/dead',
+        }]),
+      });
+    }
+    return route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: '[]',
+    });
+  });
 
   await page.goto('/advisor/');
   await expect(page.locator('#admin-section')).toBeVisible();
-  await expect(page.locator('#candidates-list')).toContainText('No candidates waiting');
-  await expect(page.locator('#proposals-list')).toContainText('No proposed updates');
-  await expect(page.locator('#flags-list')).toContainText('Nothing flagged');
+  await expect(page.locator('#candidates-list')).toContainText('Candidate Fund');
+  await expect(page.locator('#proposals-list')).toContainText('Proposal Fund');
+  await expect(page.locator('#flags-list')).toContainText('Flagged Fund');
   await expect(page.locator('#runs-list')).toContainText('No runs recorded');
+
+  const candidateButton = page.locator('[data-action="approve-candidate"][data-candidate-id="cand-1"]');
+  await candidateButton.click();
+  await candidateButton.evaluate(button => button.click());
+  await expect(candidateButton).toBeDisabled();
+  await expect(candidateButton).toHaveAttribute('aria-busy', 'true');
+  await expect.poll(() => candidateActions).toBe(1);
+  await expect(candidateButton).toBeEnabled();
+
+  const proposalButton = page.locator('[data-action="apply-proposal"][data-proposal-id="prop-1"]');
+  await proposalButton.click();
+  await proposalButton.evaluate(button => button.click());
+  await expect(proposalButton).toBeDisabled();
+  await expect(proposalButton).toHaveAttribute('aria-busy', 'true');
+  await expect.poll(() => proposalActions).toBe(1);
+  await expect(proposalButton).toBeEnabled();
+
+  const flagButton = page.locator('[data-action="resolve-flag"][data-fund-id="fund-flag"][data-resolution="dismiss"]');
+  await flagButton.click();
+  await flagButton.evaluate(button => button.click());
+  await expect(flagButton).toBeDisabled();
+  await expect(flagButton).toHaveAttribute('aria-busy', 'true');
+  await expect.poll(() => flagActions).toBe(1);
+  await expect(flagButton).toBeEnabled();
 });
 
 test('Advisor CRM records outcomes and founder validation evidence', async ({ page }) => {

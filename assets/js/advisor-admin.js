@@ -205,9 +205,40 @@
     '</div>';
   }
 
+  function adminReviewKey(kind, id) {
+    return kind + ':' + String(id || '');
+  }
+
+  function setAdminReviewBusy(kind, id, busy) {
+    var key = adminReviewKey(kind, id);
+    if (!id) return;
+    if (busy) state.adminReviewBusy[key] = true;
+    else delete state.adminReviewBusy[key];
+
+    var attribute = kind === 'candidate' ? 'candidateId' : kind === 'proposal' ? 'proposalId' : 'fundId';
+    var selector = '[data-' + attribute.replace(/[A-Z]/g, function (letter) { return '-' + letter.toLowerCase(); }) + ']';
+    document.querySelectorAll(selector).forEach(function (button) {
+      if (button.dataset[attribute] !== id || button.tagName !== 'BUTTON') return;
+      button.disabled = busy;
+      button.setAttribute('aria-busy', busy ? 'true' : 'false');
+    });
+  }
+
+  function startAdminReviewAction(kind, id) {
+    var key = adminReviewKey(kind, id);
+    if (!id || state.adminReviewBusy[key]) return false;
+    setAdminReviewBusy(kind, id, true);
+    return true;
+  }
+
+  function finishAdminReviewAction(kind, id) {
+    setAdminReviewBusy(kind, id, false);
+  }
+
   function candidateAction(id, action, body) {
+    if (!startAdminReviewAction('candidate', id)) return;
     var payload = body || { candidate_id: id, action: action };
-    fetch(API + '/admin/candidates/action', {
+    var request = fetch(API + '/admin/candidates/action', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -215,6 +246,7 @@
     .then(function (r) { if (!r.ok) return r.json().then(function (e) { throw new Error(e.detail || ''); }); return r.json(); })
     .then(function () { loadCandidates(); })
     .catch(function (e) { alert('Action failed — ' + (e.message || 'try again.')); });
+    request.finally(function () { finishAdminReviewAction('candidate', id); });
   }
 
   function candidateReject(id) {
@@ -318,7 +350,8 @@
     var payload = { proposal_id: id, action: 'apply', fields: fields };
     if (statusBox && statusBox.checked) payload.set_status = 'closed';
     if (!fields.length && !payload.set_status) { alert('Tick at least one change to apply, or use Dismiss.'); return; }
-    fetch(API + '/admin/proposals/action', {
+    if (!startAdminReviewAction('proposal', id)) return;
+    var request = fetch(API + '/admin/proposals/action', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -329,12 +362,14 @@
       loadProposals();
     })
     .catch(function (e) { alert('Apply failed — ' + (e.message || 'try again.')); });
+    request.finally(function () { finishAdminReviewAction('proposal', id); });
   }
 
   function dismissProposal(id) {
     var note = prompt('Dismiss this proposal? (the source is still marked re-checked today). Optional note:');
     if (note === null) return;
-    fetch(API + '/admin/proposals/action', {
+    if (!startAdminReviewAction('proposal', id)) return;
+    var request = fetch(API + '/admin/proposals/action', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ proposal_id: id, action: 'dismiss', review_note: note || null })
@@ -342,6 +377,7 @@
     .then(function (r) { if (!r.ok) return r.json().then(function (e) { throw new Error(e.detail || ''); }); return r.json(); })
     .then(function () { loadProposals(); })
     .catch(function (e) { alert('Dismiss failed — ' + (e.message || 'try again.')); });
+    request.finally(function () { finishAdminReviewAction('proposal', id); });
   }
 
   /* ── REVIEW QUEUE ── */
@@ -376,9 +412,10 @@
   }
 
   function flagAction(fundId, changeType, action, newUrl) {
+    if (!startAdminReviewAction('flag', fundId)) return;
     var body = { fund_id: fundId, change_type: changeType, action: action };
     if (newUrl) body.new_url = newUrl;
-    fetch(API + '/admin/flags/action', {
+    var request = fetch(API + '/admin/flags/action', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
@@ -386,6 +423,7 @@
     .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
     .then(function () { loadFlags(); })
     .catch(function () { alert('Action failed — try again.'); });
+    request.finally(function () { finishAdminReviewAction('flag', fundId); });
   }
 
   function flagFixUrl(fundId) {
