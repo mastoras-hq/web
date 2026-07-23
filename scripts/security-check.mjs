@@ -41,6 +41,9 @@ for (const path of [
   if (/<script(?![^>]*\bsrc=)[^>]*>/i.test(source)) {
     throw new Error(`${path} still contains an inline executable script`);
   }
+  if (source.includes('cdn.tailwindcss.com')) {
+    throw new Error(`${path} still loads the Tailwind CDN runtime`);
+  }
 }
 
 {
@@ -68,6 +71,7 @@ const publicNavigationPages = [
   'blog/index.html',
   'blog/five-questions-every-new-client.html',
   'blog/grant-writing-northern-ireland.html',
+  'blog/launch-package-case-study.html',
   'blog/pre-build-assessment-case-study.html',
   'blog/structure-story-soul.html',
   'blog/why-tradespeople-undercharge.html',
@@ -88,6 +92,7 @@ for (const path of [
   'tools/index.html',
   'readiness-check/index.html',
   'blog/grant-writing-northern-ireland.html',
+  'blog/launch-package-case-study.html',
   'blog/pre-build-assessment-case-study.html',
 ]) {
   const source = await readFile(path, 'utf8');

@@ -130,6 +130,7 @@ test('legacy public pages use the shared external analytics bootstrap', async ({
     '/tools/',
     '/readiness-check/',
     '/blog/grant-writing-northern-ireland.html',
+    '/blog/launch-package-case-study.html',
     '/blog/pre-build-assessment-case-study.html',
   ]) {
     const response = await request.get(path);
